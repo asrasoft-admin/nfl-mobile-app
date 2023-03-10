@@ -7,7 +7,12 @@ import {widthPercentageToDP as wp} from 'utils/responsive';
 import {Input, Button, Dropdown, Header, Texture} from '../../../common';
 import {useSelector, useDispatch} from 'react-redux';
 import {loginAction} from '../../../Redux/Actions/userAction';
-import {axiosInstance, getLocation, parseError} from '../../../helpers';
+import {
+  axiosInstance,
+  baseURL,
+  getLocation,
+  parseError,
+} from '../../../helpers';
 import {SearchableDropdowns} from '../../../common/SearchableDropdown';
 import {allActivities} from '../../../dummyData';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -69,17 +74,14 @@ export const Login = ({navigation}) => {
             if (data.password) {
               setLoading(true);
               axios
-                .get(
-                  'https://dev-nfl-dds-dashboard.herokuapp.com/api/auth/signin',
-                  {
-                    params: {
-                      number: data.number,
-                      password: data.password,
-                      activity_id: data.activity_id,
-                      area_id: selectedArea.id,
-                    },
+                .get(`${baseURL}/api/auth/signin`, {
+                  params: {
+                    number: data.number,
+                    password: data.password,
+                    activity_id: data.activity_id,
+                    area_id: selectedArea.id,
                   },
-                )
+                })
                 .then(async ({data: user}) => {
                   setLoading(false);
 

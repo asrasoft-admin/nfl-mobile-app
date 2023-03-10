@@ -15,6 +15,7 @@ import {
   parseError,
 } from '../../helpers';
 import CustomModal from '../../common/Modal';
+import {TextInput} from 'react-native-gesture-handler';
 
 export const ShopkeeperDetail = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -126,7 +127,7 @@ export const ShopkeeperDetail = ({navigation}) => {
   }, []);
 
   return (
-    <View style={{height: '100%'}}>
+    <View>
       <Texture />
       <Header navigation={navigation} />
       <KeyboardAwareScrollView contentContainerStyle={[style.container]}>
@@ -140,6 +141,7 @@ export const ShopkeeperDetail = ({navigation}) => {
             error={!!errors?.shopName}
             message={errors?.shopName?.message}
             containerStyles={style.inputContainer}
+            returnKeyType={'next'}
           />
           <Input
             name="address"
@@ -149,6 +151,7 @@ export const ShopkeeperDetail = ({navigation}) => {
             error={!!errors?.address}
             message={errors?.address?.message}
             containerStyles={style.inputContainer}
+            returnKeyType={'next'}
           />
           <Dropdown
             name="area"
@@ -161,14 +164,16 @@ export const ShopkeeperDetail = ({navigation}) => {
           />
           <Input
             name="email"
-            keyboardType="email"
+            keyboardType="email-address"
             ref={control}
             control={control}
             placeholder="E-mail ID (optional)"
             error={!!errors?.email}
             message={errors?.email?.message}
             containerStyles={style.inputContainer}
+            returnKeyType={'next'}
           />
+
           <Dropdown
             name="mobile"
             control={control}
@@ -187,6 +192,7 @@ export const ShopkeeperDetail = ({navigation}) => {
             containerStyles={style.inputContainer}
             keyboardType="numeric"
             maxLength={12}
+            returnKeyType={'send'}
           />
           <Dropdown
             name="relationship"

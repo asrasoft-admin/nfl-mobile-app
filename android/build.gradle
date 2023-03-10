@@ -22,6 +22,16 @@ buildscript {
 
 allprojects {
     repositories {
+         exclusiveContent {
+           filter {
+               includeGroup "com.facebook.react"
+           }
+           forRepository {
+               maven {
+                   url "$rootDir/../node_modules/react-native/android"
+               }
+           }
+       }
         mavenCentral()
         mavenLocal()
         maven {
@@ -37,3 +47,19 @@ allprojects {
         maven { url 'https://www.jitpack.io' }
     }
 }
+
+// allprojects {
+//     repositories {
+//        exclusiveContent {
+//            filter {
+//                includeGroup "com.facebook.react"
+//            }
+//            forRepository {
+//                maven {
+//                    url "$rootDir/../node_modules/react-native/android"
+//                }
+//            }
+//        }
+//         // ...
+//     }
+// }

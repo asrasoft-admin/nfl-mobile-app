@@ -17,6 +17,7 @@ export const Input = ({
   editable = true,
   maxLength,
   ref,
+  returnKeyType,
 }) => {
   const InputComponent = ({field}) => {
     const {onChange, onBlur, value} = field;
@@ -35,6 +36,7 @@ export const Input = ({
         placeholderTextColor={'gray'}
         autoCapitalize="none"
         maxLength={maxLength}
+        returnKeyType={!!returnKeyType ? returnKeyType : 'default'}
       />
     );
   };
