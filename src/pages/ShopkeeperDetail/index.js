@@ -50,7 +50,8 @@ export const ShopkeeperDetail = ({navigation}) => {
   };
 
   const onClose = () => {
-    return setModalVisible(!modalVisible);
+     setModalVisible(!modalVisible);
+     setLoading(false)
   };
 
   const otpCode = Math.random().toString(36).slice(2, 6);
@@ -63,7 +64,7 @@ export const ShopkeeperDetail = ({navigation}) => {
           if (data.mobile && number && data.relationship && data.terms) {
             setLoading(true);
             const {data: resData} = await axiosInstance.post(
-              '/shop-keeper/details',
+              'shop-keeper/details',
               {
                 shop_name: data.shopName,
                 shop_address: data.address,
@@ -87,11 +88,14 @@ export const ShopkeeperDetail = ({navigation}) => {
                 otpCode: otpCode,
               });
             }
-          } else throw new Error('Please fill all details');
+            console.log({otpCode})
+          } else
+           throw new Error('Please fill all details'); 
+           setLoading(false);
         } else {
           setLoading(true);
           const {data: resData} = await axiosInstance.post(
-            '/shop-keeper/details',
+            'shop-keeper/details',
             {
               shop_name: data.shopName,
               shop_address: data.address,
@@ -127,7 +131,7 @@ export const ShopkeeperDetail = ({navigation}) => {
   }, []);
 
   return (
-    <View>
+    <View style={{height:"100%"}}>
       <Texture />
       <Header navigation={navigation} />
       <KeyboardAwareScrollView contentContainerStyle={[style.container]}>

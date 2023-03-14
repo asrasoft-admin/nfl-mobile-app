@@ -21,7 +21,6 @@ import axios from 'axios';
 export const Login = ({navigation}) => {
   const state = useSelector(states => states);
   const allAreas = state.allArea;
-
   const [isLoading, setLoading] = useState(false);
   const [areas, setAreas] = useState([]);
   const {control, handleSubmit, formState} = useForm({

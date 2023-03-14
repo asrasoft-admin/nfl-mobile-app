@@ -87,7 +87,6 @@ export const Deals = ({route, navigation, containerStyles}) => {
       parseError(error);
     }
   };
-
   const fetchDeals = async () => {
     await axiosInstance
       .get('/deal/specific-deals', {

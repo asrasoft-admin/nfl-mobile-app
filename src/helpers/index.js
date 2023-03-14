@@ -12,11 +12,11 @@ export const getToken = async () => {
   }
 };
 
-export const baseURL = 'https://3add-202-47-55-165.eu.ngrok.io ';
+export const baseURL = 'https://f879-202-47-55-165.ngrok.io';
 
 export const axiosInstance = axios.create({
   // baseURL: 'https://dev-nfl-dds-dashboard.herokuapp.com/api',
-  baseURL: 'https://3add-202-47-55-165.eu.ngrok.io ',
+  baseURL: 'https://f879-202-47-55-165.ngrok.io/api',
 });
 
 export const getLocation = setLocation => {
