@@ -136,7 +136,7 @@ export const ShopkeeperDetail = ({navigation}) => {
       <Header navigation={navigation} />
       <KeyboardAwareScrollView contentContainerStyle={[style.container]}>
         <View>
-          <Text style={style.heading}>Shopkeer Details</Text>
+          <Text style={style.heading}>Shopkeeper Details</Text>
           <Input
             name="shopName"
             ref={control}

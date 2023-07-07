@@ -12,11 +12,11 @@ export const getToken = async () => {
   }
 };
 
-export const baseURL = 'https://a91e-202-47-55-165.ngrok.io';
+export const baseURL = 'https://nfl-dashboard.vercel.app/';
 
 export const axiosInstance = axios.create({
   // baseURL: 'https://dev-nfl-dds-dashboard.herokuapp.com/api',
-  baseURL: 'https://a91e-202-47-55-165.ngrok.io/api',
+  baseURL: 'https://nfl-dashboard.vercel.app/api',
 });
 
 export const getLocation = setLocation => {
