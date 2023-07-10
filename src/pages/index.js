@@ -6,6 +6,7 @@ import {ProductCheckList} from './ProductCheckList';
 import {SupervisorDetail} from './SupervisorDetail';
 import {ImageCapture} from './ImageCapture';
 import {ShopkeeperDetail} from './ShopkeeperDetail';
+import {RecordAudio} from './RecordAudio';
 
 export {
   ShopkeeperDetail,
@@ -17,4 +18,5 @@ export {
   ProductCheckList,
   SupervisorDetail,
   ImageCapture,
+  RecordAudio,
 };

@@ -10,6 +10,7 @@ import {
   SupervisorDetail,
   ImageCapture,
   ShopkeeperDetail,
+  RecordAudio,
 } from '../pages';
 import {View} from 'react-native';
 import {SignOut} from '../common';
@@ -33,6 +34,7 @@ const screens = [
   {name: 'Deals', component: Deals},
   {name: 'ImageCapture', component: ImageCapture},
   {name: 'SignOut', component: SignOut},
+  {name: 'RecordAudio', component: RecordAudio},
 ];
 
 const AppView = () => {

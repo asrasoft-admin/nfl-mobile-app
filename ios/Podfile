@@ -12,6 +12,16 @@ target 'activemedia' do
     :hermes_enabled => false
   )
 
+  pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
+
+  pod 'RNAudioRecorderPlayer', :path => '../node_modules/react-native-audio-recorder-player'
+
+  pod 'RNSoundRecorder', :path => '../node_modules/react-native-sound-recorder'
+
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+
+  pod 'RNAudioRecord', :path => '../node_modules/react-native-audio-record'
+
   target 'activemediaTests' do
     inherit! :complete
     # Pods for testing
