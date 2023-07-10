@@ -25,7 +25,7 @@ export const Welcome = ({navigation}) => {
         } else if (user.role === 'consumer') {
           navigation.navigate('CustomerDetail');
         } else {
-          navigation.navigate('RecordAudio');
+          navigation.navigate('ShopkeerDetail');
         }
       } else if (area.data.length) {
         navigation.navigate('Login');
