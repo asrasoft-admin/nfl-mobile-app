@@ -23,7 +23,7 @@ export const Welcome = ({navigation}) => {
         if (user.role === 'supervisor') {
           navigation.navigate('SupervisorDetail');
         } else if (user.role === 'consumer') {
-          navigation.navigate('CustomerDetail');
+          navigation.navigate('RecordAudio');
         } else {
           navigation.navigate('ShopkeerDetail');
         }

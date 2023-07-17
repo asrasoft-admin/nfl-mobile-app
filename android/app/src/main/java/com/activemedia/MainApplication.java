@@ -8,7 +8,6 @@ import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 // import com.goodatlas.audiorecord.RNAudioRecordPackage;
 import com.zoontek.rnpermissions.RNPermissionsPackage;
-import com.kevinresol.react_native_sound_recorder.RNSoundRecorderPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;

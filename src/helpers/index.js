@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import {Alert} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import uploadAudioToCloudinary from '../services/cloudinary/Cloudinary';
 
 export const getToken = async () => {
   try {
@@ -14,9 +16,38 @@ export const getToken = async () => {
 
 export const baseURL = 'https://nfl-dashboard.vercel.app/';
 
+export const audioRecorderPlayer = new AudioRecorderPlayer();
+
+export const handleUploadAudio = async audioPath => {
+  if (audioPath) {
+    console.log({audioPath});
+    uploadAudioToCloudinary(audioPath)
+      .then(downloadLink => {
+        // Handle the download link
+        return downloadLink;
+      })
+      .catch(error => {
+        // Handle error
+        throw new Error(error.message);
+      });
+  }
+};
+
+export const listener = () => {
+  return audioRecorderPlayer.addRecordBackListener(e => {
+    return e.currentPosition;
+  });
+};
+
+export const stopRecording = async () => {
+  const result = await audioRecorderPlayer?.stopRecorder();
+  audioRecorderPlayer.removeRecordBackListener();
+  return result;
+};
+
 export const axiosInstance = axios.create({
   // baseURL: 'https://dev-nfl-dds-dashboard.herokuapp.com/api',
-  baseURL: 'https://nfl-dashboard.vercel.app/api',
+  baseURL: 'https://df51-202-47-55-165.ngrok-free.app/api',
 });
 
 export const getLocation = setLocation => {

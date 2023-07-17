@@ -8,8 +8,14 @@ export default StyleSheet.create({
   root: {
     height: '100%',
   },
+  radio: {
+    color: 'white',
+  },
   container: {
     marginHorizontal: wp(5),
+  },
+  radioContainer: {
+    marginVertical: hp(3),
   },
   heading: {
     fontSize: wp(7),
@@ -21,6 +27,10 @@ export default StyleSheet.create({
     borderRadius: wp(7),
     marginBottom: hp(3),
   },
+  otp: {
+    marginTop: hp(2),
+  },
+
   inputContainer: {
     marginVertical: hp(1),
   },

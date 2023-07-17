@@ -94,7 +94,7 @@ export const Login = ({navigation}) => {
                         if (user.data.role === 'supervisor') {
                           navigation.navigate('SupervisorDetail');
                         } else if (user.data.role === 'consumer') {
-                          navigation.navigate('CustomerDetail');
+                          navigation.navigate('RecordAudio');
                         } else {
                           navigation.navigate('ShopkeerDetail');
                         }

@@ -1,20 +1,27 @@
 import React, {useEffect, useState} from 'react';
-import {View, Button, PermissionsAndroid, Platform} from 'react-native';
+import {View, PermissionsAndroid, Platform} from 'react-native';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 // import uploadAudioToCloudinary from './CloudinaryUploader';
-import {Header, Texture} from '../../common';
+import {Button, Header, Texture} from '../../common';
 import uploadAudioToCloudinary from '../../services/cloudinary/Cloudinary';
+import style from './style';
+import {useNavigation} from '@react-navigation/native';
+import {startRecording} from '../../Redux/Actions/RecordAudio';
+import {useDispatch, useSelector} from 'react-redux';
+import {audioRecorderPlayer} from '../../helpers';
 
-const audioRecorderPlayer = new AudioRecorderPlayer(); // Initialize audioRecorderPlayer
+// const audioRecorderPlayer = new AudioRecorderPlayer();
+
 export const RecordAudio = () => {
-  const [isRecording, setIsRecording] = useState(false);
-  //   const audioRecorderPlayer = new AudioRecorderPlayer();
   const [audioPath, setAudioPath] = useState('');
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const {isRecording} = useSelector(state => state.Recorder);
 
   useEffect(() => {
-    checkPermissions().then(() => {
-      console.log('asd');
-    });
+    (async () => {
+      await checkPermissions();
+    })();
   }, []);
 
   const checkPermissions = async () => {
@@ -67,63 +74,28 @@ export const RecordAudio = () => {
 
   const handleRecordAudio = async () => {
     try {
+      console.log('asdasd');
       if (audioRecorderPlayer !== null) {
-        // Check if audioRecorderPlayer is not null
-
-        if (!isRecording) {
-          console.log({hhh: new AudioRecorderPlayer()});
-          const path = await audioRecorderPlayer.startRecorder();
-          console.log({a: path});
-          if (path) setIsRecording(true);
-          audioRecorderPlayer.addRecordBackListener(e => {
-            console.log('Recording . . . ', e.current_position);
-            return;
-          });
-          console.log({path});
-          setAudioPath(path);
-        } else {
-          const result = await audioRecorderPlayer?.stopRecorder();
-          audioRecorderPlayer.removeRecordBackListener();
-          if (result) setIsRecording(false);
-          console.log({result});
-          setAudioPath(result);
-        }
-      } else {
-        console.log('audioRecorderPlayer is null');
+        const path = await audioRecorderPlayer.startRecorder();
+        if (path) dispatch(startRecording());
+        // audioRecorderPlayer.addRecordBackListener(e => {
+        //   console.log('Recording . . . ', e.currentPosition);
+        //   return;
+        // });
+        navigation.navigate('CustomerDetail');
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleUploadAudio = () => {
-    if (audioPath) {
-      console.log({audioPath});
-      uploadAudioToCloudinary(audioPath)
-        .then(downloadLink => {
-          // Handle the download link
-          console.log({downloadLink});
-        })
-        .catch(error => {
-          // Handle error
-          console.log(error);
-        });
-    }
-  };
-
   return (
-    <View>
+    <View style={style.root}>
       <Texture />
       <Header />
-      <Button
-        title={isRecording ? 'Stop Recording' : 'Start Recording'}
-        onPress={handleRecordAudio}
-      />
-      {audioPath !== '' && (
-        <View>
-          <Button title="Upload Audio" onPress={handleUploadAudio} />
-        </View>
-      )}
+      <View style={style.container}>
+        <Button label="Start Form" onPress={handleRecordAudio} />
+      </View>
     </View>
   );
 };

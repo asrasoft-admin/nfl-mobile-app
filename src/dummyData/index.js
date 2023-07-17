@@ -17,6 +17,21 @@ export const gender = [
   },
 ];
 
+export const city = [
+  {
+    name: 'City',
+    id: '',
+  },
+  {
+    name: 'Karachi',
+    id: 'karachi',
+  },
+  {
+    name: 'Lahore',
+    id: 'lahore',
+  },
+];
+
 export const prevBrand = [
   {
     name: 'Previous Brand',

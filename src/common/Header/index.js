@@ -1,12 +1,14 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import style from './style';
-import {Image, View, TouchableOpacity} from 'react-native';
+import {Image, View, TouchableOpacity, Text} from 'react-native';
 import LogOutModal from '../Modal/logOut';
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../../Redux/Actions/userAction';
 
 export const Header = ({navigation}) => {
+  const [timer, setTimer] = useState(0);
+  const {isRecording, audio} = useSelector(state => state.Recorder);
   const {handleSubmit, formState} = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -23,13 +25,27 @@ export const Header = ({navigation}) => {
   const onShow = () => {
     return setModalVisible(true);
   };
+  useEffect(() => {
+    let interval;
+    if (isRecording) {
+      interval = setInterval(() => {
+        setTimer(prevTimer => prevTimer + 1);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+      setTimer(0);
+    }
 
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isRecording]);
   const onClose = () => {
     return setModalVisible(!modalVisible);
   };
 
   const handleLogout = () => {
-    setLoading(true)
+    setLoading(true);
     dispatch(logout());
     onClose();
     navigation.reset({
@@ -41,12 +57,20 @@ export const Header = ({navigation}) => {
   return (
     <View>
       <View style={style.logoContainer}>
-        <Image
-          source={require('assets/images/activeMedia.png')}
-          style={style.logo}
-          resizeMode="contain"
-        />
-
+        <View>
+          <Image
+            source={require('assets/images/activeMedia.png')}
+            style={style.logo}
+            resizeMode="contain"
+          />
+          {isRecording && (
+            <View style={style.recording}>
+              <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold'}}>
+                Recording: {timer} s
+              </Text>
+            </View>
+          )}
+        </View>
         {user.authenticated ? (
           <TouchableOpacity onPress={onShow}>
             <Image

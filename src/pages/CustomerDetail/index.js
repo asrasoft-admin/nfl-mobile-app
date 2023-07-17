@@ -1,19 +1,29 @@
 import React, {useState, useEffect} from 'react';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import style from './style';
 import {Text, View, ScrollView} from 'react-native';
 import {useForm} from 'react-hook-form';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
-import {Input, Dropdown, Header, CheckBox, Texture} from '../../common';
-import {gender, relations, mobileNetwork, prevBrand} from '../../dummyData';
+import {Input, Dropdown, Header, CheckBox, Texture, Button} from '../../common';
+import {
+  gender,
+  relations,
+  mobileNetwork,
+  prevBrand,
+  city,
+} from '../../dummyData';
 import {
   axiosInstance,
   getLocation,
   numberValidation,
   parseError,
   otpCodeGenerator,
+  stopRecording,
 } from '../../helpers';
 import CustomModal from '../../common/Modal';
+import RadioButtonRN from 'radio-buttons-react-native';
+import uploadAudioToCloudinary from '../../services/cloudinary/Cloudinary';
+import {stopAudioRecording} from '../../Redux/Actions/RecordAudio';
 
 export const CustomerDetail = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -23,7 +33,19 @@ export const CustomerDetail = ({navigation}) => {
   const user = state.user;
   const allArea = state.allArea;
   const area = allArea?.data?.filter(area => area.id === user.areaId);
+  const [disclaimer, setDisclaimer] = useState(false);
   const [location, setLocation] = useState(null);
+
+  const {isRecording, audio} = useSelector(state => state.Recorder);
+  const dispatch = useDispatch();
+  const data = [
+    {
+      label: 'Yes',
+    },
+    {
+      label: 'No',
+    },
+  ];
 
   const {control, handleSubmit, ref, formState} = useForm({
     mode: 'onChange',
@@ -78,6 +100,31 @@ export const CustomerDetail = ({navigation}) => {
     const {number} = numberValidation(data);
 
     try {
+      if (!disclaimer) {
+        try {
+          const audioPath = await stopRecording();
+          dispatch(stopAudioRecording(audioPath));
+          setLoading(true);
+          const downloadLink = await uploadAudioToCloudinary(
+            audioPath || audio,
+          );
+          console.log({downloadLink});
+          return await axiosInstance.post('/customer/details', {
+            user_id: user.id,
+            activity_id: user.activity_id,
+            coordinates: JSON.stringify(location),
+            audio: downloadLink,
+            city: data.city,
+            no_response: false,
+            audio_record_time: new Date().getTime(),
+            audio_record_date: new Date(),
+          });
+        } catch (error) {
+          throw new Error(error);
+        } finally {
+          setLoading(false);
+        }
+      }
       if (data.name && data.address) {
         if (
           data.gender ||
@@ -146,34 +193,16 @@ export const CustomerDetail = ({navigation}) => {
       <ScrollView>
         <KeyboardAwareScrollView contentContainerStyle={[style.container]}>
           <Text style={style.heading}> Customer Details </Text>
-          <Input
-            ref={ref}
-            control={control}
-            name="name"
-            placeholder="Customer Name"
-            error={!!errors?.name}
-            message={errors?.name?.message}
-            containerStyles={style.inputContainer}
-          />
-
-          <Input
-            ref={control}
-            control={control}
-            name="address"
-            placeholder="Address Line 01"
-            error={!!errors?.address}
-            message={errors?.address?.message}
-            containerStyles={style.inputContainer}
-          />
 
           <Dropdown
             control={control}
-            name="gender"
-            error={!!errors?.gender}
-            message={errors?.gender?.message}
+            name="city"
+            error={!!errors?.city}
+            message={errors?.city?.message}
             containerStyles={style.inputContainer}
-            items={gender}
+            items={city}
           />
+
           <Dropdown
             control={control}
             name="prevBrand"
@@ -183,57 +212,63 @@ export const CustomerDetail = ({navigation}) => {
             items={prevBrand}
           />
 
-          <Dropdown
-            name="area"
-            control={control}
-            error={!!errors?.area}
-            message={errors?.area?.message}
-            containerStyles={style.inputContainer}
-            items={area}
-            enabledFalse={true}
-          />
-          <Input
-            ref={control}
-            control={control}
-            name="email-address"
-            keyboardType="email"
-            placeholder="E-mail ID (optional)"
-            error={!!errors?.email}
-            message={errors?.email?.message}
-            containerStyles={style.inputContainer}
-          />
-          <Dropdown
-            control={control}
-            name="mobile"
-            error={!!errors?.mobile}
-            message={errors?.mobile?.message}
-            containerStyles={style.inputContainer}
-            items={mobileNetwork}
-          />
-          <Input
-            ref={control}
-            control={control}
-            name="number"
-            placeholder="Number 923XX-XXXXXXX"
-            error={!!errors?.number}
-            message={errors?.number?.message}
-            containerStyles={style.inputContainer}
-            keyboardType="numeric"
-            maxLength={12}
-          />
-          <Dropdown
-            control={control}
-            name="relationship"
-            error={!!errors?.relationship}
-            message={errors?.relationship?.message}
-            containerStyles={style.inputContainer}
-            items={relations}
-          />
-
-          <View style={style.product}>
-            <CheckBox item={termsOfService} control={control} name="terms" />
+          <View style={style.radioContainer}>
+            <Text style={style.radio}> Disclaimer </Text>
+            <RadioButtonRN
+              data={data}
+              box={false}
+              textStyle={{color: 'white'}}
+              initial={2}
+              selectedBtn={e =>
+                e.label === 'Yes' ? setDisclaimer(true) : setDisclaimer(false)
+              }
+            />
           </View>
 
+          {disclaimer && (
+            <>
+              <Input
+                ref={ref}
+                control={control}
+                name="name"
+                placeholder="Customer Name"
+                error={!!errors?.name}
+                message={errors?.name?.message}
+                containerStyles={style.inputContainer}
+              />
+
+              <Input
+                ref={control}
+                control={control}
+                name="number"
+                placeholder="Number 923XX-XXXXXXX"
+                error={!!errors?.number}
+                message={errors?.number?.message}
+                containerStyles={style.inputContainer}
+                keyboardType="numeric"
+                maxLength={12}
+              />
+
+              <Input
+                ref={ref}
+                control={control}
+                name="otp"
+                placeholder="Enter OTP"
+                error={!!errors?.otp}
+                message={errors?.otp?.message}
+                containerStyles={style.inputContainer}
+              />
+              <View style={style.product}>
+                <CheckBox
+                  item={termsOfService}
+                  control={control}
+                  name="terms"
+                />
+              </View>
+            </>
+          )}
+
+          <Button containerStyles={style.otp} label="Send OTP" />
           <CustomModal
             isLoading={isLoading}
             onPress={handleSubmit(onSubmit)}
