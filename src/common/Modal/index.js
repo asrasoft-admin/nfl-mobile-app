@@ -5,7 +5,14 @@ import style from './style';
 import {widthPercentageToDP as wp} from '../../utils/responsive';
 import {Button} from '../Button';
 
-const CustomModal = ({onPress, isLoading, modalVisible, onShow, onClose}) => {
+const CustomModal = ({
+  onPress,
+  isLoading,
+  modalVisible,
+  onShow,
+  onClose,
+  label = 'Submit',
+}) => {
   const {handleSubmit, formState} = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -46,7 +53,7 @@ const CustomModal = ({onPress, isLoading, modalVisible, onShow, onClose}) => {
       </Modal>
 
       <Button
-        label={'Submit'}
+        label={label}
         primary={formState.isValid}
         onPress={handleSubmit(onShow)}
         containerStyles={{marginVertical: 15}}

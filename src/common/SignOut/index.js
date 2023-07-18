@@ -5,6 +5,8 @@ import {Button} from '..';
 import {Texture, Header} from '..';
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../../Redux/Actions/userAction';
+import {startRecording} from '../../Redux/Actions/RecordAudio';
+import {audioRecorderPlayer} from '../../helpers';
 
 export const SignOut = ({navigation}) => {
   const user = useSelector(state => state.user);
@@ -18,13 +20,15 @@ export const SignOut = ({navigation}) => {
     });
   };
 
-  const handleAnotherRes = () => {
+  const handleAnotherRes = async () => {
     if (user.role === 'supervisor') {
       navigation.reset({
         index: 0,
         routes: [{name: 'SupervisorDetail'}],
       });
     } else if (user.role === 'consumer') {
+      const path = await audioRecorderPlayer.startRecorder();
+      if (path) dispatch(startRecording());
       navigation.reset({
         index: 0,
         routes: [{name: 'CustomerDetail'}],

@@ -12,3 +12,6 @@ export const authConstants = {
   LOGIN: 'LOGIN',
   LOGOUT: 'LOGOUT',
 };
+
+// customerActionTypes.js
+export const SET_CUSTOMER_DETAILS = 'SET_CUSTOMER_DETAILS';

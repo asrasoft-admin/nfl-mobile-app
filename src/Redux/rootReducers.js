@@ -5,6 +5,7 @@ import loginReducer from './Reducers/userReducer';
 import AsyncStorage from '@react-native-community/async-storage';
 import {persistReducer} from 'redux-persist';
 import recordingReducer from './Reducers/RecordAudio';
+import customerReducer from './Reducers/customer';
 
 const persistConfig = {
   key: 'root',
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   allArea: areaReducer,
   allProducts: productsReducer,
   Recorder: recordingReducer,
+  customer: customerReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

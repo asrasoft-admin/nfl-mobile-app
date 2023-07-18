@@ -23,7 +23,12 @@ import {
 import CustomModal from '../../common/Modal';
 import RadioButtonRN from 'radio-buttons-react-native';
 import uploadAudioToCloudinary from '../../services/cloudinary/Cloudinary';
-import {stopAudioRecording} from '../../Redux/Actions/RecordAudio';
+import {
+  recordSuccess,
+  stopAudioRecording,
+  uploadSuccess,
+} from '../../Redux/Actions/RecordAudio';
+import {setCustomerDetails} from '../../Redux/Actions/customer';
 
 export const CustomerDetail = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -36,7 +41,11 @@ export const CustomerDetail = ({navigation}) => {
   const [disclaimer, setDisclaimer] = useState(false);
   const [location, setLocation] = useState(null);
 
-  const {isRecording, audio} = useSelector(state => state.Recorder);
+  const {
+    isRecording,
+    audioPath: audio,
+    downloadLink: downloadUrl,
+  } = useSelector(state => state.Recorder);
   const dispatch = useDispatch();
   const data = [
     {
@@ -91,90 +100,124 @@ export const CustomerDetail = ({navigation}) => {
     return setModalVisible(true);
   };
 
+  useEffect(() => {
+    console.log({audio, downloadUrl});
+  }, [audio, downloadUrl]);
+
   const onClose = () => {
     return setModalVisible(!modalVisible);
+  };
+
+  const noResponseHandle = async () => {
+    try {
+      let audioPath, downloadLink;
+      setLoading(true);
+      if (audio) {
+        audioPath = audio;
+      } else {
+        audioPath = await stopRecording();
+        dispatch(stopAudioRecording(audioPath));
+      }
+      if (downloadUrl) {
+        downloadLink = downloadUrl;
+        console.log({downloadUrl});
+      } else {
+        downloadLink = await uploadAudioToCloudinary(audioPath);
+        dispatch(uploadSuccess(downloadLink));
+      }
+      const res = await axiosInstance.post('/customer/details', {
+        user_id: user.id,
+        activity_id: user.activity_id,
+        coordinates: JSON.stringify(location),
+        audio: downloadLink,
+        previous_brand_id: data.prevBrand,
+        no_response: true,
+        audio_record_time: new Date().getTime(),
+        audio_record_date: new Date(),
+      });
+      if (res.data.success) {
+        dispatch(recordSuccess());
+        onClose();
+        navigation.navigate('SignOut');
+      }
+      console.log({res});
+      return res;
+    } catch (error) {
+      throw new Error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onSubmit = async data => {
     const otpCode = otpCodeGenerator();
     const {number} = numberValidation(data);
-
+    console.log('===========>', audio, downloadUrl);
     try {
       if (!disclaimer) {
         try {
-          const audioPath = await stopRecording();
-          dispatch(stopAudioRecording(audioPath));
+          let audioPath, downloadLink;
+          console.log({downloadUrl});
           setLoading(true);
-          const downloadLink = await uploadAudioToCloudinary(
-            audioPath || audio,
-          );
-          console.log({downloadLink});
-          return await axiosInstance.post('/customer/details', {
+          if (audio) {
+            audioPath = audio;
+          } else {
+            audioPath = await stopRecording();
+            dispatch(stopAudioRecording(audioPath));
+          }
+          if (Boolean(downloadUrl)) {
+            downloadLink = downloadUrl;
+          } else {
+            downloadLink = await uploadAudioToCloudinary(audioPath);
+            dispatch(uploadSuccess(downloadLink));
+          }
+
+          const res = await axiosInstance.post('/customer/details', {
             user_id: user.id,
             activity_id: user.activity_id,
             coordinates: JSON.stringify(location),
             audio: downloadLink,
             city: data.city,
+            previous_brand_id: data.prevBrand,
             no_response: false,
             audio_record_time: new Date().getTime(),
             audio_record_date: new Date(),
           });
+          if (res.data.success) {
+            dispatch(recordSuccess());
+            onClose();
+            navigation.navigate('SignOut');
+          }
+          console.log({res});
+          return res;
         } catch (error) {
           throw new Error(error);
         } finally {
           setLoading(false);
         }
-      }
-      if (data.name && data.address) {
-        if (
-          data.gender ||
-          data.mobile ||
-          data.number ||
-          data.relationship ||
-          data.prevBrand ||
-          data.terms
-        ) {
-          if (
-            data.gender &&
-            data.mobile &&
-            data.number &&
-            data.relationship &&
-            data.prevBrand &&
-            data.terms
-          ) {
-            setLoading(true);
-            const {data: resData} = await postDetails(data, otpCode, number);
-
-            if (resData.success) {
-              setLoading(false);
-              onClose();
-              navigation.navigate('OTPVerification', {
-                id: resData?.data?.id,
-                otpCode: otpCode,
-              });
-            }
-          } else throw new Error('Please fill all details');
-        } else {
-          setLoading(true);
-          const {data: resData} = await axiosInstance.post(
-            '/customer/details',
-            {
-              name: data.name,
-              address: data.address,
-              area_id: data.area,
+      } else {
+        if (data.name && data.number && data.prevBrand && data.terms) {
+          try {
+            const details = {
               user_id: user.id,
               activity_id: user.activity_id,
               coordinates: JSON.stringify(location),
-            },
-          );
-
-          if (resData.success) {
-            setLoading(false);
+              name: data.name,
+              mobile_number: data.number,
+              city: data.city,
+              no_response: false,
+              previous_brand_id: data.prevBrand,
+            };
+            dispatch(setCustomerDetails(details));
             onClose();
-            navigation.navigate('SignOut');
+            navigation.navigate('Deals');
+          } catch (error) {
+            throw new Error(error);
+          } finally {
+            setLoading(false);
           }
-        }
-      } else throw new Error('Please fill atleast Name and Address');
+        } else throw new Error('Please Enter Complete Information');
+      }
     } catch (error) {
       setLoading(false);
       parseError(error);
@@ -193,6 +236,22 @@ export const CustomerDetail = ({navigation}) => {
       <ScrollView>
         <KeyboardAwareScrollView contentContainerStyle={[style.container]}>
           <Text style={style.heading}> Customer Details </Text>
+          <View
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              width: '100%',
+              marginBottom: 7,
+            }}>
+            <CustomModal
+              isLoading={isLoading}
+              label="No Response"
+              onPress={handleSubmit(noResponseHandle)}
+              modalVisible={modalVisible}
+              onShow={onShow}
+              onClose={onClose}
+            />
+          </View>
 
           <Dropdown
             control={control}

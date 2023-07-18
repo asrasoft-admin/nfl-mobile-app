@@ -3,17 +3,31 @@ import style from './style';
 import {Text, ScrollView, View, ActivityIndicator} from 'react-native';
 import {Header, Deal, Texture, Button, Dropdown, Input} from '../../common';
 import {useForm} from 'react-hook-form';
-import {axiosInstance} from '../../helpers';
+import {axiosInstance, stopRecording} from '../../helpers';
 import {widthPercentageToDP as wp} from 'utils/responsive';
 import {pack_swap_product, Brand} from '../../dummyData';
 import {parseError} from '../../helpers';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {CustomSpinner} from '../../common/Spinner';
+import {
+  recordSuccess,
+  stopAudioRecording,
+  uploadSuccess,
+} from '../../Redux/Actions/RecordAudio';
+import uploadAudioToCloudinary from '../../services/cloudinary/Cloudinary';
 
 export const Deals = ({route, navigation, containerStyles}) => {
   const [isLoading, setLoading] = useState(false);
   const [allDeals, setAllDeals] = useState([]);
   const [allPackSwapProducts, setAllPackSwapProducts] = useState([]);
+  const [quantities, setQuantities] = useState([]);
+  const customer = useSelector(state => state.customer);
+  const {
+    isRecording,
+    audioPath: audio,
+    downloadLink: downloadUrl,
+  } = useSelector(state => state.Recorder);
+  const dispatch = useDispatch();
 
   const state = useSelector(state => state);
   const user = state.user;
@@ -58,26 +72,57 @@ export const Deals = ({route, navigation, containerStyles}) => {
     if (allDealsIds.length === 0) return;
 
     try {
-      const {
-        packSwapProduct,
-        previousBrand,
-        valid: packSwapValid,
-      } = packSwapValidation(data, deal);
-
-      if (deal?.id || packSwapValid || data.redemptionCode) {
+      if (deal?.id) {
+        let audioPath, downloadLink;
+        console.log({downloadUrl});
         setLoading(true);
-        const {data: resData} = await axiosInstance.post('/customer/add-deal', {
-          customer_id: route.params?.id,
-          deal_ids: allDealsIds,
-          pack_swap_product: packSwapProduct?.name,
-          pack_swap_brand: previousBrand?.name,
-          pack_redemption_code: data.redemptionCode,
-          user_id: user.id,
+        if (audio) {
+          audioPath = audio;
+        } else {
+          audioPath = await stopRecording();
+          dispatch(stopAudioRecording(audioPath));
+        }
+        if (Boolean(downloadUrl)) {
+          downloadLink = downloadUrl;
+        } else {
+          downloadLink = await uploadAudioToCloudinary(audioPath);
+          dispatch(uploadSuccess(downloadLink));
+        }
+        setLoading(true);
+        const dealQty = quantities.filter(
+          item => allDeals.find(it => it.id === item.id).selected,
+        );
+        if (dealQty.length === 0) {
+          throw new Error('Select the deal');
+        }
+        console.log({dealQty});
+        const qtyIsNull = dealQty.every(
+          item => item.quantity === 0 && !Boolean(item.quantity),
+        );
+        if (qtyIsNull) {
+          throw new Error('Enter quantity of the selected deals');
+        }
+        const res = await axiosInstance.post('/customer/details', {
+          ...customer,
+          audio: downloadLink,
+          audio_record_time: new Date().getTime(),
+          audio_record_date: new Date(),
         });
+        if (res.data.success) {
+          dispatch(recordSuccess());
+          const {data: resData} = await axiosInstance.post(
+            '/customer/add-deal',
+            {
+              customer_id: res.data.data.id,
+              deals: dealQty,
+              user_id: user.id,
+            },
+          );
 
-        if (resData.success) {
-          setLoading(false);
-          navigation.navigate('SignOut');
+          if (resData.success) {
+            setLoading(false);
+            navigation.navigate('SignOut');
+          }
         }
       } else if (packSwapValid) {
         throw new Error('Please select deal');
@@ -97,6 +142,8 @@ export const Deals = ({route, navigation, containerStyles}) => {
       })
       .then(res => {
         if (res.data.success) {
+          const temp = res.data.data.map(item => ({id: item.id, quantity: 0}));
+          setQuantities(temp);
           setAllDeals(res.data.data);
         }
       })
@@ -125,12 +172,18 @@ export const Deals = ({route, navigation, containerStyles}) => {
 
   useEffect(() => {
     fetchDeals();
-
-    if (allPackSwapProducts.length === 0) {
-      fetchAllPackSwapProducts();
-    }
   }, []);
 
+  const onChange = (dealId, quantity) => {
+    const updatedQuantities = quantities.map(item => {
+      if (item.id === dealId) {
+        return {...item, quantity};
+      }
+      return item;
+    });
+    console.log({updatedQuantities});
+    setQuantities(updatedQuantities);
+  };
   const handleSelect = deal => {
     let deals = [...allDeals];
     const dealIndex = deals.findIndex(item => item.id === deal.id);
@@ -153,6 +206,8 @@ export const Deals = ({route, navigation, containerStyles}) => {
             containerStyles={style.deal}
             handleSelect={() => handleSelect(deal)}
             deal={deal}
+            onChange={onChange}
+            quantities={quantities}
             key={`deal ${index}`}
           />
         ))}
@@ -240,7 +295,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
     return (
       <View>
         {bogo()}
-        {packSwap()}
+        {/* {packSwap()} */}
       </View>
     );
   };

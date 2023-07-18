@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, PermissionsAndroid, Platform} from 'react-native';
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 // import uploadAudioToCloudinary from './CloudinaryUploader';
 import {Button, Header, Texture} from '../../common';
-import uploadAudioToCloudinary from '../../services/cloudinary/Cloudinary';
 import style from './style';
 import {useNavigation} from '@react-navigation/native';
 import {startRecording} from '../../Redux/Actions/RecordAudio';
@@ -78,10 +76,10 @@ export const RecordAudio = () => {
       if (audioRecorderPlayer !== null) {
         const path = await audioRecorderPlayer.startRecorder();
         if (path) dispatch(startRecording());
-        // audioRecorderPlayer.addRecordBackListener(e => {
-        //   console.log('Recording . . . ', e.currentPosition);
-        //   return;
-        // });
+        audioRecorderPlayer.addRecordBackListener(e => {
+          console.log('Recording . . . ', e.currentPosition);
+          return;
+        });
         navigation.navigate('CustomerDetail');
       }
     } catch (error) {

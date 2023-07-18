@@ -2,6 +2,7 @@
 const initialState = {
   isRecording: false,
   audioPath: '',
+  downloadLink: '',
 };
 
 const recordingReducer = (state = initialState, action) => {
@@ -15,8 +16,16 @@ const recordingReducer = (state = initialState, action) => {
       return {
         ...state,
         isRecording: false,
-        audio: action.payload,
+        audioPath: action.payload,
       };
+    case 'UPLOAD_SUCCESS':
+      console.log('UPLOAD_SUCCESS');
+      return {
+        ...state,
+        downloadLink: action.payload,
+      };
+    case 'SUCCESS':
+      return initialState;
     default:
       return state;
   }
