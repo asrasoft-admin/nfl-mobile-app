@@ -32,6 +32,7 @@ import {setCustomerDetails} from '../../Redux/Actions/customer';
 
 export const CustomerDetail = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [noResModalVisible, setNoResModalVisible] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
   const state = useSelector(state => state);
@@ -107,8 +108,16 @@ export const CustomerDetail = ({navigation}) => {
   const onClose = () => {
     return setModalVisible(!modalVisible);
   };
+  const onNoResClose = () => {
+    return setNoResModalVisible(!modalVisible);
+  };
+
+  const onNoResShow = () => {
+    return setNoResModalVisible(true);
+  };
 
   const noResponseHandle = async () => {
+    console.log('======================================> no response');
     try {
       let audioPath, downloadLink;
       setLoading(true);
@@ -125,19 +134,19 @@ export const CustomerDetail = ({navigation}) => {
         downloadLink = await uploadAudioToCloudinary(audioPath);
         dispatch(uploadSuccess(downloadLink));
       }
+      console.log('no Response');
       const res = await axiosInstance.post('/customer/details', {
         user_id: user.id,
         activity_id: user.activity_id,
         coordinates: JSON.stringify(location),
         audio: downloadLink,
-        previous_brand_id: data.prevBrand,
         no_response: true,
         audio_record_time: new Date().getTime(),
         audio_record_date: new Date(),
       });
       if (res.data.success) {
         dispatch(recordSuccess());
-        onClose();
+        onNoResClose();
         navigation.navigate('SignOut');
       }
       console.log({res});
@@ -155,6 +164,7 @@ export const CustomerDetail = ({navigation}) => {
     console.log('===========>', audio, downloadUrl);
     try {
       if (!disclaimer) {
+        console.log('==>' + {disclaimer});
         try {
           let audioPath, downloadLink;
           console.log({downloadUrl});
@@ -246,10 +256,10 @@ export const CustomerDetail = ({navigation}) => {
             <CustomModal
               isLoading={isLoading}
               label="No Response"
-              onPress={handleSubmit(noResponseHandle)}
-              modalVisible={modalVisible}
-              onShow={onShow}
-              onClose={onClose}
+              onPress={noResponseHandle}
+              modalVisible={noResModalVisible}
+              onShow={onNoResShow}
+              onClose={onNoResClose}
             />
           </View>
 
