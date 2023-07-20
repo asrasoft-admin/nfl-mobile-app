@@ -20,10 +20,10 @@ export default StyleSheet.create({
   heading: {
     fontSize: wp(7),
     fontWeight: '700',
-    color: '#000',
+    color: 'black',
     textAlign: 'center',
     width: '100%',
-    backgroundColor: 'lightgreen',
+    // backgroundColor: '#4D11A4',
     borderRadius: wp(7),
     marginBottom: hp(3),
   },

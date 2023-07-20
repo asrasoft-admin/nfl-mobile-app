@@ -16,7 +16,7 @@ export default StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     width: '100%',
-    backgroundColor: 'lightgreen',
+    // backgroundColor: 'lightgreen',
     textTransform: 'uppercase',
     borderRadius: wp(7),
     marginTop: wp(4),

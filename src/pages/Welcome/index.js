@@ -37,7 +37,7 @@ export const Welcome = ({navigation}) => {
     <View style={style.container}>
       <Texture />
       <Image
-        source={require('../../assets/images/activeMedia.png')}
+        source={require('../../assets/images/asra.png')}
         style={style.logo}
         resizeMode="contain"
       />

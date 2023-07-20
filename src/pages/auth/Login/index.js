@@ -29,7 +29,7 @@ export const Login = ({navigation}) => {
   });
   const {errors} = formState;
   const dispatch = useDispatch();
-  const [selectedArea, setSelectedArea] = useState(null);
+  const [selectedArea, setSelectedArea] = useState(1);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(async () => {
@@ -67,49 +67,43 @@ export const Login = ({navigation}) => {
 
   const onSubmit = async data => {
     try {
-      if (data.activity_id) {
-        if (selectedArea) {
-          if (data.number) {
-            if (data.password) {
-              setLoading(true);
-              axios
-                .get(`${baseURL}/api/auth/signin`, {
-                  params: {
-                    number: data.number,
-                    password: data.password,
-                    activity_id: data.activity_id,
-                    area_id: selectedArea.id,
-                  },
-                })
-                .then(async ({data: user}) => {
-                  setLoading(false);
+      if (selectedArea) {
+        if (data.number) {
+          if (data.password) {
+            setLoading(true);
+            axios
+              .get(`${baseURL}/api/auth/signin`, {
+                params: {
+                  number: data.number,
+                  password: data.password,
+                  activity_id: 1,
+                  area_id: 1,
+                },
+              })
+              .then(async ({data: user}) => {
+                setLoading(false);
 
-                  if (user.success) {
-                    await AsyncStorage.setItem(
-                      '@token',
-                      user.data.token,
-                      err => {
-                        if (err) throw err;
-                        dispatch(loginAction(user, selectedArea));
-                        if (user.data.role === 'supervisor') {
-                          navigation.navigate('SupervisorDetail');
-                        } else if (user.data.role === 'consumer') {
-                          navigation.navigate('RecordAudio');
-                        } else {
-                          navigation.navigate('ShopkeerDetail');
-                        }
-                      },
-                    );
-                  }
-                })
-                .catch(error => {
-                  setLoading(false);
-                  parseError(error);
-                });
-            } else throw new Error('Password is Required');
-          } else throw new Error('Number is Required');
-        } else throw new Error('Area is Required');
-      } else throw new Error('Activity is Required');
+                if (user.success) {
+                  await AsyncStorage.setItem('@token', user.data.token, err => {
+                    if (err) throw err;
+                    dispatch(loginAction(user, selectedArea));
+                    if (user.data.role === 'supervisor') {
+                      navigation.navigate('SupervisorDetail');
+                    } else if (user.data.role === 'consumer') {
+                      navigation.navigate('RecordAudio');
+                    } else {
+                      navigation.navigate('ShopkeerDetail');
+                    }
+                  });
+                }
+              })
+              .catch(error => {
+                setLoading(false);
+                parseError(error);
+              });
+          } else throw new Error('Password is Required');
+        } else throw new Error('Number is Required');
+      } else throw new Error('Area is Required');
     } catch (error) {
       parseError(error);
     }
@@ -125,20 +119,20 @@ export const Login = ({navigation}) => {
       <Header />
 
       <View style={style.container}>
-        <Dropdown
+        {/* <Dropdown
           control={control}
           name="activity_id"
           error={!!errors?.activity_id}
           message={errors?.activity_id?.message}
           containerStyles={style.formFields}
           items={allActivities}
-        />
-        <SearchableDropdowns
+        /> */}
+        {/* <SearchableDropdowns
           items={areas}
           handleSelect={handleSelectArea}
           selectedItems={selectedArea}
           placeholder={selectedArea?.name ? selectedArea?.name : 'Area'}
-        />
+        /> */}
         <Input
           ref={control}
           control={control}

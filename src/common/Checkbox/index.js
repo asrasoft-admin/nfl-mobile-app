@@ -14,7 +14,7 @@ export const CheckBoxComp = ({item, control, name, value, onChange}) => {
           disabled={false}
           value={value}
           onValueChange={onChange}
-          tintColors={{false: 'green', true: 'green'}}
+          tintColors={{false: '#4D11A4', true: '#4D11A4'}}
         />
         <Text style={style.description}>{item?.description}</Text>
       </View>

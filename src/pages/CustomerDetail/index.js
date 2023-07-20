@@ -286,8 +286,10 @@ export const CustomerDetail = ({navigation}) => {
             <RadioButtonRN
               data={data}
               box={false}
-              textStyle={{color: 'white'}}
+              textStyle={{color: 'black', fontWeight: 'bold'}}
               initial={2}
+              deactiveColor="black"
+              activeColor="#4D11A4"
               selectedBtn={e =>
                 e.label === 'Yes' ? setDisclaimer(true) : setDisclaimer(false)
               }
@@ -334,10 +336,10 @@ export const CustomerDetail = ({navigation}) => {
                   name="terms"
                 />
               </View>
+
+              <Button containerStyles={style.otp} label="Send OTP" />
             </>
           )}
-
-          <Button containerStyles={style.otp} label="Send OTP" />
           <CustomModal
             isLoading={isLoading}
             onPress={handleSubmit(onSubmit)}

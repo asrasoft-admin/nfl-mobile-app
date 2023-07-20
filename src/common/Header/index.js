@@ -5,6 +5,9 @@ import {Image, View, TouchableOpacity, Text} from 'react-native';
 import LogOutModal from '../Modal/logOut';
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../../Redux/Actions/userAction';
+import {stopRecording} from '../../helpers';
+import {stopAudioRecording} from '../../Redux/Actions/RecordAudio';
+import {colors} from '../../assets/colors';
 
 export const Header = ({navigation}) => {
   const [timer, setTimer] = useState(0);
@@ -44,8 +47,12 @@ export const Header = ({navigation}) => {
     return setModalVisible(!modalVisible);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setLoading(true);
+    if (isRecording) {
+      await stopRecording();
+      dispatch(stopAudioRecording(''));
+    }
     dispatch(logout());
     onClose();
     navigation.reset({
@@ -57,18 +64,32 @@ export const Header = ({navigation}) => {
   return (
     <View>
       <View style={style.logoContainer}>
-        <View>
-          <Image
+        <View style={{}}>
+          {/* <Image
             source={require('assets/images/activeMedia.png')}
             style={style.logo}
             resizeMode="contain"
-          />
-          {isRecording && (
-            <View style={style.recording}>
-              <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold'}}>
-                Recording: {timer} s
-              </Text>
-            </View>
+          /> */}
+          {user.authenticated && (
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                color: colors.purple,
+                marginBottom: 5,
+              }}>
+              {user.name}
+            </Text>
+          )}
+          {false && (
+            <Text
+              style={{
+                color: 'black',
+                fontSize: 18,
+                fontWeight: 'bold',
+              }}>
+              Gulshan
+            </Text>
           )}
         </View>
         {user.authenticated ? (
@@ -85,6 +106,21 @@ export const Header = ({navigation}) => {
             style={style.logo}
             resizeMode="contain"
           />
+        )}
+      </View>
+      <View>
+        {isRecording && (
+          <View style={style.recording}>
+            <Text
+              style={{
+                color: 'red',
+                fontSize: 18,
+                fontWeight: 'bold',
+                margin: 'auto',
+              }}>
+              Recording: {timer} s
+            </Text>
+          </View>
         )}
       </View>
 

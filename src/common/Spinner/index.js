@@ -1,9 +1,10 @@
 import React from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
+import {colors} from '../../assets/colors';
 
 export const CustomSpinner = () => (
   <View style={[styles.container]}>
-    <ActivityIndicator size="large" color="#00ff00" />
+    <ActivityIndicator size="large" color={colors.purple} />
   </View>
 );
 

@@ -15,7 +15,7 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   header: {
-    backgroundColor: colors.green,
+    // backgroundColor: colors.purple,
     alignItems: 'center',
     paddingVertical: hp(5),
   },
@@ -30,9 +30,10 @@ export default StyleSheet.create({
     width: '100%',
   },
   text: {
+    color: 'black',
     textAlign: 'center',
     fontSize: wp(6),
-    color: '#fff',
+    // color: '#fff',
     fontFamily: fontFamily.MontserratBold,
   },
   resBtn: {

@@ -9,9 +9,14 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: wp(2),
+    alignItems: 'center',
   },
   recording: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: hp(2),
+    width: '100%',
   },
   logo: {
     width: wp('40'),

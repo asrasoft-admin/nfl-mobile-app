@@ -14,6 +14,8 @@ export default StyleSheet.create({
     padding: wp(1),
     borderRadius: wp(3),
     alignItems: 'center',
+    borderColor: '#808080',
+    borderWidth: 0.5,
     alignContent: 'center',
     width: '100%',
     height: wp('11.75'),

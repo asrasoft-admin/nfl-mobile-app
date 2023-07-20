@@ -11,6 +11,8 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.gray2,
+    borderColor: '#808080',
+    borderWidth: 0.5,
     // maxWidth: "40%",
     borderRadius: wp(2),
     padding: wp(2),
@@ -26,7 +28,7 @@ export default StyleSheet.create({
   btn: {
     height: wp(8),
     borderRadius: wp(2),
-    marginTop: wp(2),
+    marginVertical: wp(2),
   },
   checkBox: {
     marginLeft: wp(80),

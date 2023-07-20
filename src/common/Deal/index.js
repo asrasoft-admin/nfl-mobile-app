@@ -43,6 +43,8 @@ export const Deal = ({
           width: '100%',
           alignItems: 'center',
           marginBottom: 10,
+          borderWidth: 0.5,
+          borderColor: '#8080',
         }}>
         <Text style={style.price}> {deal?.price} PKR</Text>
         {deal?.selected && (
