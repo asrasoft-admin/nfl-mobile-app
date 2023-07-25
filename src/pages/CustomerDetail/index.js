@@ -1,7 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import style from './style';
-import {Text, View, ScrollView} from 'react-native';
+import {
+  Text,
+  View,
+  ScrollView,
+  Keyboard,
+  KeyboardAvoidingView,
+} from 'react-native';
 import {useForm} from 'react-hook-form';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import {Input, Dropdown, Header, CheckBox, Texture, Button} from '../../common';
@@ -29,6 +35,7 @@ import {
   uploadSuccess,
 } from '../../Redux/Actions/RecordAudio';
 import {setCustomerDetails} from '../../Redux/Actions/customer';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
 export const CustomerDetail = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -240,115 +247,123 @@ export const CustomerDetail = ({navigation}) => {
   };
 
   return (
-    <View style={style.root}>
-      <Texture />
-      <Header navigation={navigation} />
-      <ScrollView>
-        <KeyboardAwareScrollView contentContainerStyle={[style.container]}>
-          <Text style={style.heading}> Customer Details </Text>
-          <View
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              width: '100%',
-              marginBottom: 7,
-            }}>
-            <CustomModal
-              isLoading={isLoading}
-              label="No Response"
-              onPress={noResponseHandle}
-              modalVisible={noResModalVisible}
-              onShow={onNoResShow}
-              onClose={onNoResClose}
-            />
-          </View>
-
-          <Dropdown
-            control={control}
-            name="city"
-            error={!!errors?.city}
-            message={errors?.city?.message}
-            containerStyles={style.inputContainer}
-            items={city}
-          />
-
-          <Dropdown
-            control={control}
-            name="prevBrand"
-            error={!!errors?.prevBrand}
-            message={errors?.prevBrand?.message}
-            containerStyles={style.inputContainer}
-            items={prevBrand}
-          />
-
-          <View style={style.radioContainer}>
-            <Text style={style.radio}> Disclaimer </Text>
-            <RadioButtonRN
-              data={data}
-              box={false}
-              textStyle={{color: 'black', fontWeight: 'bold'}}
-              initial={2}
-              deactiveColor="black"
-              activeColor="#4D11A4"
-              selectedBtn={e =>
-                e.label === 'Yes' ? setDisclaimer(true) : setDisclaimer(false)
-              }
-            />
-          </View>
-
-          {disclaimer && (
-            <>
-              <Input
-                ref={ref}
-                control={control}
-                name="name"
-                placeholder="Customer Name"
-                error={!!errors?.name}
-                message={errors?.name?.message}
-                containerStyles={style.inputContainer}
-              />
-
-              <Input
-                ref={control}
-                control={control}
-                name="number"
-                placeholder="Number 923XX-XXXXXXX"
-                error={!!errors?.number}
-                message={errors?.number?.message}
-                containerStyles={style.inputContainer}
-                keyboardType="numeric"
-                maxLength={12}
-              />
-
-              <Input
-                ref={ref}
-                control={control}
-                name="otp"
-                placeholder="Enter OTP"
-                error={!!errors?.otp}
-                message={errors?.otp?.message}
-                containerStyles={style.inputContainer}
-              />
-              <View style={style.product}>
-                <CheckBox
-                  item={termsOfService}
-                  control={control}
-                  name="terms"
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={style.root}>
+        <View style={style.root}>
+          <Texture />
+          <Header navigation={navigation} />
+          <ScrollView>
+            <KeyboardAwareScrollView contentContainerStyle={[style.container]}>
+              <Text style={style.heading}> Customer Details </Text>
+              <View
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  width: '100%',
+                  marginBottom: 7,
+                }}>
+                <CustomModal
+                  isLoading={isLoading}
+                  label="No Response"
+                  onPress={noResponseHandle}
+                  modalVisible={noResModalVisible}
+                  onShow={onNoResShow}
+                  onClose={onNoResClose}
                 />
               </View>
 
-              <Button containerStyles={style.otp} label="Send OTP" />
-            </>
-          )}
-          <CustomModal
-            isLoading={isLoading}
-            onPress={handleSubmit(onSubmit)}
-            modalVisible={modalVisible}
-            onShow={onShow}
-            onClose={onClose}
-          />
-        </KeyboardAwareScrollView>
-      </ScrollView>
-    </View>
+              <Dropdown
+                control={control}
+                name="city"
+                error={!!errors?.city}
+                message={errors?.city?.message}
+                containerStyles={style.inputContainer}
+                items={city}
+              />
+
+              <Dropdown
+                control={control}
+                name="prevBrand"
+                error={!!errors?.prevBrand}
+                message={errors?.prevBrand?.message}
+                containerStyles={style.inputContainer}
+                items={prevBrand}
+              />
+
+              <View style={style.radioContainer}>
+                <Text style={style.radio}> Disclaimer </Text>
+                <RadioButtonRN
+                  data={data}
+                  box={false}
+                  textStyle={{color: 'black', fontWeight: 'bold'}}
+                  initial={2}
+                  deactiveColor="black"
+                  activeColor="#4D11A4"
+                  selectedBtn={e =>
+                    e.label === 'Yes'
+                      ? setDisclaimer(true)
+                      : setDisclaimer(false)
+                  }
+                />
+              </View>
+
+              {disclaimer && (
+                <>
+                  <Input
+                    ref={ref}
+                    control={control}
+                    name="name"
+                    placeholder="Customer Name"
+                    error={!!errors?.name}
+                    message={errors?.name?.message}
+                    containerStyles={style.inputContainer}
+                  />
+
+                  <Input
+                    ref={control}
+                    control={control}
+                    name="number"
+                    placeholder="Number 923XX-XXXXXXX"
+                    error={!!errors?.number}
+                    message={errors?.number?.message}
+                    containerStyles={style.inputContainer}
+                    keyboardType="numeric"
+                    maxLength={12}
+                  />
+
+                  <Input
+                    ref={ref}
+                    control={control}
+                    name="otp"
+                    placeholder="Enter OTP"
+                    error={!!errors?.otp}
+                    message={errors?.otp?.message}
+                    containerStyles={style.inputContainer}
+                  />
+                  <View style={style.product}>
+                    <CheckBox
+                      item={termsOfService}
+                      control={control}
+                      name="terms"
+                    />
+                  </View>
+
+                  <Button containerStyles={style.otp} label="Send OTP" />
+                </>
+              )}
+              <CustomModal
+                isLoading={isLoading}
+                onPress={handleSubmit(onSubmit)}
+                modalVisible={modalVisible}
+                onShow={onShow}
+                onClose={onClose}
+              />
+            </KeyboardAwareScrollView>
+          </ScrollView>
+        </View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };

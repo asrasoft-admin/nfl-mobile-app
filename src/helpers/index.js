@@ -14,8 +14,6 @@ export const getToken = async () => {
   }
 };
 
-export const baseURL = 'https://nfl-dashboard.vercel.app/';
-
 export const audioRecorderPlayer = new AudioRecorderPlayer();
 
 export const handleUploadAudio = async audioPath => {
@@ -34,9 +32,11 @@ export const handleUploadAudio = async audioPath => {
 };
 
 export const listener = () => {
-  return audioRecorderPlayer.addRecordBackListener(e => {
-    return e.currentPosition;
+  let time;
+  audioRecorderPlayer.addRecordBackListener(e => {
+    time = e.currentPosition;
   });
+  return time;
 };
 
 export const stopRecording = async () => {
@@ -44,6 +44,7 @@ export const stopRecording = async () => {
   audioRecorderPlayer.removeRecordBackListener();
   return result;
 };
+export const baseURL = 'https://nfl-dashboard.vercel.app/';
 
 export const axiosInstance = axios.create({
   // baseURL: 'https://dev-nfl-dds-dashboard.herokuapp.com/api',

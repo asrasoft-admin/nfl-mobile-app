@@ -5,7 +5,7 @@ import {Image, View, TouchableOpacity, Text} from 'react-native';
 import LogOutModal from '../Modal/logOut';
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../../Redux/Actions/userAction';
-import {stopRecording} from '../../helpers';
+import {audioRecorderPlayer, listener, stopRecording} from '../../helpers';
 import {stopAudioRecording} from '../../Redux/Actions/RecordAudio';
 import {colors} from '../../assets/colors';
 
@@ -29,20 +29,14 @@ export const Header = ({navigation}) => {
     return setModalVisible(true);
   };
   useEffect(() => {
-    let interval;
-    if (isRecording) {
-      interval = setInterval(() => {
-        setTimer(prevTimer => prevTimer + 1);
-      }, 1000);
-    } else {
-      clearInterval(interval);
-      setTimer(0);
-    }
-
-    return () => {
-      clearInterval(interval);
+    const listener = () => {
+      audioRecorderPlayer.addRecordBackListener(e => {
+        setTimer((e.currentPosition / 1000).toFixed(0));
+      });
     };
-  }, [isRecording]);
+    listener();
+  }, []);
+
   const onClose = () => {
     return setModalVisible(!modalVisible);
   };
