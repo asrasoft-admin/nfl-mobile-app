@@ -71,16 +71,16 @@ export const Login = ({navigation}) => {
         if (data.number) {
           if (data.password) {
             setLoading(true);
+            console.log({data});
             axios
               .get(`${baseURL}/api/auth/signin`, {
                 params: {
                   number: data.number,
                   password: data.password,
-                  activity_id: 1,
-                  area_id: 1,
                 },
               })
               .then(async ({data: user}) => {
+                console.log({user});
                 setLoading(false);
 
                 if (user.success) {

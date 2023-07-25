@@ -24,7 +24,7 @@ export const Header = ({navigation}) => {
   const user = state.user;
 
   const dispatch = useDispatch();
-
+  console.log(user.area);
   const onShow = () => {
     return setModalVisible(true);
   };
@@ -55,6 +55,7 @@ export const Header = ({navigation}) => {
     }
     dispatch(logout());
     onClose();
+    setLoading(false);
     navigation.reset({
       index: 0,
       routes: [{name: 'Login'}],
@@ -78,17 +79,17 @@ export const Header = ({navigation}) => {
                 color: colors.purple,
                 marginBottom: 5,
               }}>
-              {user.name}
+              {user.name?.toUpperCase()}
             </Text>
           )}
-          {false && (
+          {user.authenticated && (
             <Text
               style={{
                 color: 'black',
                 fontSize: 18,
                 fontWeight: 'bold',
               }}>
-              Gulshan
+              {user.area}
             </Text>
           )}
         </View>

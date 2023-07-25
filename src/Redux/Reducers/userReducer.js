@@ -9,6 +9,8 @@ const initialState = {
   authenticated: false,
   category_id: '',
   token: null,
+  area: '',
+  name: '',
 };
 
 const loginReducer = (state = initialState, action) => {
@@ -24,6 +26,8 @@ const loginReducer = (state = initialState, action) => {
         areaId: action.payload.area?.id,
         token: action.payload.data.data.token,
         authenticated: true,
+        area: action.payload.data.data.area,
+        name: action.payload.data.data.name,
       };
 
     case authConstants.LOGOUT:
