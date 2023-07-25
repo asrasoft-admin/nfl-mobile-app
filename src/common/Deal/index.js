@@ -55,6 +55,9 @@ export const Deal = ({
               borderWidth: 1,
               borderColor: 'grey',
               borderRadius: 6,
+              color: 'black',
+              fontWeight: 'bold',
+              backgroundColor: '#fff'
             }}
             value={quantities.find(item => item.id === deal.id)?.quantity}
             onChangeText={text => onChange(deal.id, text)}

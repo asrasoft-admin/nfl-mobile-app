@@ -50,9 +50,10 @@ const AppView = () => {
 
   return (
     <View style={{height: '100%', width: '100%'}}>
-      <RootStack.Navigator screenOptions={options}>
+      {/* <RootStack.Navigator screenOptions={options}>
         {tabnavigatorRender}
-      </RootStack.Navigator>
+      </RootStack.Navigator> */}
+      <Deals />
     </View>
   );
 };
