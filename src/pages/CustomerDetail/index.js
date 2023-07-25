@@ -247,12 +247,19 @@ export const CustomerDetail = ({ navigation }) => {
   };
 
   return (
-    <View
-      style={style.root}>
+    <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    style={{ flex: 1 }}
+    >
       <Texture />
       <Header navigation={navigation} />
-      <ScrollView>
-        <KeyboardAwareScrollView contentContainerStyle={[style.container]}>
+      <ScrollView style={{flex: 1}}
+      nestedScrollEnabled={true}>
+        <KeyboardAwareScrollView contentContainerStyle={[style.container]}
+           keyboardShouldPersistTaps="handled"
+           enableOnAndroid={true}
+           extraScrollHeight={Platform.OS === 'ios' ? 50 : 0}
+         >
           <Text style={style.heading}> Customer Details </Text>
           <View
             style={{
@@ -334,6 +341,7 @@ export const CustomerDetail = ({ navigation }) => {
                 ref={ref}
                 control={control}
                 name="otp"
+                keyboardType="numeric"
                 placeholder="Enter OTP"
                 error={!!errors?.otp}
                 message={errors?.otp?.message}
@@ -359,6 +367,6 @@ export const CustomerDetail = ({ navigation }) => {
           />
         </KeyboardAwareScrollView>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };

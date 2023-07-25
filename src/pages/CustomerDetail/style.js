@@ -6,12 +6,15 @@ import {
 
 export default StyleSheet.create({
   root: {
-    height: '100%',
+    // height: '100%',
+    flex: 1
   },
   radio: {
-    color: 'white',
+    color: 'black',
+    fontWeight: 'bold'
   },
   container: {
+    flex: 1,
     marginHorizontal: wp(5),
   },
   radioContainer: {
