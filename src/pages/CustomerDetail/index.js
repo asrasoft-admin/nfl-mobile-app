@@ -253,8 +253,7 @@ export const CustomerDetail = ({ navigation }) => {
     >
       <Texture />
       <Header navigation={navigation} />
-      <ScrollView style={{flex: 1}}
-      nestedScrollEnabled={true}>
+      <ScrollView style={{flex: 1}}>
         <KeyboardAwareScrollView contentContainerStyle={[style.container]}
            keyboardShouldPersistTaps="handled"
            enableOnAndroid={true}
