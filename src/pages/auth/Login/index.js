@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 import React, {useState, useEffect} from 'react';
 import style from './style';
-import {View, ActivityIndicator, Alert, PermissionsAndroid} from 'react-native';
+import {View, ActivityIndicator, Alert, PermissionsAndroid, Text} from 'react-native';
 import {useForm} from 'react-hook-form';
 import {widthPercentageToDP as wp} from 'utils/responsive';
 import {Input, Button, Dropdown, Header, Texture} from '../../../common';
@@ -118,7 +118,12 @@ export const Login = ({navigation}) => {
       <Texture />
       <Header />
 
+      <View style={style.welcomeHeadingContainer}>
+          <Text style={style.welcomeHeadingText}>Welcome To Asra Soft Door to Door Service</Text>
+      </View>
+
       <View style={style.container}>
+      <Text style={style.loginHeadingText}>LOGIN</Text>
         {/* <Dropdown
           control={control}
           name="activity_id"
@@ -133,6 +138,7 @@ export const Login = ({navigation}) => {
           selectedItems={selectedArea}
           placeholder={selectedArea?.name ? selectedArea?.name : 'Area'}
         /> */}
+
         <Input
           ref={control}
           control={control}
