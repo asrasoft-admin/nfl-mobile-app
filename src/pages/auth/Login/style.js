@@ -4,6 +4,7 @@ import {
   heightPercentageToDP as hp,
 } from 'utils/responsive';
 import {fontFamily} from '../../../assets/fonts';
+import { colors } from '../../../assets/colors';
 
 export default StyleSheet.create({
   root: {
@@ -11,22 +12,30 @@ export default StyleSheet.create({
   },
   welcomeHeadingContainer: {
     position: 'relative',
-    top: hp(13),
+    top: hp(10),
     left: 0,
     bottom: 0,
     right: 0,
-    alignItems: 'center',
     marginHorizontal: wp(5),
   },
+  logo: {
+    width: wp('100'),
+    height: hp(15),
+    margin: 0,
+    padding: 0,
+  },
   welcomeHeadingText: {
-    fontSize: wp('10'),
+    fontSize: wp('6'),
     fontWeight: 'bold',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontFamily: fontFamily.MontserratThin,
   },
   loginHeadingText: {
-    fontSize: wp('10'),
+    fontSize: wp('8'),
     fontWeight: 'bold',
-    textAlign: 'center'
+    textAlign: 'center',
+    paddingTop: wp('5'),
+    color: colors.purple
   },
   container: {
     marginHorizontal: wp(5),
