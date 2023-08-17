@@ -11,6 +11,7 @@ export const Button = ({
   icon,
   containerStyles = {},
   customLabelStyle = {},
+  loading,
 }) => {
   return (
     <NativeTouchable
@@ -19,7 +20,9 @@ export const Button = ({
         ...style.container,
         ...containerStyles,
       }}>
-      <Text style={[style.label, customLabelStyle]}>{label}</Text>
+      <Text style={[style.label, customLabelStyle]}>
+        {loading ? 'loading...' : label}
+      </Text>
       {icon && <View style={style.iconContainer}>{icon}</View>}
     </NativeTouchable>
   );

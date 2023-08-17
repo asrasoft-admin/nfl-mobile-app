@@ -103,4 +103,11 @@ export const numberValidation = data => {
   }
 };
 
-export const otpCodeGenerator = () => Math.random().toString(36).slice(2, 6);
+export function otpCodeGenerator() {
+  var randomNumber = '';
+  for (var i = 0; i < 6; i++) {
+    var digit = Math.floor(Math.random() * 10);
+    randomNumber += digit;
+  }
+  return randomNumber;
+}

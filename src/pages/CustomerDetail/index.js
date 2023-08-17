@@ -35,6 +35,7 @@ import {
   uploadSuccess,
 } from '../../Redux/Actions/RecordAudio';
 import {setCustomerDetails} from '../../Redux/Actions/customer';
+import {otpCodeAction} from '../../Redux/Actions/customerDetail';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
 export const CustomerDetail = ({navigation}) => {
@@ -48,6 +49,9 @@ export const CustomerDetail = ({navigation}) => {
   const area = allArea?.data?.filter(area => area.id === user.areaId);
   const [disclaimer, setDisclaimer] = useState(false);
   const [location, setLocation] = useState(null);
+  const [OTPSendLoading, setOTPSendLoading] = useState(false);
+  const {otpCode} = useSelector(state => state.customerDetail);
+  const [otpMessage, setOtpMessage] = useState({});
 
   const {
     isRecording,
@@ -165,13 +169,42 @@ export const CustomerDetail = ({navigation}) => {
     }
   };
 
+  const sendOTPHandler = async () => {
+    const {number, terms, otp} = control._formValues;
+    numberValidation({number});
+
+    const genOtpCode = otpCodeGenerator();
+
+    try {
+      setOTPSendLoading(true);
+      const res = await axiosInstance.post('/customer/send-otp', {
+        otp_code: genOtpCode,
+        number,
+      });
+      dispatch(otpCodeAction(genOtpCode));
+
+      if (res.data.success) {
+        setOtpMessage({message: res.data.message, success: res.data.success});
+        setOTPSendLoading(false);
+      }
+
+      if (!res.data.success) {
+        setOtpMessage({message: res.data.message, success: res.data.success});
+      }
+    } catch (error) {
+      setOTPSendLoading(false);
+      console.log(error, 'otp error');
+    }
+    // console.log(number, terms, otp);
+  };
+
   const onSubmit = async data => {
-    const otpCode = otpCodeGenerator();
+    // const otpCode = otpCodeGenerator();
     const {number} = numberValidation(data);
-    console.log('===========>', audio, downloadUrl);
+    // console.log('===========>', audio, downloadUrl);
     try {
       if (!disclaimer) {
-        console.log('==>' + {disclaimer});
+        // console.log('==>' + {disclaimer});
         try {
           let audioPath, downloadLink;
           console.log({downloadUrl});
@@ -213,27 +246,34 @@ export const CustomerDetail = ({navigation}) => {
           setLoading(false);
         }
       } else {
-        if (data.name && data.number && data.prevBrand && data.terms) {
-          try {
-            const details = {
-              user_id: user.id,
-              activity_id: user.activity_id,
-              coordinates: JSON.stringify(location),
-              name: data.name,
-              mobile_number: data.number,
-              city: data.city,
-              no_response: false,
-              previous_brand_id: data.prevBrand,
-            };
-            dispatch(setCustomerDetails(details));
-            onClose();
-            navigation.navigate('Deals');
-          } catch (error) {
-            throw new Error(error);
-          } finally {
-            setLoading(false);
-          }
-        } else throw new Error('Please Enter Complete Information');
+        if (!data.otp || otpCode == data.otp) {
+          dispatch(otpCodeAction(''));
+          if (data.name && data.number && data.prevBrand && data.terms) {
+            try {
+              const details = {
+                user_id: user.id,
+                activity_id: user.activity_id,
+                coordinates: JSON.stringify(location),
+                name: data.name,
+                mobile_number: data.number,
+                city: data.city,
+                no_response: false,
+                previous_brand_id: data.prevBrand,
+                otp: data.otp || null,
+              };
+              dispatch(setCustomerDetails(details));
+              onClose();
+              navigation.navigate('Deals');
+            } catch (error) {
+              throw new Error(error);
+            } finally {
+              setLoading(false);
+            }
+          } else throw new Error('Please Enter Complete Information');
+        } else {
+          setOtpMessage({message: 'Invalid OTP', success: false});
+          onClose();
+        }
       }
     } catch (error) {
       setLoading(false);
@@ -245,6 +285,14 @@ export const CustomerDetail = ({navigation}) => {
     value: false,
     description: 'I agree to term of service',
   };
+
+  useEffect(() => {
+    if (OTPSendLoading === false) {
+      setTimeout(() => {
+        setOtpMessage({});
+      }, 5000);
+    }
+  }, [OTPSendLoading]);
 
   return (
     <KeyboardAvoidingView
@@ -343,6 +391,16 @@ export const CustomerDetail = ({navigation}) => {
                 message={errors?.otp?.message}
                 containerStyles={style.inputContainer}
               />
+
+              <View>
+                <Text
+                  style={
+                    otpMessage.success ? {color: 'green'} : {color: 'red'}
+                  }>
+                  {otpMessage?.message}
+                </Text>
+              </View>
+
               <View style={style.product}>
                 <CheckBox
                   item={termsOfService}
@@ -351,7 +409,12 @@ export const CustomerDetail = ({navigation}) => {
                 />
               </View>
 
-              <Button containerStyles={style.otp} label="Send OTP" />
+              <Button
+                containerStyles={style.otp}
+                label="Send OTP"
+                onPress={sendOTPHandler}
+                loading={OTPSendLoading}
+              />
             </>
           )}
           <CustomModal

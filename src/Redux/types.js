@@ -13,5 +13,7 @@ export const authConstants = {
   LOGOUT: 'LOGOUT',
 };
 
+export const OTPCODE = 'OTPCODE';
+
 // customerActionTypes.js
 export const SET_CUSTOMER_DETAILS = 'SET_CUSTOMER_DETAILS';

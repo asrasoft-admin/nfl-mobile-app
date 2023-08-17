@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {persistReducer} from 'redux-persist';
 import recordingReducer from './Reducers/RecordAudio';
 import customerReducer from './Reducers/customer';
+import customerDetailReducer from './Reducers/customerDetail';
 
 const persistConfig = {
   key: 'root',
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   allProducts: productsReducer,
   Recorder: recordingReducer,
   customer: customerReducer,
+  customerDetail: customerDetailReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);
