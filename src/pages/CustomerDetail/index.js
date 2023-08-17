@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, {useState, useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import style from './style';
 import {
   Text,
@@ -8,9 +8,9 @@ import {
   Keyboard,
   KeyboardAvoidingView,
 } from 'react-native';
-import { useForm } from 'react-hook-form';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import { Input, Dropdown, Header, CheckBox, Texture, Button } from '../../common';
+import {useForm} from 'react-hook-form';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
+import {Input, Dropdown, Header, CheckBox, Texture, Button} from '../../common';
 import {
   gender,
   relations,
@@ -34,10 +34,10 @@ import {
   stopAudioRecording,
   uploadSuccess,
 } from '../../Redux/Actions/RecordAudio';
-import { setCustomerDetails } from '../../Redux/Actions/customer';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import {setCustomerDetails} from '../../Redux/Actions/customer';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
-export const CustomerDetail = ({ navigation }) => {
+export const CustomerDetail = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [noResModalVisible, setNoResModalVisible] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -64,7 +64,7 @@ export const CustomerDetail = ({ navigation }) => {
     },
   ];
 
-  const { control, handleSubmit, ref, formState } = useForm({
+  const {control, handleSubmit, ref, formState} = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
     // defaultValues: {
@@ -79,7 +79,7 @@ export const CustomerDetail = ({ navigation }) => {
     // },
   });
 
-  const { errors } = formState;
+  const {errors} = formState;
 
   const postDetails = async (data, otpCode, number) => {
     return await axiosInstance.post('/customer/details', {
@@ -109,14 +109,14 @@ export const CustomerDetail = ({ navigation }) => {
   };
 
   useEffect(() => {
-    console.log({ audio, downloadUrl });
+    console.log({audio, downloadUrl});
   }, [audio, downloadUrl]);
 
   const onClose = () => {
     return setModalVisible(!modalVisible);
   };
   const onNoResClose = () => {
-    return setNoResModalVisible(!modalVisible);
+    return setNoResModalVisible(!noResModalVisible);
   };
 
   const onNoResShow = () => {
@@ -136,7 +136,7 @@ export const CustomerDetail = ({ navigation }) => {
       }
       if (downloadUrl) {
         downloadLink = downloadUrl;
-        console.log({ downloadUrl });
+        console.log({downloadUrl});
       } else {
         downloadLink = await uploadAudioToCloudinary(audioPath);
         dispatch(uploadSuccess(downloadLink));
@@ -156,7 +156,7 @@ export const CustomerDetail = ({ navigation }) => {
         onNoResClose();
         navigation.navigate('SignOut');
       }
-      console.log({ res });
+      console.log({res});
       return res;
     } catch (error) {
       throw new Error(error);
@@ -167,14 +167,14 @@ export const CustomerDetail = ({ navigation }) => {
 
   const onSubmit = async data => {
     const otpCode = otpCodeGenerator();
-    const { number } = numberValidation(data);
+    const {number} = numberValidation(data);
     console.log('===========>', audio, downloadUrl);
     try {
       if (!disclaimer) {
-        console.log('==>' + { disclaimer });
+        console.log('==>' + {disclaimer});
         try {
           let audioPath, downloadLink;
-          console.log({ downloadUrl });
+          console.log({downloadUrl});
           setLoading(true);
           if (audio) {
             audioPath = audio;
@@ -205,7 +205,7 @@ export const CustomerDetail = ({ navigation }) => {
             onClose();
             navigation.navigate('SignOut');
           }
-          console.log({ res });
+          console.log({res});
           return res;
         } catch (error) {
           throw new Error(error);
@@ -248,17 +248,16 @@ export const CustomerDetail = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    style={{ flex: 1 }}
-    >
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{flex: 1}}>
       <Texture />
       <Header navigation={navigation} />
       <ScrollView style={{flex: 1}}>
-        <KeyboardAwareScrollView contentContainerStyle={[style.container]}
-           keyboardShouldPersistTaps="handled"
-           enableOnAndroid={true}
-           extraScrollHeight={Platform.OS === 'ios' ? 50 : 0}
-         >
+        <KeyboardAwareScrollView
+          contentContainerStyle={[style.container]}
+          keyboardShouldPersistTaps="handled"
+          enableOnAndroid={true}
+          extraScrollHeight={Platform.OS === 'ios' ? 50 : 0}>
           <Text style={style.heading}> Customer Details </Text>
           <View
             style={{
@@ -300,14 +299,12 @@ export const CustomerDetail = ({ navigation }) => {
             <RadioButtonRN
               data={data}
               box={false}
-              textStyle={{ color: 'black', fontWeight: 'bold' }}
+              textStyle={{color: 'black', fontWeight: 'bold'}}
               initial={2}
               deactiveColor="black"
               activeColor="#4D11A4"
               selectedBtn={e =>
-                e.label === 'Yes'
-                  ? setDisclaimer(true)
-                  : setDisclaimer(false)
+                e.label === 'Yes' ? setDisclaimer(true) : setDisclaimer(false)
               }
             />
           </View>
