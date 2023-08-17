@@ -1,33 +1,40 @@
 /* eslint-disable quotes */
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import style from './style';
-import { View, ActivityIndicator, Alert, PermissionsAndroid, Text, Image } from 'react-native';
-import { useForm } from 'react-hook-form';
-import { widthPercentageToDP as wp } from 'utils/responsive';
-import { Input, Button, Dropdown, Header, Texture } from '../../../common';
-import { useSelector, useDispatch } from 'react-redux';
-import { loginAction } from '../../../Redux/Actions/userAction';
+import {
+  View,
+  ActivityIndicator,
+  Alert,
+  PermissionsAndroid,
+  Text,
+  Image,
+} from 'react-native';
+import {useForm} from 'react-hook-form';
+import {widthPercentageToDP as wp} from 'utils/responsive';
+import {Input, Button, Dropdown, Header, Texture} from '../../../common';
+import {useSelector, useDispatch} from 'react-redux';
+import {loginAction} from '../../../Redux/Actions/userAction';
 import {
   axiosInstance,
   baseURL,
   getLocation,
   parseError,
 } from '../../../helpers';
-import { SearchableDropdowns } from '../../../common/SearchableDropdown';
-import { allActivities } from '../../../dummyData';
+import {SearchableDropdowns} from '../../../common/SearchableDropdown';
+import {allActivities} from '../../../dummyData';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
-export const Login = ({ navigation }) => {
+export const Login = ({navigation}) => {
   const state = useSelector(states => states);
   const allAreas = state.allArea;
   const [isLoading, setLoading] = useState(false);
   const [areas, setAreas] = useState([]);
-  const { control, handleSubmit, formState } = useForm({
+  const {control, handleSubmit, formState} = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
-  const { errors } = formState;
+  const {errors} = formState;
   const dispatch = useDispatch();
   const [selectedArea, setSelectedArea] = useState(1);
 
@@ -50,7 +57,7 @@ export const Login = ({ navigation }) => {
           getLocation();
         } else {
           Alert.alert('Location permission denied', `Locataion is Required`, [
-            { text: 'OK' },
+            {text: 'OK'},
           ]);
         }
       } catch (error) {
@@ -71,7 +78,7 @@ export const Login = ({ navigation }) => {
         if (data.number) {
           if (data.password) {
             setLoading(true);
-            console.log({ data });
+            console.log({data});
             axios
               .get(`${baseURL}/api/auth/signin`, {
                 params: {
@@ -79,8 +86,8 @@ export const Login = ({ navigation }) => {
                   password: data.password,
                 },
               })
-              .then(async ({ data: user }) => {
-                console.log({ user });
+              .then(async ({data: user}) => {
+                console.log({user});
                 setLoading(false);
 
                 if (user.success) {
@@ -119,12 +126,9 @@ export const Login = ({ navigation }) => {
       {/* <Header /> */}
 
       <View style={style.welcomeHeadingContainer}>
-        <Image
-          source={require('../../../assets/images/national.png')}
-          style={style.logo}
-          resizeMode="contain"
-        />
-        <Text style={style.welcomeHeadingText}>Welcome To Asra Soft Door to Door Service</Text>
+        <Text style={style.welcomeHeadingText}>
+          Welcome To Asra Soft Door to Door Service
+        </Text>
         <Text style={style.loginHeadingText}>LOGIN</Text>
       </View>
 
@@ -170,7 +174,7 @@ export const Login = ({ navigation }) => {
           icon={
             isLoading && (
               <ActivityIndicator
-                style={{ position: 'absolute', left: wp('36') }}
+                style={{position: 'absolute', left: wp('36')}}
               />
             )
           }

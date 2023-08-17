@@ -19,7 +19,8 @@ export default StyleSheet.create({
     width: '100%',
   },
   logo: {
-    width: wp('40'),
+    // width: wp('40'),
+    justifyContent: 'center',
     height: hp(15),
     margin: 0,
     padding: 0,

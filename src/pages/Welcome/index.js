@@ -41,11 +41,6 @@ export const Welcome = ({navigation}) => {
         style={style.logo}
         resizeMode="contain"
       />
-      <Image
-        source={require('../../assets/images/national.png')}
-        style={style.logo}
-        resizeMode="contain"
-      />
       <Spinner />
     </View>
   );

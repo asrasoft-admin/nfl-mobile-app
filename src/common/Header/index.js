@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import style from './style';
-import {Image, View, TouchableOpacity, Text} from 'react-native';
+import {View, TouchableOpacity, Text} from 'react-native';
 import LogOutModal from '../Modal/logOut';
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../../Redux/Actions/userAction';
 import {audioRecorderPlayer, listener, stopRecording} from '../../helpers';
 import {stopAudioRecording} from '../../Redux/Actions/RecordAudio';
 import {colors} from '../../assets/colors';
+import Svg, {Path} from 'react-native-svg';
 
 export const Header = ({navigation}) => {
   const [timer, setTimer] = useState(0);
@@ -87,20 +88,18 @@ export const Header = ({navigation}) => {
             </Text>
           )}
         </View>
-        {user.authenticated ? (
-          <TouchableOpacity onPress={onShow}>
-            <Image
-              source={require('assets/images/national.png')}
-              style={style.logo}
-              resizeMode="contain"
-            />
+        {user.authenticated && (
+          <TouchableOpacity onPress={onShow} style={style.logo}>
+            <Svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+              <Path
+                d="M3 6H21M3 12H21M3 18H21"
+                stroke="black"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </Svg>
           </TouchableOpacity>
-        ) : (
-          <Image
-            source={require('assets/images/national.png')}
-            style={style.logo}
-            resizeMode="contain"
-          />
         )}
       </View>
       <View>
