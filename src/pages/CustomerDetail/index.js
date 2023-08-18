@@ -202,8 +202,9 @@ export const CustomerDetail = ({navigation}) => {
     // const otpCode = otpCodeGenerator();
     const {number} = numberValidation(data);
     // console.log('===========>', audio, downloadUrl);
+    console.log(data.city, data.prevBrand);
     try {
-      if (!disclaimer) {
+      if (!disclaimer && !!data.prevBrand && data.city !== '') {
         // console.log('==>' + {disclaimer});
         try {
           let audioPath, downloadLink;
@@ -248,7 +249,13 @@ export const CustomerDetail = ({navigation}) => {
       } else {
         if (!data.otp || otpCode == data.otp) {
           dispatch(otpCodeAction(''));
-          if (data.name && data.number && data.prevBrand && data.terms) {
+          if (
+            data.name &&
+            data.number &&
+            data.terms &&
+            !!data.prevBrand &&
+            data.city !== ''
+          ) {
             try {
               const details = {
                 user_id: user.id,
