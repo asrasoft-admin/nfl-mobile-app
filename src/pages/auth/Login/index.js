@@ -127,7 +127,7 @@ export const Login = ({navigation}) => {
 
       <View style={style.welcomeHeadingContainer}>
         <Text style={style.welcomeHeadingText}>
-          Welcome To Asra Soft Door to Door Service
+          Welcome To Door to Door Service Asra Soft
         </Text>
         <Text style={style.loginHeadingText}>LOGIN</Text>
       </View>
