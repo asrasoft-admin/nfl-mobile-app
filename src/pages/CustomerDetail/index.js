@@ -178,11 +178,14 @@ export const CustomerDetail = ({navigation}) => {
 
     const genOtpCode = otpCodeGenerator();
 
+    const sum = number?.slice(1, 11);
+    const numRes = 92 + sum;
+
     try {
       setOTPSendLoading(true);
       const res = await axiosInstance.post('/customer/send-otp', {
         otp_code: genOtpCode,
-        number,
+        number: numRes,
       });
       dispatch(otpCodeAction(genOtpCode));
 
@@ -388,7 +391,7 @@ export const CustomerDetail = ({navigation}) => {
                 message={errors?.number?.message}
                 containerStyles={style.inputContainer}
                 keyboardType="numeric"
-                maxLength={12}
+                maxLength={11}
               />
 
               <Input

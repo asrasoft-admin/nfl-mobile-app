@@ -83,17 +83,17 @@ export const numberValidation = data => {
   const numberLength = data?.number;
   try {
     if (numberLength) {
-      if (numberLength?.slice(0, 2) === '92') {
-        if (numberLength?.length === 12) {
+      if (numberLength?.slice(0, 2) === '03') {
+        if (numberLength?.length === 11) {
           return {
             valid: true,
             number: numberLength,
           };
         } else {
-          throw new Error('Number should be 12 digits long');
+          throw new Error('Number should be 11 digits long');
         }
       } else {
-        throw new Error('First 2 digit should be 92');
+        throw new Error('First 2 digit should be 03');
       }
     } else {
       return {valid: false};
