@@ -149,7 +149,10 @@ export const CustomerDetail = ({navigation}) => {
       const res = await axiosInstance.post('/customer/details', {
         user_id: user.id,
         activity_id: user.activity_id,
-        coordinates: JSON.stringify(location),
+        coordinates: JSON.stringify({
+          latitude: location?.latitude,
+          longitude: location?.longitude,
+        }),
         audio: downloadLink,
         no_response: true,
         audio_record_time: new Date().getTime(),
