@@ -24,7 +24,8 @@ export const SupervisorDetail = ({navigation}) => {
   const [location, setLocation] = useState(null);
   const user = state.user;
   const allAreas = state.allArea;
-  const area = allAreas?.data?.filter(area => area.id === user.areaId);
+
+  let area = allAreas?.data?.find(area => area.name === user.area);
 
   const {control, handleSubmit, formState} = useForm({
     mode: 'onChange',
@@ -73,7 +74,7 @@ export const SupervisorDetail = ({navigation}) => {
         const {data: resData} = await axiosInstance.post('/winner/add-winner', {
           name: data.winnerName,
           address: data.address,
-          area_id: data.area,
+          area_id: area.id,
           email: data.email,
           mobile_network_id: data.mobile,
           mobile_number: number,
@@ -86,6 +87,7 @@ export const SupervisorDetail = ({navigation}) => {
           winner_position: data.winnerNumber,
           session_no: data.session,
         });
+        console.log('data ===========================>', data);
         if (resData.success) {
           setLoading(false);
           onClose();

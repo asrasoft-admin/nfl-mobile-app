@@ -46,7 +46,7 @@ export const CustomerDetail = ({navigation}) => {
   const state = useSelector(state => state);
   const user = state.user;
   const allArea = state.allArea;
-  const area = allArea?.data?.filter(area => area.id === user.areaId);
+  let area = allArea?.data?.find(area => area.name === user.area);
   const [disclaimer, setDisclaimer] = useState(false);
   const [location, setLocation] = useState(null);
   const [OTPSendLoading, setOTPSendLoading] = useState(false);
@@ -157,6 +157,7 @@ export const CustomerDetail = ({navigation}) => {
         no_response: true,
         audio_record_time: new Date().getTime(),
         audio_record_date: new Date(),
+        area_id: area?.id,
       });
       if (res.data.success) {
         dispatch(recordSuccess());
@@ -189,6 +190,7 @@ export const CustomerDetail = ({navigation}) => {
       });
       dispatch(otpCodeAction(genOtpCode));
 
+      console.log('=================== send otp', res.data);
       if (res.data.success) {
         setOtpMessage({message: res.data.message, success: res.data.success});
         setOTPSendLoading(false);
@@ -239,13 +241,14 @@ export const CustomerDetail = ({navigation}) => {
             no_response: false,
             audio_record_time: new Date().getTime(),
             audio_record_date: new Date(),
+            area_id: area?.id,
           });
           if (res.data.success) {
             dispatch(recordSuccess());
             onClose();
             navigation.navigate('SignOut');
           }
-          console.log({res});
+          console.log('===========================area =>', {res});
           return res;
         } catch (error) {
           throw new Error(error);
@@ -273,6 +276,7 @@ export const CustomerDetail = ({navigation}) => {
                 no_response: false,
                 previous_brand_id: data.prevBrand,
                 otp: data.otp || null,
+                area_id: area?.id,
               };
               dispatch(setCustomerDetails(details));
               onClose();
@@ -307,6 +311,7 @@ export const CustomerDetail = ({navigation}) => {
     }
   }, [OTPSendLoading]);
 
+  console.log(area.id, '===============');
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
