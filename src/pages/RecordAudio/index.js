@@ -93,6 +93,11 @@ export const RecordAudio = () => {
       <Header />
       <View style={style.container}>
         <Button label="Start Form" onPress={handleRecordAudio} />
+        <Button
+          label="View your record"
+          onPress={() => {}}
+          containerStyles={style.viewSummary}
+        />
       </View>
     </View>
   );

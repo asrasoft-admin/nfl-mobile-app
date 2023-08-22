@@ -18,4 +18,7 @@ export default StyleSheet.create({
     height: 100,
     width: 100,
   },
+  viewSummary: {
+    marginTop: hp('2'),
+  },
 });
