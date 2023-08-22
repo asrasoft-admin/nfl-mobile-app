@@ -47,6 +47,7 @@ export default StyleSheet.create({
   flatListContent: {
     flex: 1,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     marginHorizontal: wp(4),
     marginVertical: hp(0.5),
   },

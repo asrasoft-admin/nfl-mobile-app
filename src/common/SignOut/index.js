@@ -84,36 +84,6 @@ export const SignOut = ({navigation}) => {
 
           <View style={style.flatListContainer}>
             <Text style={style.todayTextContainer}>Your Today's stats</Text>
-
-            {/* <View
-              style={{
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <View style={{flexDirection: 'row', margin: 5}}>
-                <Text>head 1 :</Text>
-                <Text> para</Text>
-                <View style={{flexDirection: 'row'}}>
-                  <Text> head 1 :</Text>
-                  <Text> para</Text>
-                </View>
-              </View>
-
-              <View style={{flexDirection: 'row', margin: 5}}>
-                <Text>head 1 :</Text>
-                <Text> para</Text>
-                <View style={{flexDirection: 'row'}}>
-                  <Text> head 1 :</Text>
-                  <Text> para</Text>
-                </View>
-              </View>
-              <View style={{flexDirection: 'row', margin: 5}}>
-                <Text>head 1 :</Text>
-                <Text> para</Text>
-              </View>
-            </View> */}
-
             <FlatList
               data={Object.keys(summaryData.summaryData.data)}
               renderItem={({item, index}) => (
