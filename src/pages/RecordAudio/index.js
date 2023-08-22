@@ -10,6 +10,8 @@ import {audioRecorderPlayer, axiosInstance} from '../../helpers';
 import {
   getSummaryDataFail,
   getSummaryDataSucess,
+  getSummaryTotalDataFail,
+  getSummaryTotalDataSuccess,
 } from '../../Redux/Actions/summary';
 
 // const audioRecorderPlayer = new AudioRecorderPlayer();
@@ -92,6 +94,8 @@ export const RecordAudio = () => {
     }
   };
 
+  // '/customer/total-summary'
+
   useEffect(() => {
     const date = new Date().toISOString();
     const dateRes = date.split('T')[0];
@@ -108,6 +112,20 @@ export const RecordAudio = () => {
       })
       .catch(err => {
         dispatch(getSummaryDataFail(err));
+        console.log(err, 'err');
+      });
+
+    axiosInstance
+      .get('/customer/total-summary', {
+        params: {
+          ba_id: user?.id,
+        },
+      })
+      .then(({data}) => {
+        dispatch(getSummaryTotalDataSuccess(data));
+      })
+      .catch(err => {
+        dispatch(getSummaryTotalDataFail(err));
         console.log(err, 'err');
       });
   }, [user, dispatch]);

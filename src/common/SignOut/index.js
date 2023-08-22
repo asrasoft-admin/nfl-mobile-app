@@ -13,7 +13,7 @@ import SummaryCard from '../SummaryCard';
 
 export const SignOut = ({navigation}) => {
   const user = useSelector(state => state.user);
-  const summaryData = useSelector(state => state.summary);
+  const {summaryData} = useSelector(state => state.summaryData);
   const dispatch = useDispatch();
 
   const handleAnotherRes = async () => {
@@ -49,7 +49,6 @@ export const SignOut = ({navigation}) => {
       })
       .then(({data}) => {
         dispatch(getSummaryDataSucess(data));
-        console.log(data, 'res');
       })
       .catch(err => {
         dispatch(getSummaryDataFail(err));
@@ -75,7 +74,7 @@ export const SignOut = ({navigation}) => {
           </Text>
 
           <SummaryCard
-            data={summaryData?.summaryData?.data}
+            data={summaryData?.data}
             cardTitle="Your Today's stats"
           />
         </View>

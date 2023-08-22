@@ -7,7 +7,10 @@ import {persistReducer} from 'redux-persist';
 import recordingReducer from './Reducers/RecordAudio';
 import customerReducer from './Reducers/customer';
 import customerDetailReducer from './Reducers/customerDetail';
-import summaryReducer from './Reducers/summary';
+import summaryReducer, {
+  summaryDataReducer,
+  summaryTotalDataReducer,
+} from './Reducers/summary';
 
 const persistConfig = {
   key: 'root',
@@ -22,7 +25,8 @@ const rootReducer = combineReducers({
   Recorder: recordingReducer,
   customer: customerReducer,
   customerDetail: customerDetailReducer,
-  summary: summaryReducer,
+  summaryData: summaryDataReducer,
+  summaryTotalData: summaryTotalDataReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

@@ -7,7 +7,8 @@ import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 
 const UserSummary = () => {
-  const summaryData = useSelector(state => state.summary);
+  const {summaryData} = useSelector(state => state.summaryData);
+  const {summaryTotalData} = useSelector(state => state.summaryTotalData);
   const navigation = useNavigation();
 
   return (
@@ -24,8 +25,14 @@ const UserSummary = () => {
         </TouchableOpacity>
         <View>
           <SummaryCard
-            data={summaryData?.summaryData?.data}
+            data={summaryData?.data}
             cardTitle="Your Today's stats"
+          />
+        </View>
+        <View>
+          <SummaryCard
+            data={summaryTotalData?.data}
+            cardTitle="Your Total stats"
           />
         </View>
       </View>

@@ -1,4 +1,9 @@
-import {GET_SUMMARY_DATA_FAIL, GET_SUMMARY_DATA_SUCCESS} from '../types';
+import {
+  GET_SUMMARY_DATA_FAIL,
+  GET_SUMMARY_DATA_SUCCESS,
+  GET_SUMMARY_TOTAL_FAIL,
+  GET_SUMMARY_TOTAL_SUCCESS,
+} from '../types';
 
 // reducers.js
 const initialState = {
@@ -6,7 +11,7 @@ const initialState = {
   error: '',
 };
 
-const summaryReducer = (state = initialState, action) => {
+export const summaryDataReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET_SUMMARY_DATA_SUCCESS:
       return {
@@ -23,4 +28,22 @@ const summaryReducer = (state = initialState, action) => {
   }
 };
 
-export default summaryReducer;
+export const summaryTotalDataReducer = (
+  state = {summaryTotalData: {}, summaryTotalError: ''},
+  action,
+) => {
+  switch (action.type) {
+    case GET_SUMMARY_TOTAL_SUCCESS:
+      return {
+        ...state,
+        summaryTotalData: action.payload,
+      };
+    case GET_SUMMARY_TOTAL_FAIL:
+      return {
+        ...state,
+        summaryTotalError: action.payload,
+      };
+    default:
+      return state;
+  }
+};
