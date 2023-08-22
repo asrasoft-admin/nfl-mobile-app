@@ -14,6 +14,7 @@ import {
 } from '../pages';
 import {View} from 'react-native';
 import {SignOut} from '../common';
+import UserSummary from '../pages/UserSummary';
 
 const RootStack = createStackNavigator();
 const options = {
@@ -35,6 +36,7 @@ const screens = [
   {name: 'ImageCapture', component: ImageCapture},
   {name: 'SignOut', component: SignOut},
   {name: 'RecordAudio', component: RecordAudio},
+  {name: 'UserSummary', component: UserSummary},
 ];
 
 const AppView = () => {

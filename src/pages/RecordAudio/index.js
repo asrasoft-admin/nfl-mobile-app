@@ -120,7 +120,7 @@ export const RecordAudio = () => {
         <Button label="Start Form" onPress={handleRecordAudio} />
         <Button
           label="View your record"
-          onPress={() => {}}
+          onPress={() => navigation.navigate('UserSummary')}
           containerStyles={style.viewSummary}
         />
       </View>

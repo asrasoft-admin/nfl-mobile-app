@@ -1,28 +1,20 @@
 import React, {useEffect} from 'react';
 import style from './style';
-import {Image, View, Text, FlatList} from 'react-native';
+import {Image, View, Text} from 'react-native';
 import {Button} from '..';
 import {Texture, Header} from '..';
 import {useDispatch, useSelector} from 'react-redux';
-import {logout} from '../../Redux/Actions/userAction';
-import {axiosInstance, toTitleCase} from '../../helpers';
+import {axiosInstance} from '../../helpers';
 import {
   getSummaryDataFail,
   getSummaryDataSucess,
 } from '../../Redux/Actions/summary';
+import SummaryCard from '../SummaryCard';
 
 export const SignOut = ({navigation}) => {
   const user = useSelector(state => state.user);
   const summaryData = useSelector(state => state.summary);
   const dispatch = useDispatch();
-
-  const handleLogout = () => {
-    dispatch(logout());
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'Login'}],
-    });
-  };
 
   const handleAnotherRes = async () => {
     if (user.role === 'supervisor') {
@@ -82,20 +74,10 @@ export const SignOut = ({navigation}) => {
             Your data has been successfully submitted
           </Text>
 
-          <View style={style.flatListContainer}>
-            <Text style={style.todayTextContainer}>Your Today's stats</Text>
-            <FlatList
-              data={Object.keys(summaryData.summaryData.data)}
-              renderItem={({item, index}) => (
-                <View style={style.flatListContent} key={index}>
-                  <Text style={style.heading}>{toTitleCase(item)} : </Text>
-                  <Text style={style.title}>
-                    {summaryData.summaryData.data[item]}
-                  </Text>
-                </View>
-              )}
-            />
-          </View>
+          <SummaryCard
+            data={summaryData?.summaryData?.data}
+            cardTitle="Your Today's stats"
+          />
         </View>
 
         <View style={style.footer}>
