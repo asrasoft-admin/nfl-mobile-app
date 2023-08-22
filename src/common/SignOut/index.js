@@ -5,10 +5,15 @@ import {Button} from '..';
 import {Texture, Header} from '..';
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../../Redux/Actions/userAction';
-import {axiosInstance} from '../../helpers';
+import {axiosInstance, toTitleCase} from '../../helpers';
+import {
+  getSummaryDataFail,
+  getSummaryDataSucess,
+} from '../../Redux/Actions/summary';
 
 export const SignOut = ({navigation}) => {
   const user = useSelector(state => state.user);
+  const summaryData = useSelector(state => state.summary);
   const dispatch = useDispatch();
 
   const handleLogout = () => {
@@ -51,20 +56,14 @@ export const SignOut = ({navigation}) => {
         },
       })
       .then(({data}) => {
+        dispatch(getSummaryDataSucess(data));
         console.log(data, 'res');
       })
       .catch(err => {
+        dispatch(getSummaryDataFail(err));
         console.log(err, 'err');
       });
-  }, [user]);
-
-  const summaryLocalData = [
-    {heading: 'my test', title: '3424'},
-    {heading: 'Data test', title: '3424'},
-    {heading: 'my test', title: '3424'},
-    {heading: 'my test', title: '3424'},
-    {heading: 'my test', title: '3424'},
-  ];
+  }, [user, dispatch]);
 
   return (
     <View style={style.root}>
@@ -116,11 +115,13 @@ export const SignOut = ({navigation}) => {
             </View> */}
 
             <FlatList
-              data={summaryLocalData}
+              data={Object.keys(summaryData.summaryData.data)}
               renderItem={({item, index}) => (
                 <View style={style.flatListContent} key={index}>
-                  <Text style={style.heading}>{item.heading} : </Text>
-                  <Text style={style.title}>{item.title}</Text>
+                  <Text style={style.heading}>{toTitleCase(item)} : </Text>
+                  <Text style={style.title}>
+                    {summaryData.summaryData.data[item]}
+                  </Text>
                 </View>
               )}
             />

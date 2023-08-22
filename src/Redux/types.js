@@ -15,5 +15,8 @@ export const authConstants = {
 
 export const OTPCODE = 'OTPCODE';
 
+export const GET_SUMMARY_DATA_SUCCESS = 'GET_SUMMARY_DATA_SUCCESS';
+export const GET_SUMMARY_DATA_FAIL = 'GET_SUMMARY_DATA_FAIL';
+
 // customerActionTypes.js
 export const SET_CUSTOMER_DETAILS = 'SET_CUSTOMER_DETAILS';
