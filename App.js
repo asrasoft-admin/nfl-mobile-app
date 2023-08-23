@@ -1,5 +1,4 @@
-import React, {useEffect} from 'react';
-import {BackHandler} from 'react-native';
+import React from 'react';
 import {
   NavigationContainer,
   useNavigationContainerRef,
@@ -15,11 +14,6 @@ const MyTheme = {
     primary: colors.activeColor,
     background: colors.background,
   },
-};
-
-const disableBackButton = () => {
-  BackHandler.exitApp();
-  return true;
 };
 
 const App = () => {
@@ -50,10 +44,6 @@ const App = () => {
     }
     return Promise.reject(err);
   });
-
-  useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', disableBackButton);
-  }, []);
 
   return (
     <NavigationContainer theme={MyTheme} ref={navigation}>
