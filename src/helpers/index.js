@@ -48,7 +48,8 @@ export const baseURL = 'https://nfl-dashboard.vercel.app/';
 
 export const axiosInstance = axios.create({
   // baseURL: 'https://dev-nfl-dds-dashboard.herokuapp.com/api',
-  baseURL: 'https://nfl-dashboard.vercel.app/api',
+  // baseURL: 'https://nfl-dashboard.vercel.app/api',
+  baseURL: 'https://dds.asrasoft.net/api',
 });
 
 export const getLocation = setLocation => {
