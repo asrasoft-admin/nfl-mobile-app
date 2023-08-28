@@ -1,12 +1,14 @@
 import RNFetchBlob from 'react-native-fetch-blob';
 
-const uploadAudioToCloudinary = async audioPath => {
+const uploadAudioToCloudinary = async (audioPath) => {
   const url = `https://api.cloudinary.com/v1_1/dwhyqylgz/video/upload`;
+  const generatedFilename = audioPath.substring(audioPath.lastIndexOf('/') + 1);
+
   const uploadData = [
     {
       name: 'file',
-      filename: 'audio.mp3',
-      type: 'audio/mp3',
+      filename:generatedFilename,
+      type: 'audio/aac',
       data: RNFetchBlob.wrap(audioPath),
     },
     {name: 'upload_preset', data: 'v8rutycs'}, // Replace with your Cloudinary upload preset

@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import {Alert} from 'react-native';
+import RNFS from 'react-native-fs';
 import Geolocation from 'react-native-geolocation-service';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import uploadAudioToCloudinary from '../services/cloudinary/Cloudinary';
@@ -41,15 +42,26 @@ export const listener = () => {
 
 export const stopRecording = async () => {
   const result = await audioRecorderPlayer?.stopRecorder();
+  const cachePath = RNFS.CachesDirectoryPath + '/' + 'audio_folder';
+  const isCacheFolderExists = await RNFS.exists(cachePath);
+  if (!isCacheFolderExists) {
+    await RNFS.mkdir(cachePath);
+  }
+  const currentDate = new Date();
+  const formattedDate = currentDate.toISOString(); // Convert to ISO string for a standard format
+  const audioFilename = formattedDate + '.aac'; // or '.acc' if you prefer
+
+  const audioPath = cachePath + '/' + audioFilename;
+  await RNFS.moveFile(result, audioPath);
   audioRecorderPlayer.removeRecordBackListener();
-  return result;
+  return audioPath;
 };
 export const baseURL = 'https://nfl-dashboard.vercel.app/';
 
 export const axiosInstance = axios.create({
-  // baseURL: 'https://dev-nfl-dds-dashboard.herokuapp.com/api',
-  // baseURL: 'https://nfl-dashboard.vercel.app/api',
-  baseURL: 'https://dds.asrasoft.net/api',
+  // baseURL: 'https://564a-202-47-55-165.ngrok-free.app/api',
+  baseURL: 'https://nfl-dashboard.vercel.app/api',
+  // baseURL: 'https://dds.asrasoft.net/api',
 });
 
 export const getLocation = setLocation => {
@@ -118,3 +130,65 @@ export function toTitleCase(str) {
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/\b\w/g, char => char.toUpperCase());
 }
+
+export const fetchDeals = async user => {
+  return await axiosInstance
+    .get('/deal/specific-deals', {
+      params: {
+        category_id: user.category_id,
+        activity_id: user.activity_id,
+      },
+    })
+    .then(res => {
+      if (res.data.success) {
+        const temp = res.data.data.map(item => ({id: item.id, quantity: 0}));
+        return {data: res.data.data, qty: temp};
+        // setQuantities(temp);
+        // setAllDeals(res.data.data);
+      }
+    })
+    .catch(error => {
+      parseError(error);
+    });
+};
+
+export const handleSync = async data => {
+  if (data.length === 0) {
+    return Alert.alert(
+      'Nothing to Sync',
+      'You have to record one or more entries to enable sync data',
+      [{text: 'OK'}],
+    );
+  }
+
+  try {
+    const modifiedData = await Promise.all(
+      data.map(async element => {
+        const audio = await uploadAudioToCloudinary(element.audioPath);
+        console.log(element.deals);
+        delete element.audioPath;
+        return {
+          ...element,
+          audio,
+        };
+      }),
+    );
+
+    console.log({modifiedData});
+    console.log(
+      '?????????????????????????????????????????????????????????????????????????>',
+    );
+    const {data: resData} = await axiosInstance.post('/customer/sync', {
+      data: modifiedData,
+    });
+    console.log(
+      '=================================================================================>',
+    );
+    // console.log(resData);
+    return resData;
+  } catch (error) {
+    parseError(error);
+    console.log(error);
+    return error;
+  }
+};

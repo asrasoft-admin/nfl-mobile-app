@@ -37,6 +37,7 @@ import {
 import {setCustomerDetails} from '../../Redux/Actions/customer';
 import {otpCodeAction} from '../../Redux/Actions/customerDetail';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import {saveUser} from '../../Redux/Actions/allUsers';
 
 export const CustomerDetail = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -129,43 +130,72 @@ export const CustomerDetail = ({navigation}) => {
 
   const noResponseHandle = async () => {
     console.log('======================================> no response');
+
+    let audioPath, downloadLink;
+    setLoading(true);
     try {
-      let audioPath, downloadLink;
-      setLoading(true);
       if (audio) {
         audioPath = audio;
       } else {
         audioPath = await stopRecording();
         dispatch(stopAudioRecording(audioPath));
       }
-      if (downloadUrl) {
-        downloadLink = downloadUrl;
-        console.log({downloadUrl});
-      } else {
-        downloadLink = await uploadAudioToCloudinary(audioPath);
-        dispatch(uploadSuccess(downloadLink));
-      }
-      console.log('no Response');
-      const res = await axiosInstance.post('/customer/details', {
+      // if (Boolean(downloadUrl)) {
+      //   downloadLink = downloadUrl;
+      // } else {
+      //   downloadLink = await uploadAudioToCloudinary(audioPath);
+      //   if (!downloadLink)
+      //     throw new Error('Something went wrong in recording audio');
+      //   dispatch(uploadSuccess(downloadLink));
+      // }
+      const cusData = {
         user_id: user.id,
         activity_id: user.activity_id,
         coordinates: JSON.stringify({
           latitude: location?.latitude,
           longitude: location?.longitude,
         }),
-        audio: downloadLink,
         no_response: true,
+        audioPath,
         audio_record_time: new Date().getTime(),
         audio_record_date: new Date(),
         area_id: area?.id,
-      });
-      if (res.data.success) {
-        dispatch(recordSuccess());
-        onNoResClose();
-        navigation.navigate('SignOut');
-      }
-      console.log({res});
-      return res;
+        deals: [],
+      };
+      dispatch(saveUser(cusData));
+      dispatch(recordSuccess());
+      navigation.navigate('SignOut');
+      setLoading(false);
+      onNoResClose();
+      // if (downloadUrl) {
+      //   downloadLink = downloadUrl;
+      //   console.log({downloadUrl});
+      // } else {
+      //   downloadLink = await uploadAudioToCloudinary(audioPath);
+      //   dispatch(uploadSuccess(downloadLink));
+      // }
+      // console.log('no Response');
+      //   const res = await axiosInstance.post('/customer/details', {
+      //     user_id: user.id,
+      //     activity_id: user.activity_id,
+      //     coordinates: JSON.stringify({
+      //       latitude: location?.latitude,
+      //       longitude: location?.longitude,
+      //     }),
+      //     audio: downloadLink,
+      //     no_response: true,
+      //     audio_record_time: new Date().getTime(),
+      //     audio_record_date: new Date(),
+      //     area_id: area?.id,
+
+      //   });
+      //   if (res.data.success) {
+      //     dispatch(recordSuccess());
+      //     onNoResClose();
+      //     navigation.navigate('SignOut');
+      //   }
+      //   console.log({res});
+      //   return res;
     } catch (error) {
       throw new Error(error);
     } finally {
@@ -201,6 +231,8 @@ export const CustomerDetail = ({navigation}) => {
       }
     } catch (error) {
       setOTPSendLoading(false);
+      setOtpMessage({message: error.message, success: false});
+      dispatch(otpCodeAction(""))
       console.log(error, 'otp error');
     }
     // console.log(number, terms, otp);
@@ -224,32 +256,53 @@ export const CustomerDetail = ({navigation}) => {
             audioPath = await stopRecording();
             dispatch(stopAudioRecording(audioPath));
           }
-          if (Boolean(downloadUrl)) {
-            downloadLink = downloadUrl;
-          } else {
-            downloadLink = await uploadAudioToCloudinary(audioPath);
-            dispatch(uploadSuccess(downloadLink));
-          }
-
-          const res = await axiosInstance.post('/customer/details', {
+          // if (Boolean(downloadUrl)) {
+          //   downloadLink = downloadUrl;
+          // } else {
+          //   downloadLink = await uploadAudioToCloudinary(audioPath);
+          //   if (!downloadLink)
+          //     throw new Error('Something went wrong in recording audio');
+          //   dispatch(uploadSuccess(downloadLink));
+          // }
+          // save the customer to the memory to be sync late
+          const cusData = {
             user_id: user.id,
             activity_id: user.activity_id,
             coordinates: JSON.stringify(location),
-            audio: downloadLink,
             city: data.city,
+            audioPath,
             previous_brand_id: data.prevBrand,
             no_response: false,
             audio_record_time: new Date().getTime(),
             audio_record_date: new Date(),
             area_id: area?.id,
-          });
-          if (res.data.success) {
-            dispatch(recordSuccess());
-            onClose();
-            navigation.navigate('SignOut');
-          }
-          console.log('===========================area =>', {res});
-          return res;
+            deals: [],
+          };
+          dispatch(saveUser(cusData));
+          dispatch(recordSuccess());
+          navigation.navigate('SignOut');
+          setLoading(false);
+          onClose();
+
+          // const res = await axiosInstance.post('/customer/details', {
+          //   user_id: user.id,
+          //   activity_id: user.activity_id,
+          //   coordinates: JSON.stringify(location),
+          //   audio: downloadLink,
+          //   city: data.city,
+          //   previous_brand_id: data.prevBrand,
+          //   no_response: false,
+          //   audio_record_time: new Date().getTime(),
+          //   audio_record_date: new Date(),
+          //   area_id: area?.id,
+          // });
+          // if (res.data.success) {
+          //   dispatch(recordSuccess());
+          //   onClose();
+          //   navigation.navigate('SignOut');
+          // }
+          // console.log('===========================area =>', {res});
+          // return res;
         } catch (error) {
           throw new Error(error);
         } finally {

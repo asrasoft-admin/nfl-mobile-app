@@ -15,6 +15,7 @@ import {
   uploadSuccess,
 } from '../../Redux/Actions/RecordAudio';
 import uploadAudioToCloudinary from '../../services/cloudinary/Cloudinary';
+import { saveUser } from '../../Redux/Actions/allUsers';
 
 export const Deals = ({route, navigation, containerStyles}) => {
   const [isLoading, setLoading] = useState(false);
@@ -22,6 +23,8 @@ export const Deals = ({route, navigation, containerStyles}) => {
   const [allPackSwapProducts, setAllPackSwapProducts] = useState([]);
   const [quantities, setQuantities] = useState([]);
   const customer = useSelector(state => state.customer);
+  const {allCustomersDetails} = useSelector(state => state.allCustomers);
+  console.log({allCustomersDetails})
   const {
     isRecording,
     audioPath: audio,
@@ -31,6 +34,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
 
   const state = useSelector(state => state);
   const user = state.user;
+  const {deals} = state.deals;
 
   const {control, handleSubmit, formState} = useForm({
     mode: 'onChange',
@@ -39,29 +43,6 @@ export const Deals = ({route, navigation, containerStyles}) => {
   const {errors} = formState;
 
   const deal = allDeals.find(item => item.selected === true);
-
-  const packSwapValidation = (data, dealId) => {
-    const packSwapProduct = allPackSwapProducts.find(
-      item => item?.id === data?.pack_swap_product,
-    );
-    const previousBrand = Brand.find(item => item?.id === data.prevBrand);
-
-    if (packSwapProduct?.id && previousBrand?.id && dealId) {
-      return {
-        valid: true,
-        packSwapProduct,
-        previousBrand,
-      };
-    } else if (packSwapProduct?.id || previousBrand?.id) {
-      throw new Error('Please fill all details of Pack Swap');
-    } else {
-      return {
-        valid: false,
-        packSwapProduct: null,
-        previousBrand: null,
-      };
-    }
-  };
 
   const handleProceed = async data => {
     let allDealsIds = [];
@@ -82,13 +63,15 @@ export const Deals = ({route, navigation, containerStyles}) => {
           audioPath = await stopRecording();
           dispatch(stopAudioRecording(audioPath));
         }
-        if (Boolean(downloadUrl)) {
-          downloadLink = downloadUrl;
-        } else {
-          downloadLink = await uploadAudioToCloudinary(audioPath);
-          dispatch(uploadSuccess(downloadLink));
-        }
-        setLoading(true);
+        // if (Boolean(downloadUrl)) {
+        //   downloadLink = downloadUrl;
+        // } else {
+        //   downloadLink = await uploadAudioToCloudinary(audioPath);
+        //   if (!downloadLink)
+        //     throw new Error('Something went wrong in recording audio');
+        //   dispatch(uploadSuccess(downloadLink));
+        // }
+
         const dealQty = quantities.filter(
           item => allDeals.find(it => it.id === item.id).selected,
         );
@@ -102,28 +85,39 @@ export const Deals = ({route, navigation, containerStyles}) => {
         if (qtyIsNull) {
           throw new Error('Enter quantity of the selected deals');
         }
-        const res = await axiosInstance.post('/customer/details', {
+        const cusData = {
           ...customer,
-          audio: downloadLink,
+          audioPath,
           audio_record_time: new Date().getTime(),
           audio_record_date: new Date(),
-        });
-        if (res.data.success) {
-          dispatch(recordSuccess());
-          const {data: resData} = await axiosInstance.post(
-            '/customer/add-deal',
-            {
-              customer_id: res.data.data.id,
-              deals: dealQty,
-              user_id: user.id,
-            },
-          );
+          deals: dealQty,
+        };
+        dispatch(saveUser(cusData));
+        dispatch(recordSuccess());
+        setLoading(false);
+        navigation.navigate('SignOut');
+        // const res = await axiosInstance.post('/customer/details', {
+        //   ...customer,
+        //   audio: downloadLink,
+        //   audio_record_time: new Date().getTime(),
+        //   audio_record_date: new Date(),
+        // });
+        // if (res.data.success) {
+        //   dispatch(recordSuccess());
+        //   const {data: resData} = await axiosInstance.post(
+        //     '/customer/add-deal',
+        //     {
+        //       customer_id: res.data.data.id,
+        //       deals: dealQty,
+        //       user_id: user.id,
+        //     },
+        //   );
 
-          if (resData.success) {
-            setLoading(false);
-            navigation.navigate('SignOut');
-          }
-        }
+        //   if (resData.success) {
+        //     setLoading(false);
+        //     navigation.navigate('SignOut');
+        //   }
+        // }
       } else if (packSwapValid) {
         throw new Error('Please select deal');
       } else throw new Error('Please select any one deal');
@@ -132,48 +126,18 @@ export const Deals = ({route, navigation, containerStyles}) => {
       parseError(error);
     }
   };
-  const fetchDeals = async () => {
-    await axiosInstance
-      .get('/deal/specific-deals', {
-        params: {
-          category_id: user.category_id,
-          activity_id: user.activity_id,
-        },
-      })
-      .then(res => {
-        if (res.data.success) {
-          const temp = res.data.data.map(item => ({id: item.id, quantity: 0}));
-          setQuantities(temp);
-          setAllDeals(res.data.data);
-        }
-      })
-      .catch(error => {
-        setLoading(false);
-        parseError(error);
-        setAllDeals([]);
-      });
-  };
 
-  const fetchAllPackSwapProducts = async () => {
-    await axiosInstance
-      .get('/customer/all-pack-swap-products')
-      .then(res => {
-        if (res.data.success) {
-          const packSwapProducts = [{name: 'Pack Swap Product', id: ''}];
-          packSwapProducts.push(...res.data.data);
-          setAllPackSwapProducts(packSwapProducts);
-        }
-      })
-      .catch(error => {
-        setLoading(false);
-        parseError(error);
-      });
+  const fetchDeals = async () => {
+    const temp = deals.map(item => ({id: item.id, quantity: 0}));
+    setQuantities(temp);
+    setAllDeals(deals);
   };
 
   useEffect(() => {
     fetchDeals();
+    console.log({deals})
   }, []);
-
+console.log({deals})
   const onChange = (dealId, quantity) => {
     const updatedQuantities = quantities.map(item => {
       if (item.id === dealId) {

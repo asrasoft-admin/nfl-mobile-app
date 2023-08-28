@@ -1,28 +1,43 @@
 import React, {useEffect, useState} from 'react';
-import {View, PermissionsAndroid, Platform} from 'react-native';
+import {
+  View,
+  PermissionsAndroid,
+  Platform,
+  ActivityIndicator,
+} from 'react-native';
 // import uploadAudioToCloudinary from './CloudinaryUploader';
 import {Button, Header, Texture} from '../../common';
 import style from './style';
 import {useNavigation} from '@react-navigation/native';
 import {startRecording} from '../../Redux/Actions/RecordAudio';
 import {useDispatch, useSelector} from 'react-redux';
-import {audioRecorderPlayer, axiosInstance} from '../../helpers';
+import {widthPercentageToDP as wp} from '../../utils/responsive';
+import {
+  audioRecorderPlayer,
+  axiosInstance,
+  handleSync,
+  parseError,
+} from '../../helpers';
 import {
   getSummaryDataFail,
   getSummaryDataSucess,
   getSummaryTotalDataFail,
   getSummaryTotalDataSuccess,
 } from '../../Redux/Actions/summary';
+import {emptyList, saveUser} from '../../Redux/Actions/allUsers';
 
 // const audioRecorderPlayer = new AudioRecorderPlayer();
 
 export const RecordAudio = () => {
   const [audioPath, setAudioPath] = useState('');
+  const [syncLoading, setSyncLoading] = useState(false);
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {isRecording} = useSelector(state => state.Recorder);
   const user = useSelector(state => state.user);
-
+  const {allCustomersDetails} = useSelector(state => state.allCustomers);
+  console.log({allCustomersDetails});
   useEffect(() => {
     (async () => {
       await checkPermissions();
@@ -77,6 +92,20 @@ export const RecordAudio = () => {
     }
   };
 
+  const onClick = async () => {
+    try {
+      setSyncLoading(true);
+      const data = await handleSync(allCustomersDetails);
+      if (data && data?.resData && data?.resData?.success) {
+        dispatch(emptyList());
+      }
+
+      setSyncLoading(false);
+    } catch (error) {
+      parseError(error);
+      setSyncLoading(false);
+    }
+  };
   const handleRecordAudio = async () => {
     try {
       console.log('asdasd');
@@ -140,6 +169,18 @@ export const RecordAudio = () => {
           label="View your record"
           onPress={() => navigation.navigate('UserSummary')}
           containerStyles={style.viewSummary}
+        />
+        <Button
+          containerStyles={style.viewSummary}
+          label="Sync Data"
+          icon={
+            syncLoading && (
+              <ActivityIndicator
+                style={{position: 'absolute', left: wp('21')}}
+              />
+            )
+          }
+          onPress={() => onClick()}
         />
       </View>
     </View>

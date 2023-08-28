@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
   Login,
@@ -15,6 +15,9 @@ import {
 import {View} from 'react-native';
 import {SignOut} from '../common';
 import UserSummary from '../pages/UserSummary';
+import { fetchDeals } from '../helpers';
+import { useDispatch, useSelector } from 'react-redux';
+import { storeDeals } from '../Redux/Actions/deals';
 
 const RootStack = createStackNavigator();
 const options = {
@@ -40,6 +43,10 @@ const screens = [
 ];
 
 const AppView = () => {
+  const state = useSelector(state => state);
+  const {deals} = state.deals;
+  const user = state.user
+  const dispatch = useDispatch()
   const tabnavigatorRender = screens.map((item, index) => {
     return (
       <RootStack.Screen
@@ -49,6 +56,16 @@ const AppView = () => {
       />
     );
   });
+
+  useEffect(()=>{
+    (async()=>{
+      if(user){
+        const {data} =await fetchDeals(user);
+        dispatch(storeDeals(data))
+      }
+    })()
+  }, [user])
+  console.log({deals})
 
   return (
     <View style={{height: '100%', width: '100%'}}>
