@@ -4,6 +4,7 @@ import {
   PermissionsAndroid,
   Platform,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 // import uploadAudioToCloudinary from './CloudinaryUploader';
 import {Button, Header, Texture} from '../../common';
@@ -96,8 +97,15 @@ export const RecordAudio = () => {
     try {
       setSyncLoading(true);
       const data = await handleSync(allCustomersDetails);
-      if (data && data?.resData && data?.resData?.success) {
+      console.log('============================>', data);
+      if (data && data?.success) {
         dispatch(emptyList());
+        console.log('hello');
+        Alert.alert(
+          'Data Sync Completed',
+          'Data has been synced successfully',
+          [{text: 'OK'}],
+        );
       }
 
       setSyncLoading(false);

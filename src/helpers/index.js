@@ -166,9 +166,9 @@ export const handleSync = async data => {
       data.map(async element => {
         const audio = await uploadAudioToCloudinary(element.audioPath);
         console.log(element.deals);
-        delete element.audioPath;
+        const {audioPath, ...finalElement} = element;
         return {
-          ...element,
+          ...finalElement,
           audio,
         };
       }),
