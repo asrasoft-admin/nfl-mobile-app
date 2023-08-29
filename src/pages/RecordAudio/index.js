@@ -13,18 +13,8 @@ import {useNavigation} from '@react-navigation/native';
 import {startRecording} from '../../Redux/Actions/RecordAudio';
 import {useDispatch, useSelector} from 'react-redux';
 import {widthPercentageToDP as wp} from '../../utils/responsive';
-import {
-  audioRecorderPlayer,
-  axiosInstance,
-  handleSync,
-  parseError,
-} from '../../helpers';
-import {
-  getSummaryDataFail,
-  getSummaryDataSucess,
-  getSummaryTotalDataFail,
-  getSummaryTotalDataSuccess,
-} from '../../Redux/Actions/summary';
+import {audioRecorderPlayer, handleSync, parseError} from '../../helpers';
+
 import {emptyList, saveUser} from '../../Redux/Actions/allUsers';
 
 // const audioRecorderPlayer = new AudioRecorderPlayer();
@@ -36,7 +26,6 @@ export const RecordAudio = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {isRecording} = useSelector(state => state.Recorder);
-  const user = useSelector(state => state.user);
   const {allCustomersDetails} = useSelector(state => state.allCustomers);
   console.log({allCustomersDetails});
   useEffect(() => {
@@ -132,40 +121,6 @@ export const RecordAudio = () => {
   };
 
   // '/customer/total-summary'
-
-  useEffect(() => {
-    const date = new Date().toISOString();
-    const dateRes = date.split('T')[0];
-    axiosInstance
-      .get('/customer/ba-summary', {
-        params: {
-          ba_id: user?.id,
-          date: dateRes,
-        },
-      })
-      .then(({data}) => {
-        dispatch(getSummaryDataSucess(data));
-        console.log(data, 'res');
-      })
-      .catch(err => {
-        dispatch(getSummaryDataFail(err));
-        console.log(err, 'err');
-      });
-
-    axiosInstance
-      .get('/customer/total-summary', {
-        params: {
-          ba_id: user?.id,
-        },
-      })
-      .then(({data}) => {
-        dispatch(getSummaryTotalDataSuccess(data));
-      })
-      .catch(err => {
-        dispatch(getSummaryTotalDataFail(err));
-        console.log(err, 'err');
-      });
-  }, [user, dispatch]);
 
   return (
     <View style={style.root}>

@@ -15,12 +15,21 @@ const styles = StyleSheet.create({
   disclaimerContainer: {
     flex: 1,
   },
+  disclaimerWarning: {
+    backgroundColor: '#e4e4a5',
+    paddingVertical: widthPercentageToDP(3),
+    marginTop: heightPercentageToDP(1),
+    marginHorizontal: widthPercentageToDP(2),
+    borderRadius: 12,
+  },
   disclaimerText: {
-    fontSize: widthPercentageToDP(4.5),
-    fontWeight: '600',
-    color: 'red',
-    textAlign: 'center',
-    marginTop: heightPercentageToDP(2),
+    fontSize: widthPercentageToDP(3),
+    fontStyle: 'italic',
+    marginHorizontal: widthPercentageToDP(3),
+  },
+  disclaimerHead: {
+    fontStyle: 'normal',
+    fontSize: widthPercentageToDP(3),
   },
   texture: {
     height: heightPercentageToDP(4),

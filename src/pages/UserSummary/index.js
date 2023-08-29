@@ -1,15 +1,69 @@
-import React from 'react';
-import {View, Text, Image, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import styles from './styles';
 import {Texture, Header} from '../../common';
 import SummaryCard from '../../common/SummaryCard';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
+import {
+  getSummaryDataFail,
+  getSummaryDataSucess,
+  getSummaryTotalDataFail,
+  getSummaryTotalDataSuccess,
+} from '../../Redux/Actions/summary';
+import {axiosInstance} from '../../helpers';
 
 const UserSummary = () => {
   const {summaryData} = useSelector(state => state.summaryData);
   const {summaryTotalData} = useSelector(state => state.summaryTotalData);
+  const user = useSelector(state => state.user);
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const date = new Date().toISOString();
+    const dateRes = date.split('T')[0];
+    setIsLoading(true);
+    axiosInstance
+      .get('/customer/ba-summary', {
+        params: {
+          ba_id: user?.id,
+          date: dateRes,
+        },
+      })
+      .then(({data}) => {
+        dispatch(getSummaryDataSucess(data));
+        setIsLoading(false);
+        console.log(data, 'res');
+      })
+      .catch(err => {
+        dispatch(getSummaryDataFail(err));
+        console.log(err, 'err');
+      });
+
+    axiosInstance
+      .get('/customer/total-summary', {
+        params: {
+          ba_id: user?.id,
+        },
+      })
+      .then(({data}) => {
+        dispatch(getSummaryTotalDataSuccess(data));
+      })
+      .catch(err => {
+        dispatch(getSummaryTotalDataFail(err));
+        console.log(err, 'err');
+      });
+  }, [user, dispatch]);
 
   return (
     <View style={styles.root}>
@@ -24,23 +78,34 @@ const UserSummary = () => {
             style={styles.texture}
             resizeMode="cover"
           />
-          <View style={styles.disclaimerContainer}></View>
         </TouchableOpacity>
-        <Text style={styles.disclaimerText}>
-          Sync All your data to see the correct record
-        </Text>
-        <View>
-          <SummaryCard
-            data={summaryData?.data}
-            cardTitle="Your Today's stats"
-          />
-        </View>
-        <View>
-          <SummaryCard
-            data={summaryTotalData?.data}
-            cardTitle="Your Total stats"
-          />
-        </View>
+        {isLoading ? (
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <ActivityIndicator size={40} />
+          </View>
+        ) : (
+          <>
+            <View style={styles.disclaimerWarning}>
+              <Text style={styles.disclaimerText}>
+                <Text style={styles.disclaimerHead}>Disclaimer : </Text>
+                Sync all your data to see the correct records!
+              </Text>
+            </View>
+            <View>
+              <SummaryCard
+                data={summaryData?.data}
+                cardTitle="Your Today's stats"
+              />
+            </View>
+            <View>
+              <SummaryCard
+                data={summaryTotalData?.data}
+                cardTitle="Your Total stats"
+              />
+            </View>
+          </>
+        )}
       </View>
     </View>
   );
