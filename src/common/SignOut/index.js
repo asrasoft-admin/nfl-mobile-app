@@ -9,11 +9,9 @@ import {
   getSummaryDataFail,
   getSummaryDataSucess,
 } from '../../Redux/Actions/summary';
-import SummaryCard from '../SummaryCard';
 
 export const SignOut = ({navigation}) => {
   const user = useSelector(state => state.user);
-  const {summaryData} = useSelector(state => state.summaryData);
   const dispatch = useDispatch();
 
   const handleAnotherRes = async () => {
@@ -72,11 +70,6 @@ export const SignOut = ({navigation}) => {
           <Text style={style.text}>
             Your data has been successfully submitted
           </Text>
-
-          <SummaryCard
-            data={summaryData?.data}
-            cardTitle="Your Today's stats"
-          />
         </View>
 
         <View style={style.footer}>

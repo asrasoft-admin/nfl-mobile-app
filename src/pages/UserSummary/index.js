@@ -16,13 +16,19 @@ const UserSummary = () => {
       <View style={styles.container}>
         <Texture />
         <Header />
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.arrowIconContainer}>
           <Image
             source={require('../../assets/images/arrow.png')}
             style={styles.texture}
             resizeMode="cover"
           />
+          <View style={styles.disclaimerContainer}></View>
         </TouchableOpacity>
+        <Text style={styles.disclaimerText}>
+          Sync All your data to see the correct record
+        </Text>
         <View>
           <SummaryCard
             data={summaryData?.data}

@@ -11,6 +11,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  arrowIconContainer: {},
+  disclaimerContainer: {
+    flex: 1,
+  },
+  disclaimerText: {
+    fontSize: widthPercentageToDP(4.5),
+    fontWeight: '600',
+    color: 'red',
+    textAlign: 'center',
+    marginTop: heightPercentageToDP(2),
+  },
   texture: {
     height: heightPercentageToDP(4),
     width: widthPercentageToDP(7),

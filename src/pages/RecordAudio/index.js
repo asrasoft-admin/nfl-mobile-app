@@ -172,7 +172,11 @@ export const RecordAudio = () => {
       <Texture />
       <Header />
       <View style={style.container}>
-        <Button label="Start Form" onPress={handleRecordAudio} />
+        <Button
+          label="Start Form"
+          onPress={handleRecordAudio}
+          containerStyles={style.viewSummary}
+        />
         <Button
           label="View your record"
           onPress={() => navigation.navigate('UserSummary')}
@@ -184,7 +188,7 @@ export const RecordAudio = () => {
           icon={
             syncLoading && (
               <ActivityIndicator
-                style={{position: 'absolute', left: wp('21')}}
+                style={{position: 'absolute', left: wp('24')}}
               />
             )
           }

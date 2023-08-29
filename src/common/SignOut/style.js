@@ -11,6 +11,7 @@ export default StyleSheet.create({
   },
   overlay: {
     flex: 1,
+    justifyContent: 'center',
   },
   header: {
     alignItems: 'center',

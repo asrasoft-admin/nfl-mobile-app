@@ -20,5 +20,7 @@ export default StyleSheet.create({
   },
   viewSummary: {
     marginTop: hp('2'),
+    width: '95%',
+    alignSelf: 'center',
   },
 });
