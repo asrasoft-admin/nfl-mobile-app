@@ -60,8 +60,8 @@ export const baseURL = 'https://nfl-dashboard.vercel.app/';
 
 export const axiosInstance = axios.create({
   // baseURL: 'https://564a-202-47-55-165.ngrok-free.app/api',
-  baseURL: 'https://nfl-dashboard.vercel.app/api',
-  // baseURL: 'https://dds.asrasoft.net/api',
+  // baseURL: 'https://nfl-dashboard.vercel.app/api',
+  baseURL: 'https://dds.asrasoft.net/api',
 });
 
 export const getLocation = setLocation => {

@@ -232,7 +232,7 @@ export const CustomerDetail = ({navigation}) => {
     } catch (error) {
       setOTPSendLoading(false);
       setOtpMessage({message: error.message, success: false});
-      dispatch(otpCodeAction(""))
+      dispatch(otpCodeAction(''));
       console.log(error, 'otp error');
     }
     // console.log(number, terms, otp);
@@ -414,7 +414,7 @@ export const CustomerDetail = ({navigation}) => {
           />
 
           <View style={style.radioContainer}>
-            <Text style={style.radio}> Disclaimer </Text>
+            <Text style={style.radio}> Is customer buying </Text>
             <RadioButtonRN
               data={data}
               box={false}
@@ -440,17 +440,25 @@ export const CustomerDetail = ({navigation}) => {
                 containerStyles={style.inputContainer}
               />
 
-              <Input
-                ref={control}
-                control={control}
-                name="number"
-                placeholder="Number 923XX-XXXXXXX"
-                error={!!errors?.number}
-                message={errors?.number?.message}
-                containerStyles={style.inputContainer}
-                keyboardType="numeric"
-                maxLength={11}
-              />
+              <View style={style.numberInputMain}>
+                <Input
+                  ref={control}
+                  control={control}
+                  name="number"
+                  placeholder="Number 923XX-XXXXXXX"
+                  error={!!errors?.number}
+                  message={errors?.number?.message}
+                  containerStyles={style.numberInputContainer}
+                  keyboardType="numeric"
+                  maxLength={11}
+                />
+                <Button
+                  containerStyles={style.otp}
+                  label="Send OTP"
+                  onPress={sendOTPHandler}
+                  loading={OTPSendLoading}
+                />
+              </View>
 
               <Input
                 ref={ref}
@@ -479,13 +487,6 @@ export const CustomerDetail = ({navigation}) => {
                   name="terms"
                 />
               </View>
-
-              <Button
-                containerStyles={style.otp}
-                label="Send OTP"
-                onPress={sendOTPHandler}
-                loading={OTPSendLoading}
-              />
             </>
           )}
           <CustomModal

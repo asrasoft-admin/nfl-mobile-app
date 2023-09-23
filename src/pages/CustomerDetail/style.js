@@ -7,11 +7,11 @@ import {
 export default StyleSheet.create({
   root: {
     // height: '100%',
-    flex: 1
+    flex: 1,
   },
   radio: {
     color: 'black',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   container: {
     flex: 1,
@@ -30,11 +30,23 @@ export default StyleSheet.create({
     borderRadius: wp(7),
     marginBottom: hp(3),
   },
+  numberInputMain: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   otp: {
-    marginTop: hp(2),
+    // marginTop: hp(2),
+    width: wp(30),
+    height: hp(6),
   },
 
   inputContainer: {
+    marginVertical: hp(1),
+  },
+  numberInputContainer: {
+    width: wp(50),
     marginVertical: hp(1),
   },
   btn: {
