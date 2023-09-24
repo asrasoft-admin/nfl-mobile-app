@@ -1,21 +1,28 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   PermissionsAndroid,
   Platform,
   ActivityIndicator,
   Alert,
+  BackHandler,
 } from 'react-native';
 // import uploadAudioToCloudinary from './CloudinaryUploader';
 import {Button, Header, Texture} from '../../common';
 import style from './style';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {startRecording} from '../../Redux/Actions/RecordAudio';
 import {useDispatch, useSelector} from 'react-redux';
 import {widthPercentageToDP as wp} from '../../utils/responsive';
-import {audioRecorderPlayer, handleSync, parseError} from '../../helpers';
+import {
+  audioRecorderPlayer,
+  fetchDeals,
+  handleSync,
+  parseError,
+} from '../../helpers';
 
 import {emptyList, saveUser} from '../../Redux/Actions/allUsers';
+import {storeDeals} from '../../Redux/Actions/deals';
 
 // const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -27,12 +34,57 @@ export const RecordAudio = () => {
   const dispatch = useDispatch();
   const {isRecording} = useSelector(state => state.Recorder);
   const {allCustomersDetails} = useSelector(state => state.allCustomers);
-  console.log({allCustomersDetails});
+  const [isActiveScreen, setIsActiveScreen] = useState(false);
+  const state = useSelector(state => state);
+  const user = state.user;
+
+  const handleBackPress = () => {
+    if (isActiveScreen) {
+      return true;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    };
+  }, [isActiveScreen]);
+
+  useEffect(() => {
+    const onFocus = () => {
+      setIsActiveScreen(true);
+    };
+
+    const onBlur = () => {
+      setIsActiveScreen(false);
+    };
+
+    const focusListener = navigation.addListener('focus', onFocus);
+    const blurListener = navigation.addListener('blur', onBlur);
+
+    return () => {
+      focusListener.remove();
+      blurListener.remove();
+    };
+  }, []);
+
   useEffect(() => {
     (async () => {
       await checkPermissions();
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (user) {
+        const {data} = await fetchDeals(user);
+        dispatch(storeDeals(data));
+      }
+    })();
+  }, [user]);
 
   const checkPermissions = async () => {
     if (Platform.OS === 'android') {
@@ -122,6 +174,9 @@ export const RecordAudio = () => {
 
   // '/customer/total-summary'
 
+  if (!user.authenticated) {
+    return null;
+  }
   return (
     <View style={style.root}>
       <Texture />

@@ -95,13 +95,13 @@ const UserSummary = () => {
             <View>
               <SummaryCard
                 data={summaryData?.data}
-                cardTitle="Your Today's stats"
+                cardTitle="Your Today's Stats"
               />
             </View>
             <View>
               <SummaryCard
                 data={summaryTotalData?.data}
-                cardTitle="Your Total stats"
+                cardTitle="Your Total Stats"
               />
             </View>
           </>

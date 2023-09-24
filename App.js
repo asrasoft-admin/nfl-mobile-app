@@ -26,7 +26,7 @@ const App = () => {
 
     if (request && request.headers && token) {
       request.headers.Authorization = token;
-    } else throw new Error('Session Expired!');
+    }
 
     return request;
   });

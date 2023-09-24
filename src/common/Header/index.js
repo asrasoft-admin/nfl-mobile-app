@@ -19,7 +19,7 @@ export const Header = ({navigation}) => {
   });
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const state = useSelector(state => state);
   const user = state.user;
@@ -43,14 +43,14 @@ export const Header = ({navigation}) => {
   };
 
   const handleLogout = async () => {
-    setLoading(true);
+    setIsLoading(true);
     if (isRecording) {
       await stopRecording();
       dispatch(stopAudioRecording(''));
     }
     dispatch(logout());
     onClose();
-    setLoading(false);
+    setIsLoading(false);
     navigation.reset({
       index: 0,
       routes: [{name: 'Login'}],

@@ -11,7 +11,14 @@ const SummaryCard = ({data, cardTitle}) => {
         data={data && Object.keys(data)}
         renderItem={({item, index}) => (
           <View style={styles.flatListContent} key={index}>
-            <Text style={styles.heading}>{data && toTitleCase(item)} : </Text>
+            <Text style={styles.heading}>
+              {data && toTitleCase(item) === 'Sales'
+                ? 'Trials'
+                : toTitleCase(item) === 'Total Sales'
+                ? 'Total Trials'
+                : toTitleCase(item)}{' '}
+              :{' '}
+            </Text>
             <Text style={styles.title}>{data && data[item]}</Text>
           </View>
         )}

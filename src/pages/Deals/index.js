@@ -15,7 +15,7 @@ import {
   uploadSuccess,
 } from '../../Redux/Actions/RecordAudio';
 import uploadAudioToCloudinary from '../../services/cloudinary/Cloudinary';
-import { saveUser } from '../../Redux/Actions/allUsers';
+import {saveUser} from '../../Redux/Actions/allUsers';
 
 export const Deals = ({route, navigation, containerStyles}) => {
   const [isLoading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
   const [quantities, setQuantities] = useState([]);
   const customer = useSelector(state => state.customer);
   const {allCustomersDetails} = useSelector(state => state.allCustomers);
-  console.log({allCustomersDetails})
+  console.log({allCustomersDetails});
   const {
     isRecording,
     audioPath: audio,
@@ -92,6 +92,13 @@ export const Deals = ({route, navigation, containerStyles}) => {
           audio_record_date: new Date(),
           deals: dealQty,
         };
+        let filterDeal = [...deals];
+        const dealIndex = filterDeal.findIndex(item => item.id === deal?.id);
+
+        if (filterDeal[dealIndex].selected === true) {
+          filterDeal[dealIndex].selected = false;
+          setAllDeals(filterDeal);
+        }
         dispatch(saveUser(cusData));
         dispatch(recordSuccess());
         setLoading(false);
@@ -135,9 +142,9 @@ export const Deals = ({route, navigation, containerStyles}) => {
 
   useEffect(() => {
     fetchDeals();
-    console.log({deals})
+    console.log({deals});
   }, []);
-console.log({deals})
+
   const onChange = (dealId, quantity) => {
     const updatedQuantities = quantities.map(item => {
       if (item.id === dealId) {

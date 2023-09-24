@@ -8,6 +8,7 @@ import {
   PermissionsAndroid,
   Text,
   Image,
+  BackHandler,
 } from 'react-native';
 import {useForm} from 'react-hook-form';
 import {widthPercentageToDP as wp} from 'utils/responsive';
@@ -38,9 +39,43 @@ export const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const [selectedArea, setSelectedArea] = useState(1);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [isActiveScreen, setIsActiveScreen] = useState(false);
+
+  const handleBackPress = () => {
+    if (isActiveScreen) {
+      BackHandler.exitApp();
+      return true;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    };
+  }, [isActiveScreen]);
+
+  useEffect(() => {
+    const onFocus = () => {
+      setIsActiveScreen(true);
+    };
+
+    const onBlur = () => {
+      setIsActiveScreen(false);
+    };
+
+    const focusListener = navigation.addListener('focus', onFocus);
+    const blurListener = navigation.addListener('blur', onBlur);
+
+    return () => {
+      focusListener.remove();
+      blurListener.remove();
+    };
+  }, []);
+
   useEffect(async () => {
-    // eslint-disable-next-line no-undef
     if (Platform.OS === 'ios') {
       getLocation();
     } else {
