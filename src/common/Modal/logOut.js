@@ -39,6 +39,7 @@ const LogOutModal = ({onPress, isLoading, modalVisible, onClose}) => {
                 primary={formState.isValid}
                 onPress={handleSubmit(onClose)}
                 containerStyles={style.btn}
+                isWhite={true}
               />
             </View>
           </View>

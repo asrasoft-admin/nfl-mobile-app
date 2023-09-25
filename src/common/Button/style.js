@@ -9,7 +9,6 @@ export default StyleSheet.create({
     height: wp('12'),
     borderWidth: wp('0.5'),
     borderRadius: wp('6'),
-    backgroundColor: colors.purple,
     borderColor: colors.purple,
     justifyContent: 'center',
     alignItems: 'center',
@@ -24,7 +23,6 @@ export default StyleSheet.create({
   label: {
     fontSize: wp('3.5'),
     letterSpacing: 0,
-    color: colors.activeColor,
     fontFamily: fontFamily.PoppinsBold,
   },
 });

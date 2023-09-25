@@ -53,6 +53,7 @@ export const CustomerDetail = ({navigation}) => {
   const [OTPSendLoading, setOTPSendLoading] = useState(false);
   const {otpCode} = useSelector(state => state.customerDetail);
   const [otpMessage, setOtpMessage] = useState({});
+  const [isChangingOTPLabel, setIsChangingOTPLabel] = useState(false);
 
   const {
     isRecording,
@@ -205,7 +206,7 @@ export const CustomerDetail = ({navigation}) => {
 
   const sendOTPHandler = async () => {
     const {number, terms, otp} = control._formValues;
-    numberValidation({number});
+    numberValidation(number);
 
     const genOtpCode = otpCodeGenerator();
 
@@ -224,6 +225,7 @@ export const CustomerDetail = ({navigation}) => {
       if (res.data.success) {
         setOtpMessage({message: res.data.message, success: res.data.success});
         setOTPSendLoading(false);
+        setIsChangingOTPLabel(true);
       }
 
       if (!res.data.success) {
@@ -280,6 +282,7 @@ export const CustomerDetail = ({navigation}) => {
           };
           dispatch(saveUser(cusData));
           dispatch(recordSuccess());
+          setIsChangingOTPLabel(false);
           navigation.navigate('SignOut');
           setLoading(false);
           onClose();
@@ -454,7 +457,7 @@ export const CustomerDetail = ({navigation}) => {
                 />
                 <Button
                   containerStyles={style.otp}
-                  label="Send OTP"
+                  label={isChangingOTPLabel ? 'Resend OTP' : 'Send OTP'}
                   onPress={sendOTPHandler}
                   loading={OTPSendLoading}
                 />
