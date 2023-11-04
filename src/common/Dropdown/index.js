@@ -6,7 +6,7 @@ import {Controller} from 'react-hook-form';
 
 export const Dropdown = ({
   items = [
-    {name: 'Area', id: ''},
+    {name: 'Area', id: 'Area'},
     {name: 'Gulshan', id: 'Gulshan'},
   ],
 

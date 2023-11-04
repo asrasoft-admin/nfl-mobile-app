@@ -162,10 +162,14 @@ export const RecordAudio = () => {
         const path = await audioRecorderPlayer.startRecorder();
         if (path) dispatch(startRecording());
         audioRecorderPlayer.addRecordBackListener(e => {
-          console.log('Recording . . . ', e.currentPosition);
+          // console.log('Recording . . . ', e.currentPosition);
           return;
         });
-        navigation.navigate('CustomerDetail');
+        if (state?.user?.role === 'shopkeeper') {
+          navigation.navigate('ShopkeerDetail');
+        } else {
+          navigation.navigate('CustomerDetail');
+        }
       }
     } catch (error) {
       console.log(error);

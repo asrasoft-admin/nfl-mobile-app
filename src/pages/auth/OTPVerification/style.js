@@ -20,7 +20,6 @@ export default StyleSheet.create({
     fontWeight: '700',
     color: '#000',
     textAlign: 'center',
-    backgroundColor: 'lightgreen',
     marginBottom: hp(3),
     borderRadius: wp(7),
   },

@@ -17,13 +17,13 @@ export default StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     width: '100%',
-    backgroundColor: 'lightgreen',
     textTransform: 'uppercase',
   },
   subHeading: {
-    color: '#fff',
+    color: '#000',
     fontSize: wp(5),
     marginVertical: wp(3),
+    marginHorizontal: wp(2.5),
   },
   product: {
     flexDirection: 'row',
@@ -32,11 +32,18 @@ export default StyleSheet.create({
   },
   description: {
     fontSize: wp(4),
-    color: '#fff',
+    marginLeft: wp(4),
+    color: '#000',
+  },
+  checkBox: {
+    marginLeft: wp(1),
   },
   content: {
     justifyContent: 'space-between',
     flex: 1,
-    marginBottom: 20,
+    marginBottom: wp(1),
+  },
+  button: {
+    marginVertical: wp(5),
   },
 });

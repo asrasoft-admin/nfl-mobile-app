@@ -5,17 +5,19 @@ import style from './style';
 import {Text, View, BackHandler} from 'react-native';
 import {useForm} from 'react-hook-form';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
-import {Input, Dropdown, Header, CheckBox, Texture} from '../../common';
+import {Input, Dropdown, Header, CheckBox, Texture, Button} from '../../common';
 import {relations, mobileNetwork, winnersActivity} from '../../dummyData';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   axiosInstance,
   getLocation,
   numberValidation,
+  otpCodeGenerator,
   parseError,
 } from '../../helpers';
 import CustomModal from '../../common/Modal';
 import {TextInput} from 'react-native-gesture-handler';
+import {otpCodeAction} from '../../Redux/Actions/customerDetail';
 
 export const ShopkeeperDetail = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -26,8 +28,14 @@ export const ShopkeeperDetail = ({navigation}) => {
   const user = state.user;
   const allAreas = state.allArea;
   const area = allAreas?.data?.filter(area => area.id === user.areaId);
+  const [OTPSendLoading, setOTPSendLoading] = useState(false);
+  const {otpCode} = useSelector(state => state.customerDetail);
+  const [otpMessage, setOtpMessage] = useState({});
+  const [isChangingOTPLabel, setIsChangingOTPLabel] = useState(false);
 
-  const {control, handleSubmit, formState} = useForm({
+  const dispatch = useDispatch();
+
+  const {control, handleSubmit, ref, formState} = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
     // defaultValues: {
@@ -50,48 +58,93 @@ export const ShopkeeperDetail = ({navigation}) => {
   };
 
   const onClose = () => {
-     setModalVisible(!modalVisible);
-     setLoading(false)
+    setModalVisible(!modalVisible);
+    setLoading(false);
   };
 
-  const otpCode = Math.random().toString(36).slice(2, 6);
+  // const otpCode = Math.random().toString(36).slice(2, 6);
+
+  const sendOTPHandler = async () => {
+    const {number, terms, otp} = control._formValues;
+    numberValidation(number);
+
+    const genOtpCode = otpCodeGenerator();
+
+    const sum = number?.slice(1, 11);
+    const numRes = 92 + sum;
+
+    try {
+      setOTPSendLoading(true);
+      const res = await axiosInstance.post('/customer/send-otp', {
+        otp_code: genOtpCode,
+        number: numRes,
+      });
+      dispatch(otpCodeAction(genOtpCode));
+
+      console.log('=================== send otp', res.data);
+      if (res.data.success) {
+        setOtpMessage({message: res.data.message, success: res.data.success});
+        setOTPSendLoading(false);
+        setIsChangingOTPLabel(true);
+      }
+
+      if (!res.data.success) {
+        setOtpMessage({message: res.data.message, success: res.data.success});
+      }
+    } catch (error) {
+      setOTPSendLoading(false);
+      setOtpMessage({message: error.message, success: false});
+      dispatch(otpCodeAction(''));
+      console.log(error?.message, 'otp error');
+    }
+    // console.log(number, terms, otp);
+  };
 
   const onSubmit = async data => {
+    console.log({data});
     const {number} = numberValidation(data);
     try {
       if (data.shopName && data.address) {
         if (data.mobile || number || data.relationship || data.terms) {
           if (data.mobile && number && data.relationship && data.terms) {
-            setLoading(true);
-            const {data: resData} = await axiosInstance.post(
-              'shop-keeper/details',
-              {
-                shop_name: data.shopName,
-                shop_address: data.address,
-                area_id: data.area,
-                email: data.email,
-                mobile_network_id: data.mobile,
-                mobile_number: number,
-                relationship_id: data.relationship,
-                terms_agreed: data.terms,
-                user_id: user.id,
-                activity_id: user.activity_id,
-                coordinates: JSON.stringify(location),
-                otp_code: otpCode,
-              },
-            );
-            if (resData.success) {
-              setLoading(false);
+            if (!data.otp || otpCode == data.otp) {
+              setLoading(true);
+              dispatch(otpCodeAction(''));
+              const {data: resData} = await axiosInstance.post(
+                'shop-keeper/details',
+                {
+                  shop_name: data.shopName,
+                  shop_address: data.address,
+                  area_id: 1,
+                  email: data.email,
+                  mobile_network_id: data.mobile,
+                  mobile_number: number,
+                  relationship_id: data.relationship,
+                  terms_agreed: data.terms,
+                  user_id: user.id,
+                  activity_id: user.activity_id,
+                  coordinates: JSON.stringify(location),
+                  otp_code: otpCode,
+                },
+              );
+              if (resData.success) {
+                setLoading(false);
+                onClose();
+                // navigation.navigate('OTPVerification', {
+                //   id: resData?.data?.id,
+                //   otpCode: otpCode,
+                // });
+                // navigation.navigate('ProductCheckList', {...route.params});
+                navigation.navigate('ProductCheckList', {
+                  id: resData?.data?.id,
+                });
+              }
+            } else {
+              setOtpMessage({message: 'Invalid OTP', success: false});
               onClose();
-              navigation.navigate('OTPVerification', {
-                id: resData?.data?.id,
-                otpCode: otpCode,
-              });
             }
-            console.log({otpCode})
-          } else
-           throw new Error('Please fill all details'); 
-           setLoading(false);
+          } else throw new Error('Please fill all details');
+          setLoading(false);
         } else {
           setLoading(true);
           const {data: resData} = await axiosInstance.post(
@@ -130,8 +183,16 @@ export const ShopkeeperDetail = ({navigation}) => {
     BackHandler.addEventListener('hardwareBackPress', disableBackButton);
   }, []);
 
+  useEffect(() => {
+    if (OTPSendLoading === false) {
+      setTimeout(() => {
+        setOtpMessage({});
+      }, 5000);
+    }
+  }, [OTPSendLoading]);
+
   return (
-    <View style={{height:"100%"}}>
+    <View style={{height: '100%'}}>
       <Texture />
       <Header navigation={navigation} />
       <KeyboardAwareScrollView contentContainerStyle={[style.container]}>
@@ -186,7 +247,7 @@ export const ShopkeeperDetail = ({navigation}) => {
             containerStyles={style.inputContainer}
             items={mobileNetwork}
           />
-          <Input
+          {/* <Input
             name="number"
             ref={control}
             control={control}
@@ -197,7 +258,27 @@ export const ShopkeeperDetail = ({navigation}) => {
             keyboardType="numeric"
             maxLength={12}
             returnKeyType={'send'}
-          />
+          /> */}
+
+          <View style={style.numberInputMain}>
+            <Input
+              ref={control}
+              control={control}
+              name="number"
+              placeholder="Number 923XX-XXXXXXX"
+              error={!!errors?.number}
+              message={errors?.number?.message}
+              containerStyles={style.numberInputContainer}
+              keyboardType="numeric"
+              maxLength={12}
+            />
+            <Button
+              containerStyles={style.otp}
+              label={isChangingOTPLabel ? 'Resend OTP' : 'Send OTP'}
+              onPress={sendOTPHandler}
+              loading={OTPSendLoading}
+            />
+          </View>
           <Dropdown
             name="relationship"
             control={control}
@@ -206,6 +287,25 @@ export const ShopkeeperDetail = ({navigation}) => {
             containerStyles={style.inputContainer}
             items={relations}
           />
+          <Input
+            ref={ref}
+            control={control}
+            name="otp"
+            keyboardType="numeric"
+            placeholder="Enter OTP"
+            error={!!errors?.otp}
+            message={errors?.otp?.message}
+            containerStyles={style.inputContainer}
+          />
+
+          {otpMessage?.message && (
+            <View>
+              <Text
+                style={otpMessage.success ? {color: 'green'} : {color: 'red'}}>
+                {otpMessage?.message}
+              </Text>
+            </View>
+          )}
           <View style={style.product}>
             <CheckBox item={item} control={control} name="terms" />
           </View>

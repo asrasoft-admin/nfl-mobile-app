@@ -86,13 +86,18 @@ export const ProductCheckList = ({route, navigation}) => {
                     onValueChange={newValue =>
                       handleValueChange(index, newValue)
                     }
+                    style={style.checkBox}
                     tintColors={{false: 'green', true: 'green'}}
                   />
                   <Text style={style.description}>{item.name}</Text>
                 </View>
               ))}
             </View>
-            <Button label="Submit" onPress={handleSubmit} />
+            <Button
+              label="Submit"
+              onPress={handleSubmit}
+              containerStyles={style.button}
+            />
           </View>
         </ScrollView>
       ) : (

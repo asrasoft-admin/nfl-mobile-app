@@ -367,7 +367,6 @@ export const CustomerDetail = ({navigation}) => {
     }
   }, [OTPSendLoading]);
 
-  console.log(area.id, '===============');
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

@@ -43,6 +43,7 @@ const CustomModal = ({
 
               <Button
                 label={'Close'}
+                isWhite={true}
                 primary={formState.isValid}
                 onPress={handleSubmit(onClose)}
                 containerStyles={style.btn}

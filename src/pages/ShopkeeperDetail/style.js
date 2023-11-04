@@ -4,18 +4,19 @@ import {
   heightPercentageToDP as hp,
 } from 'utils/responsive';
 import {fontFamily} from '../../assets/fonts';
+import {colors} from '../../assets/colors';
 
 export default StyleSheet.create({
   container: {
     marginHorizontal: wp(5),
   },
   heading: {
-    fontSize: wp(8),
+    fontSize: wp(7),
     fontWeight: '700',
-    color: '#000',
+    color: 'black',
+    fontWeight: '700',
     textAlign: 'center',
     width: '100%',
-    backgroundColor: 'lightgreen',
     borderRadius: wp(7),
     marginBottom: hp(3),
   },
@@ -24,6 +25,24 @@ export default StyleSheet.create({
   },
   btn: {
     marginVertical: hp(2),
+  },
+  numberInputMain: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  numberInputContainer: {
+    width: wp(50),
+    marginVertical: hp(1),
+  },
+  inputContainer: {
+    marginVertical: hp(1),
+  },
+  otp: {
+    // marginTop: hp(2),
+    width: wp(30),
+    height: hp(6),
   },
   product: {
     flexDirection: 'row',
