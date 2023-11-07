@@ -110,7 +110,7 @@ export const ShopkeeperDetail = ({navigation}) => {
       if (data.shopName && data.address) {
         if (data.mobile || number || data.relationship || data.terms) {
           if (data.mobile && number && data.relationship && data.terms) {
-            if (!data.otp || otpCode == data.otp) {
+            if (!data.otp && otpCode == data.otp) {
               setLoading(true);
               dispatch(otpCodeAction(''));
               const {data: resData} = await axiosInstance.post(
@@ -118,7 +118,7 @@ export const ShopkeeperDetail = ({navigation}) => {
                 {
                   shop_name: data.shopName,
                   shop_address: data.address,
-                  area_id: 1,
+                  area_id: data?.area,
                   email: data.email,
                   mobile_network_id: data.mobile,
                   mobile_number: number,
@@ -241,8 +241,8 @@ export const ShopkeeperDetail = ({navigation}) => {
             error={!!errors?.area}
             message={errors?.area?.message}
             containerStyles={style.inputContainer}
-            items={area}
-            enabledFalse={true}
+            items={allAreas?.data}
+            enabledFalse={false}
           />
           <Input
             name="email"
@@ -264,19 +264,14 @@ export const ShopkeeperDetail = ({navigation}) => {
             containerStyles={style.inputContainer}
             items={mobileNetwork}
           />
-          {/* <Input
-            name="number"
-            ref={control}
+          <Dropdown
+            name="relationship"
             control={control}
-            placeholder="Number 923XX-XXXXXXX"
-            error={!!errors?.number}
-            message={errors?.number?.message}
+            error={!!errors?.relationship}
+            message={errors?.relationship?.message}
             containerStyles={style.inputContainer}
-            keyboardType="numeric"
-            maxLength={12}
-            returnKeyType={'send'}
-          /> */}
-
+            items={relations}
+          />
           <View style={style.numberInputMain}>
             <Input
               ref={control}
@@ -296,14 +291,6 @@ export const ShopkeeperDetail = ({navigation}) => {
               loading={OTPSendLoading}
             />
           </View>
-          <Dropdown
-            name="relationship"
-            control={control}
-            error={!!errors?.relationship}
-            message={errors?.relationship?.message}
-            containerStyles={style.inputContainer}
-            items={relations}
-          />
           <Input
             ref={ref}
             control={control}

@@ -5,11 +5,7 @@ import {Picker} from '@react-native-community/picker';
 import {Controller} from 'react-hook-form';
 
 export const Dropdown = ({
-  items = [
-    {name: 'Area', id: 'Area'},
-    {name: 'Gulshan', id: 'Gulshan'},
-  ],
-
+  items,
   containerStyles,
   control,
   error,
@@ -28,7 +24,7 @@ export const Dropdown = ({
             style={style.filterValue}
             mode="dropdown"
             enabled={enabledFalse ? false : true}>
-            {items.map((item, index) => (
+            {items?.map((item, index) => (
               <Picker.Item
                 label={item.name}
                 value={item.id}

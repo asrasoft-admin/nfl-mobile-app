@@ -8,7 +8,7 @@ export const allAreaAction = () => {
     try {
       const area = await axios.get(`${baseURL}/api/area/all-areas`);
       const areaAll = area.data;
-      console.log({area});
+      console.log({areaAll});
       if (area) {
         dispatch({
           type: areaConstants.FETCH_AREA_SUCCESS,
