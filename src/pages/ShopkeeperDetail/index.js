@@ -9,15 +9,18 @@ import {Input, Dropdown, Header, CheckBox, Texture, Button} from '../../common';
 import {relations, mobileNetwork, winnersActivity} from '../../dummyData';
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  audioRecorderPlayer,
   axiosInstance,
   getLocation,
   numberValidation,
   otpCodeGenerator,
   parseError,
+  stopRecording,
 } from '../../helpers';
 import CustomModal from '../../common/Modal';
 import {TextInput} from 'react-native-gesture-handler';
 import {otpCodeAction} from '../../Redux/Actions/customerDetail';
+import {stopAudioRecording} from '../../Redux/Actions/RecordAudio';
 
 export const ShopkeeperDetail = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -174,9 +177,23 @@ export const ShopkeeperDetail = ({navigation}) => {
 
   const item = {value: false, description: 'I agree to term of service'};
 
+  const handleRecordAudio = async () => {
+    try {
+      if (audioRecorderPlayer) {
+        await stopRecording();
+        dispatch(stopAudioRecording());
+        audioRecorderPlayer.removeRecordBackListener(e => {
+          // console.log('Recording . . . ', e.currentPosition);
+          return;
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const disableBackButton = () => {
-    BackHandler.exitApp();
-    return true;
+    handleRecordAudio();
   };
 
   useEffect(() => {

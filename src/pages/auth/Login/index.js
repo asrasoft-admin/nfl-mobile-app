@@ -134,7 +134,7 @@ export const Login = ({navigation}) => {
                     } else if (user.data.role === 'consumer') {
                       navigation.navigate('RecordAudio');
                     } else {
-                      navigation.navigate('ShopkeerDetail');
+                      navigation.navigate('RecordAudio');
                     }
                   });
                 }

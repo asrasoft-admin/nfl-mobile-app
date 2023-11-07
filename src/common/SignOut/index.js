@@ -30,7 +30,7 @@ export const SignOut = ({navigation}) => {
     } else {
       navigation.reset({
         index: 0,
-        routes: [{name: 'ShopkeerDetail'}],
+        routes: [{name: 'RecordAudio'}],
       });
     }
   };

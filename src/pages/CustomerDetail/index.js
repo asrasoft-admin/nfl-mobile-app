@@ -7,6 +7,7 @@ import {
   ScrollView,
   Keyboard,
   KeyboardAvoidingView,
+  BackHandler,
 } from 'react-native';
 import {useForm} from 'react-hook-form';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
@@ -25,6 +26,7 @@ import {
   parseError,
   otpCodeGenerator,
   stopRecording,
+  audioRecorderPlayer,
 } from '../../helpers';
 import CustomModal from '../../common/Modal';
 import RadioButtonRN from 'radio-buttons-react-native';
@@ -358,6 +360,29 @@ export const CustomerDetail = ({navigation}) => {
     value: false,
     description: 'I agree to term of service',
   };
+
+  const handleRecordAudio = async () => {
+    try {
+      if (audioRecorderPlayer) {
+        await stopRecording();
+        dispatch(stopAudioRecording());
+        audioRecorderPlayer.removeRecordBackListener(e => {
+          // console.log('Recording . . . ', e.currentPosition);
+          return;
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const disableBackButton = () => {
+    handleRecordAudio();
+  };
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', disableBackButton);
+  }, []);
 
   useEffect(() => {
     if (OTPSendLoading === false) {
