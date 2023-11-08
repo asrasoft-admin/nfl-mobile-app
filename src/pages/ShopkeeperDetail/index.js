@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable radix */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import style from './style';
 import {Text, View, BackHandler} from 'react-native';
 import {useForm} from 'react-hook-form';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import {Input, Dropdown, Header, CheckBox, Texture, Button} from '../../common';
-import {relations, mobileNetwork, winnersActivity} from '../../dummyData';
+import {relations, mobileNetwork} from '../../dummyData';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   audioRecorderPlayer,
@@ -18,9 +18,9 @@ import {
   stopRecording,
 } from '../../helpers';
 import CustomModal from '../../common/Modal';
-import {TextInput} from 'react-native-gesture-handler';
 import {otpCodeAction} from '../../Redux/Actions/customerDetail';
 import {stopAudioRecording} from '../../Redux/Actions/RecordAudio';
+import {shopkeeperDetail} from '../../Redux/Actions/shopkeeperDetails';
 
 export const ShopkeeperDetail = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -35,6 +35,7 @@ export const ShopkeeperDetail = ({navigation}) => {
   const {otpCode} = useSelector(state => state.customerDetail);
   const [otpMessage, setOtpMessage] = useState({});
   const [isChangingOTPLabel, setIsChangingOTPLabel] = useState(false);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -106,42 +107,50 @@ export const ShopkeeperDetail = ({navigation}) => {
   const onSubmit = async data => {
     console.log({data});
     const {number} = numberValidation(data);
+
     try {
       if (data.shopName && data.address) {
         if (data.mobile || number || data.relationship || data.terms) {
           if (data.mobile && number && data.relationship && data.terms) {
-            if (!data.otp && otpCode == data.otp) {
+            if (!data.otp || otpCode == data.otp) {
               setLoading(true);
               dispatch(otpCodeAction(''));
-              const {data: resData} = await axiosInstance.post(
-                'shop-keeper/details',
-                {
-                  shop_name: data.shopName,
-                  shop_address: data.address,
-                  area_id: data?.area,
-                  email: data.email,
-                  mobile_network_id: data.mobile,
-                  mobile_number: number,
-                  relationship_id: data.relationship,
-                  terms_agreed: data.terms,
-                  user_id: user.id,
-                  activity_id: user.activity_id,
-                  coordinates: JSON.stringify(location),
-                  otp_code: otpCode,
-                },
-              );
-              if (resData.success) {
-                setLoading(false);
-                onClose();
-                // navigation.navigate('OTPVerification', {
-                //   id: resData?.data?.id,
-                //   otpCode: otpCode,
-                // });
-                // navigation.navigate('ProductCheckList', {...route.params});
-                navigation.navigate('ProductCheckList', {
-                  id: resData?.data?.id,
-                });
-              }
+              const sendData = {
+                shop_name: data.shopName,
+                shop_address: data.address,
+                area_id: data?.area,
+                email: data.email,
+                mobile_network_id: data.mobile,
+                mobile_number: number,
+                relationship_id: data.relationship,
+                terms_agreed: data.terms,
+                user_id: user.id,
+                activity_id: user.activity_id,
+                coordinates: JSON.stringify(location),
+                otp_code: otpCode,
+              };
+              // const {data: resData} = await axiosInstance.post(
+              //   'shop-keeper/details',
+              //   sendData,
+              // );
+              // if (resData.success) {
+              //   setLoading(false);
+              //   onClose();
+              //   // navigation.navigate('OTPVerification', {
+              //   //   id: resData?.data?.id,
+              //   //   otpCode: otpCode,
+              //   // });
+              //   // navigation.navigate('ProductCheckList', {...route.params});
+              //   navigation.navigate('ProductCheckList', {
+              //     id: resData?.data?.id,
+              //   });
+              // }
+              dispatch(shopkeeperDetail(sendData));
+              setLoading(false);
+              onClose();
+              navigation.navigate('ProductCheckList', {
+                id: user?.id,
+              });
             } else {
               setOtpMessage({message: 'Invalid OTP', success: false});
               onClose();
@@ -208,6 +217,7 @@ export const ShopkeeperDetail = ({navigation}) => {
     }
   }, [OTPSendLoading]);
 
+  console.log({isKeyboardOpen});
   return (
     <View style={{height: '100%'}}>
       <Texture />

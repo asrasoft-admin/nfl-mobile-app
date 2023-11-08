@@ -23,3 +23,6 @@ export const GET_SUMMARY_TOTAL_FAIL = 'GET_SUMMARY_TOTAL_FAIL';
 
 // customerActionTypes.js
 export const SET_CUSTOMER_DETAILS = 'SET_CUSTOMER_DETAILS';
+
+// shopkeeper
+export const SAVE_SHOPKEEPER_DETAIL = 'SAVE_SHOPKEEPER_DETAIL';

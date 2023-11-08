@@ -14,15 +14,31 @@ export const style = StyleSheet.create({
     paddingHorizontal: wp(5),
   },
   itemContainer: {
-    marginVertical: hp(3),
+    marginVertical: hp(3.5),
   },
   imageHeading: {
-    color: '#fff',
+    color: '#000',
     fontWeight: '600',
     fontSize: 15,
   },
-  imageName: {
-    color: '#fff',
-    fontStyle: 'italic',
+  // imageName: {
+  //   color: '#000',
+  //   fontStyle: 'italic',
+  //   maxWidth: '92%',
+  // },
+  btn: {
+    marginBottom: hp(4),
+  },
+  imageContainer: {
+    flexDirection: 'row',
+  },
+  image: {
+    width: wp(15),
+    height: hp(10),
+    borderRadius: 8,
+  },
+  imageData: {
+    marginHorizontal: wp(4),
+    marginVertical: hp(3),
   },
 });

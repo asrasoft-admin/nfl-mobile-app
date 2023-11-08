@@ -7,18 +7,39 @@ import {
   Platform,
   PermissionsAndroid,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import {Header, Button, Texture} from '../../common';
 import {style} from './style';
 import {widthPercentageToDP as wp} from 'utils/responsive';
 import {launchCamera} from 'react-native-image-picker';
-import {axiosInstance, parseError} from '../../helpers';
+import {
+  audioRecorderPlayer,
+  axiosInstance,
+  parseError,
+  stopRecording,
+} from '../../helpers';
 import {useForm} from 'react-hook-form';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  recordSuccess,
+  stopAudioRecording,
+  uploadSuccess,
+} from '../../Redux/Actions/RecordAudio';
+import uploadAudioToCloudinary from '../../services/cloudinary/Cloudinary';
 
 export const ImageCapture = ({route, navigation}) => {
   const [shopImage, setShopImage] = useState(null);
   const [productImage, setProductImage] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const {shopkeeperData} = useSelector(state => state.shopkeeperDetail);
+  const {
+    isRecording,
+    audioPath: audio,
+    downloadLink: downloadUrl,
+  } = useSelector(state => state.Recorder);
+
+  const dispatch = useDispatch();
 
   const {handleSubmit, formState} = useForm({
     mode: 'onChange',
@@ -102,15 +123,45 @@ export const ImageCapture = ({route, navigation}) => {
   const handleSignOut = async () => {
     if (shopImage.base64 && productImage.base64) {
       setLoading(true);
+      let audioPath, downloadLink;
+      console.log({downloadUrl});
+      setLoading(true);
+      if (audio) {
+        audioPath = audio;
+      } else {
+        audioPath = await stopRecording();
+        dispatch(stopAudioRecording(audioPath));
+        audioRecorderPlayer.removeRecordBackListener(e => {
+          // console.log('Recording . . . ', e.currentPosition);
+          return;
+        });
+      }
+
+      if (Boolean(downloadUrl)) {
+        downloadLink = downloadUrl;
+      } else {
+        downloadLink = await uploadAudioToCloudinary(audioPath);
+        if (!downloadLink)
+          throw new Error('Something went wrong in recording audio');
+        dispatch(uploadSuccess(downloadLink));
+      }
+
       await axiosInstance
         .post('/shop-keeper/associate-image-shopKeeper', {
           shop_image: `data:image/png;base64,${shopImage.base64}`,
           product_image: `data:image/png;base64,${productImage.base64}`,
           shopKeeper_id: route.params.id,
         })
-        .then(res => {
+        .then(async res => {
           setLoading(false);
           if (res.data.success) {
+            console.log({audioPath});
+            const {data: resData} = await axiosInstance.post(
+              'shop-keeper/details',
+              shopkeeperData,
+              {audio: downloadLink},
+            );
+            dispatch(recordSuccess());
             navigation.navigate('SignOut');
           }
         })
@@ -121,6 +172,7 @@ export const ImageCapture = ({route, navigation}) => {
     }
   };
 
+  console.log({shopkeeperData});
   return (
     <View style={style.root}>
       <Texture />
@@ -140,14 +192,22 @@ export const ImageCapture = ({route, navigation}) => {
           />
           {shopImage && (
             <View style={style.itemContainer}>
-              <Text style={style.imageHeading}>Shop Image</Text>
-              <Text style={style.imageName}>{shopImage.fileName}</Text>
+              <View style={style.imageContainer}>
+                <Image source={{uri: shopImage?.uri}} style={style.image} />
+                <View style={style.imageData}>
+                  <Text style={style.imageHeading}>Shop Image</Text>
+                </View>
+              </View>
             </View>
           )}
           {productImage && (
             <View style={style.itemContainer}>
-              <Text style={style.imageHeading}>Product Image</Text>
-              <Text style={style.imageName}>{productImage.fileName}</Text>
+              <View style={style.imageContainer}>
+                <Image source={{uri: shopImage?.uri}} style={style.image} />
+                <View style={style.imageData}>
+                  <Text style={style.imageHeading}>Product Image</Text>
+                </View>
+              </View>
             </View>
           )}
         </View>

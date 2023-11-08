@@ -13,11 +13,12 @@ import summaryReducer, {
 } from './Reducers/summary';
 import {addUsersReducer} from './Reducers/allUsers';
 import {dealsReducer} from './Reducers/deals';
+import shopkeeperDetails from './Reducers/shopkeeperDetails';
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['user', 'allArea', 'allCustomers', 'deals'],
+  whitelist: ['user', 'allArea', 'allCustomers', 'deals', 'shopkeeperDetail'],
 };
 
 const rootReducer = combineReducers({
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   summaryTotalData: summaryTotalDataReducer,
   allCustomers: addUsersReducer,
   deals: dealsReducer,
+  shopkeeperDetail: shopkeeperDetails,
 });
 
 export default persistReducer(persistConfig, rootReducer);
