@@ -203,6 +203,7 @@ export const Login = ({navigation}) => {
           message={errors?.password?.message}
           isPassword
           containerStyles={style.formFields}
+          maxLength={20}
         />
         <Button
           label={!isLoading && 'Login'}

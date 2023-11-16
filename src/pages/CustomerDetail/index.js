@@ -279,7 +279,8 @@ export const CustomerDetail = ({navigation}) => {
             no_response: false,
             audio_record_time: new Date().getTime(),
             audio_record_date: new Date(),
-            area_id: area?.id,
+            area_id: 1,
+            area: 'Hydrabad',
             deals: [],
           };
           dispatch(saveUser(cusData));
@@ -472,7 +473,7 @@ export const CustomerDetail = ({navigation}) => {
                   ref={control}
                   control={control}
                   name="number"
-                  placeholder="Number 923XX-XXXXXXX"
+                  placeholder="Number 03XX-XXXXXXX"
                   error={!!errors?.number}
                   message={errors?.number?.message}
                   containerStyles={style.numberInputContainer}

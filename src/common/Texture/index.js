@@ -4,6 +4,9 @@ import {Image, ImageBackground, View} from 'react-native';
 
 export const Texture = () => {
   return (
-    <Image source={require('assets/images/asra.png')} style={style.texture} />
+    <Image
+      source={require('assets/images/national.png')}
+      style={style.texture}
+    />
   );
 };

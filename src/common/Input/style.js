@@ -1,6 +1,9 @@
 import {StyleSheet} from 'react-native';
 import {colors} from '../../assets/colors';
-import {widthPercentageToDP as wp} from '../../utils/responsive';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from '../../utils/responsive';
 import {fontFamily} from '../../assets/fonts';
 
 export default StyleSheet.create({
@@ -23,5 +26,16 @@ export default StyleSheet.create({
     color: 'red',
     marginLeft: wp(1),
     fontFamily: fontFamily.MontserratBold,
+  },
+  showPassImg: {
+    width: wp(6),
+    height: wp(6),
+  },
+  showPassImgContainer: {
+    position: 'absolute',
+    top: hp(1.6),
+    right: 0,
+    bottom: 0,
+    left: wp(80),
   },
 });
