@@ -1,8 +1,14 @@
-import React from "react";
-import { TouchableOpacity, View, TouchableNativeFeedback } from "react-native";
+import React from 'react';
+import {TouchableOpacity, View, TouchableNativeFeedback} from 'react-native';
 
-export const NativeTouchable = ({ onPress, style, background, children }) => {
-  return Platform.OS == "ios" ? (
+export const NativeTouchable = ({
+  onPress,
+  style,
+  background,
+  children,
+  disabled,
+}) => {
+  return Platform.OS == 'ios' ? (
     <TouchableOpacity onPress={onPress} style={style}>
       {children}
     </TouchableOpacity>
@@ -23,17 +29,16 @@ export const NativeTouchable = ({ onPress, style, background, children }) => {
               marginStart: style.marginStart,
               marginEnd: style.marginEnd,
               margin: style.margin,
-              overflow: "hidden",
+              overflow: 'hidden',
             }
-          : { overflow: "hidden" }
-      }
-    >
+          : {overflow: 'hidden'}
+      }>
       <TouchableNativeFeedback
-        onPress={onPress}
+        onPress={!disabled && onPress}
         background={
           background || TouchableNativeFeedback.SelectableBackground()
         }
-      >
+        disabled={disabled}>
         <View
           style={{
             ...style,
@@ -46,8 +51,7 @@ export const NativeTouchable = ({ onPress, style, background, children }) => {
             marginStart: 0,
             marginEnd: 0,
             margin: 0,
-          }}
-        >
+          }}>
           {children}
         </View>
       </TouchableNativeFeedback>

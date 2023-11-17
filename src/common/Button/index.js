@@ -14,14 +14,18 @@ export const Button = ({
   customLabelStyle = {},
   loading,
   isWhite,
+  disabled,
 }) => {
   return (
     <NativeTouchable
       onPress={active ? onPress : () => {}}
+      disabled={disabled}
       style={{
         ...style.container,
         ...containerStyles,
         backgroundColor: isWhite ? colors.white : colors.purple,
+        backgroundColor: disabled ? colors.gray4 : colors.purple,
+        borderColor: disabled ? colors.gray4 : colors.purple,
       }}>
       <Text
         style={[

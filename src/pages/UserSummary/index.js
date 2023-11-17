@@ -19,6 +19,7 @@ import {
   getSummaryTotalDataSuccess,
 } from '../../Redux/Actions/summary';
 import {axiosInstance} from '../../helpers';
+import {heightPercentageToDP} from '../../utils/responsive';
 
 const UserSummary = () => {
   const {summaryData} = useSelector(state => state.summaryData);
@@ -92,18 +93,27 @@ const UserSummary = () => {
                 Sync all your data to see the correct records!
               </Text>
             </View>
-            <View>
-              <SummaryCard
-                data={summaryData?.data}
-                cardTitle="Your Today's Stats"
-              />
-            </View>
-            <View>
-              <SummaryCard
-                data={summaryTotalData?.data}
-                cardTitle="Your Total Stats"
-              />
-            </View>
+            <ScrollView>
+              <View
+                style={{
+                  flex: 1,
+                  width: '100%',
+                  height: heightPercentageToDP(72),
+                }}>
+                <View>
+                  <SummaryCard
+                    data={summaryData?.data}
+                    cardTitle="Your Today's Stats"
+                  />
+                </View>
+                <View>
+                  <SummaryCard
+                    data={summaryTotalData?.data}
+                    cardTitle="Your Total Stats"
+                  />
+                </View>
+              </View>
+            </ScrollView>
           </>
         )}
       </View>

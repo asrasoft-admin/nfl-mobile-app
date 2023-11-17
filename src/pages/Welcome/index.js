@@ -6,6 +6,7 @@ import {Spinner, Texture} from '../../common';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {allAreaAction} from '../../Redux/Actions/area';
+import Footer from '../../common/Footer';
 
 export const Welcome = ({navigation}) => {
   const state = useSelector(states => states);

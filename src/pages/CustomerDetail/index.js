@@ -8,6 +8,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   BackHandler,
+  Alert,
 } from 'react-native';
 import {useForm} from 'react-hook-form';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
@@ -56,6 +57,8 @@ export const CustomerDetail = ({navigation}) => {
   const {otpCode} = useSelector(state => state.customerDetail);
   const [otpMessage, setOtpMessage] = useState({});
   const [isChangingOTPLabel, setIsChangingOTPLabel] = useState(false);
+  const [timer, setTimer] = useState(30); // Initial timer value in seconds
+  const [showTimer, setShowTimer] = useState(false);
 
   const {
     isRecording,
@@ -111,6 +114,23 @@ export const CustomerDetail = ({navigation}) => {
   useEffect(() => {
     getLocation(setLocation);
   }, []);
+
+  useEffect(() => {
+    let interval;
+
+    if (showTimer) {
+      interval = setInterval(() => {
+        setTimer(prevTimer => (prevTimer > 0 ? prevTimer - 1 : 0));
+      }, 1000);
+
+      if (timer === 0) {
+        setIsChangingOTPLabel(true);
+        setShowTimer(false);
+      }
+    }
+
+    return () => clearInterval(interval);
+  }, [timer, showTimer]);
 
   const onShow = () => {
     return setModalVisible(true);
@@ -208,36 +228,39 @@ export const CustomerDetail = ({navigation}) => {
 
   const sendOTPHandler = async () => {
     const {number, terms, otp} = control._formValues;
-    numberValidation(number);
+    const {valid} = numberValidation({number});
 
     const genOtpCode = otpCodeGenerator();
 
     const sum = number?.slice(1, 11);
     const numRes = 92 + sum;
 
-    try {
-      setOTPSendLoading(true);
-      const res = await axiosInstance.post('/customer/send-otp', {
-        otp_code: genOtpCode,
-        number: numRes,
-      });
-      dispatch(otpCodeAction(genOtpCode));
+    if (valid) {
+      try {
+        setOTPSendLoading(true);
+        const res = await axiosInstance.post('/customer/send-otp', {
+          otp_code: genOtpCode,
+          number: numRes,
+        });
+        dispatch(otpCodeAction(genOtpCode));
 
-      console.log('=================== send otp', res.data);
-      if (res.data.success) {
-        setOtpMessage({message: res.data.message, success: res.data.success});
+        console.log('=================== send otp', res.data);
+        if (res.data.success) {
+          setOtpMessage({message: res.data.message, success: res.data.success});
+          setOTPSendLoading(false);
+          setTimer(60);
+          setShowTimer(true);
+        }
+
+        if (!res.data.success) {
+          setOtpMessage({message: res.data.message, success: res.data.success});
+        }
+      } catch (error) {
         setOTPSendLoading(false);
-        setIsChangingOTPLabel(true);
+        setOtpMessage({message: error.message, success: false});
+        dispatch(otpCodeAction(''));
+        console.log(error, 'otp error');
       }
-
-      if (!res.data.success) {
-        setOtpMessage({message: res.data.message, success: res.data.success});
-      }
-    } catch (error) {
-      setOTPSendLoading(false);
-      setOtpMessage({message: error.message, success: false});
-      dispatch(otpCodeAction(''));
-      console.log(error, 'otp error');
     }
     // console.log(number, terms, otp);
   };
@@ -482,10 +505,14 @@ export const CustomerDetail = ({navigation}) => {
                 />
                 <Button
                   containerStyles={style.otp}
-                  label={isChangingOTPLabel ? 'Resend OTP' : 'Send OTP'}
+                  label={
+                    isChangingOTPLabel && !showTimer ? 'Resend OTP' : 'Send OTP'
+                  }
                   onPress={sendOTPHandler}
                   loading={OTPSendLoading}
+                  disabled={showTimer}
                 />
+                {showTimer && <Text>{timer}</Text>}
               </View>
 
               <Input

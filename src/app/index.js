@@ -18,6 +18,7 @@ import UserSummary from '../pages/UserSummary';
 import {fetchDeals} from '../helpers';
 import {useDispatch, useSelector} from 'react-redux';
 import {storeDeals} from '../Redux/Actions/deals';
+import Footer from '../common/Footer';
 
 const RootStack = createStackNavigator();
 const options = {
@@ -62,6 +63,7 @@ const AppView = () => {
       <RootStack.Navigator screenOptions={options}>
         {tabnavigatorRender}
       </RootStack.Navigator>
+      <Footer />
     </View>
   );
 };
