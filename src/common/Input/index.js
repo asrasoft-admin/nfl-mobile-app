@@ -64,7 +64,7 @@ export const Input = ({
               source={
                 !showPassword
                   ? require('../../assets/images/closeEye.png')
-                  : require('../../assets/images/closeEye.png')
+                  : require('../../assets/images/openEye.png')
               }
               style={style.showPassImg}
             />
