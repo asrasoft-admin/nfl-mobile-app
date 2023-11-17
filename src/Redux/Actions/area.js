@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {baseURL} from '../../helpers';
-import {areaConstants} from '../types';
+import {areaConstants, areasConstants} from '../types';
 
 export const allAreaAction = () => {
   return async dispatch => {
@@ -29,3 +29,8 @@ export const allAreaAction = () => {
     }
   };
 };
+
+export const setArea = data => ({
+  type: areasConstants.FETCH_AREAS,
+  payload: data,
+});

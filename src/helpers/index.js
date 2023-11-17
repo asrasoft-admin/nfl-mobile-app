@@ -85,6 +85,33 @@ export const getLocation = setLocation => {
   );
 };
 
+export const getAreaFromAPI = async coordinates => {
+  try {
+    if (coordinates) {
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.latitude},${coordinates.longitude}&key=AIzaSyD2Dj_yeEdoiT0uACMggKgHncPiAxHYRVk`,
+      );
+
+      const firstResult = response.data.results[0];
+
+      const formattedAddress = firstResult.formatted_address;
+      const addressComponents = firstResult.address_components;
+      const area = addressComponents.find(component =>
+        component.types.includes('sublocality_level_1'),
+      )?.short_name;
+
+      // const {address, display_name, neighbourhood} = response.data;
+      const locationInfo = {
+        address: area,
+        displayName: formattedAddress,
+      };
+      return locationInfo;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const parseError = error => {
   const errorMessage = error?.response?.data?.error?.message
     ? error?.response?.data?.error?.message

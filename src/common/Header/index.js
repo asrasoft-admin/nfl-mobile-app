@@ -18,6 +18,8 @@ export const Header = ({navigation}) => {
     reValidateMode: 'onChange',
   });
 
+  const {area} = useSelector(state => state.allArea);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,7 +27,7 @@ export const Header = ({navigation}) => {
   const user = state.user;
 
   const dispatch = useDispatch();
-  console.log(user.area);
+
   const onShow = () => {
     return setModalVisible(true);
   };
@@ -84,7 +86,7 @@ export const Header = ({navigation}) => {
                 fontSize: 18,
                 fontWeight: 'bold',
               }}>
-              {user.area}
+              {area}
             </Text>
           )}
         </View>

@@ -28,6 +28,7 @@ import {
   otpCodeGenerator,
   stopRecording,
   audioRecorderPlayer,
+  getAreaFromAPI,
 } from '../../helpers';
 import CustomModal from '../../common/Modal';
 import RadioButtonRN from 'radio-buttons-react-native';
@@ -41,6 +42,7 @@ import {setCustomerDetails} from '../../Redux/Actions/customer';
 import {otpCodeAction} from '../../Redux/Actions/customerDetail';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {saveUser} from '../../Redux/Actions/allUsers';
+import axios from 'axios';
 
 export const CustomerDetail = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -53,10 +55,12 @@ export const CustomerDetail = ({navigation}) => {
   let area = allArea?.data?.find(area => area.name === user.area);
   const [disclaimer, setDisclaimer] = useState(false);
   const [location, setLocation] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
   const [OTPSendLoading, setOTPSendLoading] = useState(false);
   const {otpCode} = useSelector(state => state.customerDetail);
   const [otpMessage, setOtpMessage] = useState({});
   const [isChangingOTPLabel, setIsChangingOTPLabel] = useState(false);
+  const {area: myArea} = useSelector(state => state.allArea);
   const [timer, setTimer] = useState(30); // Initial timer value in seconds
   const [showTimer, setShowTimer] = useState(false);
 
@@ -171,6 +175,8 @@ export const CustomerDetail = ({navigation}) => {
       //     throw new Error('Something went wrong in recording audio');
       //   dispatch(uploadSuccess(downloadLink));
       // }
+      const data = await getAreaFromAPI(location);
+
       const cusData = {
         user_id: user.id,
         activity_id: user.activity_id,
@@ -182,10 +188,16 @@ export const CustomerDetail = ({navigation}) => {
         audioPath,
         audio_record_time: new Date().getTime(),
         audio_record_date: new Date(),
-        area_id: area?.id,
+        area_id: 1,
+        area: myArea,
+        location: data.displayName,
         deals: [],
       };
-      dispatch(saveUser(cusData));
+
+      if (user?.role === 'consumer') {
+        dispatch(saveUser(cusData));
+      }
+
       dispatch(recordSuccess());
       navigation.navigate('SignOut');
       setLoading(false);
@@ -270,6 +282,8 @@ export const CustomerDetail = ({navigation}) => {
     const {number} = numberValidation(data);
     // console.log('===========>', audio, downloadUrl);
     console.log(data.city, data.prevBrand);
+    const locationData = await getAreaFromAPI(location);
+
     try {
       if (!disclaimer && !!data.prevBrand && data.city !== '') {
         // console.log('==>' + {disclaimer});
@@ -292,6 +306,7 @@ export const CustomerDetail = ({navigation}) => {
           //   dispatch(uploadSuccess(downloadLink));
           // }
           // save the customer to the memory to be sync late
+
           const cusData = {
             user_id: user.id,
             activity_id: user.activity_id,
@@ -303,10 +318,14 @@ export const CustomerDetail = ({navigation}) => {
             audio_record_time: new Date().getTime(),
             audio_record_date: new Date(),
             area_id: 1,
-            area: 'Hydrabad',
+            area: myArea,
+            location: locationData.displayName,
+            address: data.address,
             deals: [],
           };
-          dispatch(saveUser(cusData));
+          if (user?.role === 'consumer') {
+            dispatch(saveUser(cusData));
+          }
           dispatch(recordSuccess());
           setIsChangingOTPLabel(false);
           navigation.navigate('SignOut');
@@ -358,7 +377,10 @@ export const CustomerDetail = ({navigation}) => {
                 no_response: false,
                 previous_brand_id: data.prevBrand,
                 otp: data.otp || null,
-                area_id: area?.id,
+                location: locationData.displayName,
+                area_id: 1,
+                area: myArea,
+                address: data?.address,
               };
               dispatch(setCustomerDetails(details));
               onClose();
@@ -415,6 +437,17 @@ export const CustomerDetail = ({navigation}) => {
       }, 5000);
     }
   }, [OTPSendLoading]);
+
+  const getArea = async () => {
+    const locationData = await getAreaFromAPI(location);
+    setUserLocation(locationData ? locationData.displayName : 'Loading...');
+  };
+
+  useEffect(() => {
+    if (location) {
+      getArea();
+    }
+  }, [location]);
 
   return (
     <KeyboardAvoidingView
@@ -489,6 +522,28 @@ export const CustomerDetail = ({navigation}) => {
                 error={!!errors?.name}
                 message={errors?.name?.message}
                 containerStyles={style.inputContainer}
+              />
+
+              <Input
+                ref={ref}
+                control={control}
+                name="address"
+                placeholder="Address"
+                error={!!errors?.name}
+                message={errors?.name?.message}
+                containerStyles={style.inputContainer}
+              />
+
+              <Input
+                ref={ref}
+                control={control}
+                name="location"
+                placeholder="Location"
+                error={!!errors?.name}
+                message={errors?.name?.message}
+                containerStyles={style.inputContainer}
+                defaultValue={userLocation}
+                editable={false}
               />
 
               <View style={style.numberInputMain}>

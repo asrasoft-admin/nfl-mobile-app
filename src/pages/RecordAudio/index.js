@@ -17,12 +17,16 @@ import {widthPercentageToDP as wp} from '../../utils/responsive';
 import {
   audioRecorderPlayer,
   fetchDeals,
+  getAreaFromAPI,
+  getLocation,
   handleSync,
   parseError,
 } from '../../helpers';
 
 import {emptyList, saveUser} from '../../Redux/Actions/allUsers';
 import {storeDeals} from '../../Redux/Actions/deals';
+import {setArea} from '../../Redux/Actions/area';
+import axios from 'axios';
 
 // const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -35,7 +39,9 @@ export const RecordAudio = () => {
   const {isRecording} = useSelector(state => state.Recorder);
   const {allCustomersDetails} = useSelector(state => state.allCustomers);
   const [isActiveScreen, setIsActiveScreen] = useState(false);
+  const [location, setLocation] = useState(null);
   const state = useSelector(state => state);
+  const {area} = useSelector(state => state.allArea);
   const user = state.user;
 
   const handleBackPress = () => {
@@ -137,6 +143,14 @@ export const RecordAudio = () => {
   const onClick = async () => {
     try {
       setSyncLoading(true);
+      if (user.role === 'testID') {
+        setSyncLoading(false);
+        return Alert.alert(
+          'Data Sync Completed',
+          'Data has been synced successfully',
+          [{text: 'OK'}],
+        );
+      }
       const data = await handleSync(allCustomersDetails);
       console.log('============================>', data);
       if (data && data?.success) {
@@ -176,7 +190,32 @@ export const RecordAudio = () => {
     }
   };
 
-  // '/customer/total-summary'
+  useEffect(() => {
+    getLocation(setLocation);
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (location) {
+        const data = await getAreaFromAPI(location);
+        console.log({data});
+        if (data.address) {
+          dispatch(setArea(data.address));
+        }
+      }
+    })();
+  }, [location]);
+
+  // const getSomeData = async () => {
+  //   if (location) {
+
+  //     console.log({formattedAddress, area, firstResult});
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getSomeData();
+  // }, [location]);
 
   if (!user.authenticated) {
     return null;

@@ -26,3 +26,7 @@ export const SET_CUSTOMER_DETAILS = 'SET_CUSTOMER_DETAILS';
 
 // shopkeeper
 export const SAVE_SHOPKEEPER_DETAIL = 'SAVE_SHOPKEEPER_DETAIL';
+
+export const areasConstants = {
+  FETCH_AREAS: 'FETCH_AREAS',
+};

@@ -99,7 +99,10 @@ export const Deals = ({route, navigation, containerStyles}) => {
           filterDeal[dealIndex].selected = false;
           setAllDeals(filterDeal);
         }
-        dispatch(saveUser(cusData));
+
+        if (user?.role === 'consumer') {
+          dispatch(saveUser(cusData));
+        }
         dispatch(recordSuccess());
         setLoading(false);
         navigation.navigate('SignOut');

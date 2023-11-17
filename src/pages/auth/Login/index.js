@@ -25,7 +25,6 @@ import {SearchableDropdowns} from '../../../common/SearchableDropdown';
 import {allActivities} from '../../../dummyData';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
-import Footer from '../../../common/Footer';
 
 export const Login = ({navigation}) => {
   const state = useSelector(states => states);
@@ -221,8 +220,6 @@ export const Login = ({navigation}) => {
           containerStyles={style.formFields}
         />
       </View>
-
-      <Footer />
     </View>
   );
 };

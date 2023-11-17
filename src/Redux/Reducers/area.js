@@ -1,8 +1,9 @@
-import {areaConstants} from '../types';
+import {areaConstants, areasConstants} from '../types';
 
 const initialState = {
   error: '',
   data: [],
+  area: '',
 };
 
 const areaReducer = (state = initialState, action) => {
@@ -20,6 +21,11 @@ const areaReducer = (state = initialState, action) => {
       return {
         ...state,
         error: action.payload.error,
+      };
+    case areasConstants.FETCH_AREAS:
+      return {
+        ...state,
+        area: action.payload,
       };
 
     default:
