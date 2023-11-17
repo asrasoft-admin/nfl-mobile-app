@@ -23,8 +23,11 @@ export const Button = ({
       style={{
         ...style.container,
         ...containerStyles,
-        backgroundColor: isWhite ? colors.white : colors.purple,
-        backgroundColor: disabled ? colors.gray4 : colors.purple,
+        backgroundColor: isWhite
+          ? colors.white
+          : colors.purple && disabled
+          ? colors.gray4
+          : colors.purple,
         borderColor: disabled ? colors.gray4 : colors.purple,
       }}>
       <Text
