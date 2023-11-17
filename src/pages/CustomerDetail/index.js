@@ -260,7 +260,7 @@ export const CustomerDetail = ({navigation}) => {
         if (res.data.success) {
           setOtpMessage({message: res.data.message, success: res.data.success});
           setOTPSendLoading(false);
-          setTimer(60);
+          setTimer(90);
           setShowTimer(true);
         }
 
