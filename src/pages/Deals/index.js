@@ -3,7 +3,7 @@ import style from './style';
 import {Text, ScrollView, View, ActivityIndicator} from 'react-native';
 import {Header, Deal, Texture, Button, Dropdown, Input} from '../../common';
 import {useForm} from 'react-hook-form';
-import {axiosInstance, stopRecording} from '../../helpers';
+import {axiosInstance, handleSync, stopRecording} from '../../helpers';
 import {widthPercentageToDP as wp} from 'utils/responsive';
 import {pack_swap_product, Brand} from '../../dummyData';
 import {parseError} from '../../helpers';
@@ -82,9 +82,10 @@ export const Deals = ({route, navigation, containerStyles}) => {
         const qtyIsNull = dealQty.every(
           item => item.quantity === 0 && !Boolean(item.quantity),
         );
-        if (qtyIsNull) {
-          throw new Error('Enter quantity of the selected deals');
-        }
+        // if (qtyIsNull) {
+        //   throw new Error('Enter quantity of the selected deals');
+        // }
+        console.log({});
         const cusData = {
           ...customer,
           audioPath,
@@ -101,7 +102,8 @@ export const Deals = ({route, navigation, containerStyles}) => {
         }
 
         if (user?.role === 'consumer') {
-          dispatch(saveUser(cusData));
+          // dispatch(saveUser(cusData));
+          await handleSync([cusData]);
         }
         dispatch(recordSuccess());
         setLoading(false);
@@ -138,7 +140,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
   };
 
   const fetchDeals = async () => {
-    const temp = deals.map(item => ({id: item.id, quantity: 0}));
+    const temp = deals.map(item => ({id: item.id, quantity: 1}));
     setQuantities(temp);
     setAllDeals(deals);
   };

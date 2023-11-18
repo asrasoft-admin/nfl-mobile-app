@@ -140,35 +140,37 @@ export const RecordAudio = () => {
     }
   };
 
-  const onClick = async () => {
-    try {
-      setSyncLoading(true);
-      if (user.role === 'testID') {
-        setSyncLoading(false);
-        return Alert.alert(
-          'Data Sync Completed',
-          'Data has been synced successfully',
-          [{text: 'OK'}],
-        );
-      }
-      const data = await handleSync(allCustomersDetails);
-      console.log('============================>', data);
-      if (data && data?.success) {
-        dispatch(emptyList());
-        console.log('hello');
-        Alert.alert(
-          'Data Sync Completed',
-          'Data has been synced successfully',
-          [{text: 'OK'}],
-        );
-      }
+  // sync function --
+  // const onClick = async () => {
+  //   try {
+  //     setSyncLoading(true);
+  //     if (user.role === 'testID') {
+  //       setSyncLoading(false);
+  //       return Alert.alert(
+  //         'Data Sync Completed',
+  //         'Data has been synced successfully',
+  //         [{text: 'OK'}],
+  //       );
+  //     }
+  //     const data = await handleSync(allCustomersDetails);
+  //     console.log('============================>', data);
+  //     if (data && data?.success) {
+  //       dispatch(emptyList());
+  //       console.log('hello');
+  //       Alert.alert(
+  //         'Data Sync Completed',
+  //         'Data has been synced successfully',
+  //         [{text: 'OK'}],
+  //       );
+  //     }
 
-      setSyncLoading(false);
-    } catch (error) {
-      parseError(error);
-      setSyncLoading(false);
-    }
-  };
+  //     setSyncLoading(false);
+  //   } catch (error) {
+  //     parseError(error);
+  //     setSyncLoading(false);
+  //   }
+  // };
+
   const handleRecordAudio = async () => {
     try {
       console.log('asdasd');
@@ -235,7 +237,7 @@ export const RecordAudio = () => {
           onPress={() => navigation.navigate('UserSummary')}
           containerStyles={style.viewSummary}
         />
-        <Button
+        {/* <Button
           containerStyles={style.viewSummary}
           label="Sync Data"
           icon={
@@ -246,7 +248,7 @@ export const RecordAudio = () => {
             )
           }
           onPress={() => onClick()}
-        />
+        /> */}
       </View>
     </View>
   );

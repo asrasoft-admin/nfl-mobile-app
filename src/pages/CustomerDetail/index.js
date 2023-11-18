@@ -29,6 +29,7 @@ import {
   stopRecording,
   audioRecorderPlayer,
   getAreaFromAPI,
+  handleSync,
 } from '../../helpers';
 import CustomModal from '../../common/Modal';
 import RadioButtonRN from 'radio-buttons-react-native';
@@ -195,7 +196,8 @@ export const CustomerDetail = ({navigation}) => {
       };
 
       if (user?.role === 'consumer') {
-        dispatch(saveUser(cusData));
+        // dispatch(saveUser(cusData));
+        await handleSync([cusData]);
       }
 
       dispatch(recordSuccess());
@@ -324,7 +326,8 @@ export const CustomerDetail = ({navigation}) => {
             deals: [],
           };
           if (user?.role === 'consumer') {
-            dispatch(saveUser(cusData));
+            // dispatch(saveUser(cusData));
+            await handleSync([cusData]);
           }
           dispatch(recordSuccess());
           setIsChangingOTPLabel(false);

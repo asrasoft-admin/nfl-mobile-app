@@ -47,7 +47,7 @@ export const Deal = ({
           borderColor: '#8080',
         }}>
         <Text style={style.price}> {deal?.price} PKR</Text>
-        {deal?.selected && (
+        {/* {deal?.selected && (
           <TextInput
             style={{
               height: 35,
@@ -64,7 +64,7 @@ export const Deal = ({
             placeholder="Enter Qty"
             keyboardType="numeric"
           />
-        )}
+        )} */}
       </View>
       <Text>{deal?.description}</Text>
       <Button

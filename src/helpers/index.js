@@ -58,9 +58,10 @@ export const stopRecording = async () => {
 };
 // export const baseURL = 'https://dds.asrasoft.net';
 export const baseURL = 'https://nfl-dashboard.vercel.app';
+// export const baseURL = 'https://0361-117-102-63-236.ngrok-free.app';
 
 export const axiosInstance = axios.create({
-  // baseURL: 'https://564a-202-47-55-165.ngrok-free.app/api',
+  // baseURL: 'https://0361-117-102-63-236.ngrok-free.app/api',
   baseURL: 'https://nfl-dashboard.vercel.app/api',
   // baseURL: 'https://dds.asrasoft.net/api',
   // baseURL: 'https://746f-111-88-203-1.ngrok-free.app/api',
@@ -182,13 +183,13 @@ export const fetchDeals = async user => {
 };
 
 export const handleSync = async data => {
-  if (data.length === 0) {
-    return Alert.alert(
-      'Nothing to Sync',
-      'You have to record one or more entries to enable sync data',
-      [{text: 'OK'}],
-    );
-  }
+  // if (data.length === 0) {
+  //   return Alert.alert(
+  //     'Nothing to Sync',
+  //     'You have to record one or more entries to enable sync data',
+  //     [{text: 'OK'}],
+  //   );
+  // }
 
   try {
     const modifiedData = await Promise.all(
