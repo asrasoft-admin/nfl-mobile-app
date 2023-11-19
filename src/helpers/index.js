@@ -56,14 +56,14 @@ export const stopRecording = async () => {
   audioRecorderPlayer.removeRecordBackListener();
   return audioPath;
 };
-// export const baseURL = 'https://dds.asrasoft.net';
-export const baseURL = 'https://nfl-dashboard.vercel.app';
+export const baseURL = 'https://dds.asrasoft.net';
+// export const baseURL = 'https://nfl-dashboard.vercel.app';
 // export const baseURL = 'https://0361-117-102-63-236.ngrok-free.app';
 
 export const axiosInstance = axios.create({
   // baseURL: 'https://0361-117-102-63-236.ngrok-free.app/api',
-  baseURL: 'https://nfl-dashboard.vercel.app/api',
-  // baseURL: 'https://dds.asrasoft.net/api',
+  // baseURL: 'https://nfl-dashboard.vercel.app/api',
+  baseURL: 'https://dds.asrasoft.net/api',
   // baseURL: 'https://746f-111-88-203-1.ngrok-free.app/api',
 });
 
