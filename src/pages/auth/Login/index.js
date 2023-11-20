@@ -122,7 +122,6 @@ export const Login = ({navigation}) => {
                 },
               })
               .then(async ({data: user}) => {
-                console.log({user});
                 setLoading(false);
 
                 if (user.success) {

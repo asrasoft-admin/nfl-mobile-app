@@ -87,12 +87,12 @@ const UserSummary = () => {
           </View>
         ) : (
           <>
-            <View style={styles.disclaimerWarning}>
+            {/* <View style={styles.disclaimerWarning}>
               <Text style={styles.disclaimerText}>
                 <Text style={styles.disclaimerHead}>Disclaimer : </Text>
                 Sync all your data to see the correct records!
               </Text>
-            </View>
+            </View> */}
 
             <View>
               <SummaryCard

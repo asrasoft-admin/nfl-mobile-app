@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, memo} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import style from './style';
 import {
@@ -45,10 +45,11 @@ import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {saveUser} from '../../Redux/Actions/allUsers';
 import axios from 'axios';
 
-export const CustomerDetail = ({navigation}) => {
+const CustomerDetail = memo(({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [noResModalVisible, setNoResModalVisible] = useState(false);
   const [isLoading, setLoading] = useState(false);
+  const [isLoadingTwo, setIsLoadingTwo] = useState(false);
 
   const state = useSelector(state => state);
   const user = state.user;
@@ -64,6 +65,7 @@ export const CustomerDetail = ({navigation}) => {
   const {area: myArea} = useSelector(state => state.allArea);
   const [timer, setTimer] = useState(30); // Initial timer value in seconds
   const [showTimer, setShowTimer] = useState(false);
+  console.log('===================== COMPONENT RENDER ===================== ');
 
   const {
     isRecording,
@@ -79,20 +81,9 @@ export const CustomerDetail = ({navigation}) => {
       label: 'No',
     },
   ];
-
   const {control, handleSubmit, ref, formState} = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
-    // defaultValues: {
-    //   name: 'umer',
-    //   address: 'liaquatabd',
-    //   gender: 'male',
-    //   mobile: 1,
-    //   number: '923102772589',
-    //   relationship: 1,
-    //   prevBrand: 1,
-    //   terms: true,
-    // },
   });
 
   const {errors} = formState;
@@ -138,7 +129,7 @@ export const CustomerDetail = ({navigation}) => {
   }, [timer, showTimer]);
 
   const onShow = () => {
-    return setModalVisible(true);
+    setModalVisible(true);
   };
 
   useEffect(() => {
@@ -146,7 +137,7 @@ export const CustomerDetail = ({navigation}) => {
   }, [audio, downloadUrl]);
 
   const onClose = () => {
-    return setModalVisible(!modalVisible);
+    setModalVisible(false);
   };
   const onNoResClose = () => {
     return setNoResModalVisible(!noResModalVisible);
@@ -160,8 +151,8 @@ export const CustomerDetail = ({navigation}) => {
     console.log('======================================> no response');
 
     let audioPath, downloadLink;
-    setLoading(true);
     try {
+      setIsLoadingTwo(true);
       if (audio) {
         audioPath = audio;
       } else {
@@ -202,7 +193,7 @@ export const CustomerDetail = ({navigation}) => {
 
       dispatch(recordSuccess());
       navigation.navigate('SignOut');
-      setLoading(false);
+      setIsLoadingTwo(false);
       onNoResClose();
       // if (downloadUrl) {
       //   downloadLink = downloadUrl;
@@ -283,11 +274,10 @@ export const CustomerDetail = ({navigation}) => {
     // const otpCode = otpCodeGenerator();
     const {number} = numberValidation(data);
     // console.log('===========>', audio, downloadUrl);
-    console.log(data.city, data.prevBrand);
     const locationData = await getAreaFromAPI(location);
 
     try {
-      if (!disclaimer && !!data.prevBrand && data.city !== '') {
+      if (!disclaimer && !!data.prevBrand) {
         // console.log('==>' + {disclaimer});
         try {
           let audioPath, downloadLink;
@@ -313,7 +303,7 @@ export const CustomerDetail = ({navigation}) => {
             user_id: user.id,
             activity_id: user.activity_id,
             coordinates: JSON.stringify(location),
-            city: data.city,
+            city: 'karachi',
             audioPath,
             previous_brand_id: data.prevBrand,
             no_response: false,
@@ -325,15 +315,21 @@ export const CustomerDetail = ({navigation}) => {
             address: data.address,
             deals: [],
           };
-          if (user?.role === 'consumer') {
-            // dispatch(saveUser(cusData));
-            await handleSync([cusData]);
+          try {
+            if (user?.role === 'consumer') {
+              // dispatch(saveUser(cusData));
+              await handleSync([cusData]);
+            }
+            dispatch(recordSuccess());
+            setLoading(false);
+            navigation.navigate('SignOut');
+            onClose();
+          } catch (error) {
+            parseError(error);
+            console.log(error);
+          } finally {
+            console.log('helllo===============>', {modalVisible});
           }
-          dispatch(recordSuccess());
-          setIsChangingOTPLabel(false);
-          navigation.navigate('SignOut');
-          setLoading(false);
-          onClose();
 
           // const res = await axiosInstance.post('/customer/details', {
           //   user_id: user.id,
@@ -356,19 +352,11 @@ export const CustomerDetail = ({navigation}) => {
           // return res;
         } catch (error) {
           throw new Error(error);
-        } finally {
-          setLoading(false);
         }
       } else {
         if (!data.otp || otpCode == data.otp) {
           dispatch(otpCodeAction(''));
-          if (
-            data.name &&
-            data.number &&
-            data.terms &&
-            !!data.prevBrand &&
-            data.city !== ''
-          ) {
+          if (data.name && data.number && data.terms && !!data.prevBrand) {
             try {
               const details = {
                 user_id: user.id,
@@ -376,7 +364,7 @@ export const CustomerDetail = ({navigation}) => {
                 coordinates: JSON.stringify(location),
                 name: data.name,
                 mobile_number: data.number,
-                city: data.city,
+                city: 'karachi',
                 no_response: false,
                 previous_brand_id: data.prevBrand,
                 otp: data.otp || null,
@@ -400,7 +388,6 @@ export const CustomerDetail = ({navigation}) => {
         }
       }
     } catch (error) {
-      setLoading(false);
       parseError(error);
     }
   };
@@ -452,6 +439,7 @@ export const CustomerDetail = ({navigation}) => {
     }
   }, [location]);
 
+  console.log('helllo===============>', modalVisible);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -473,8 +461,9 @@ export const CustomerDetail = ({navigation}) => {
               marginBottom: 7,
             }}>
             <CustomModal
-              isLoading={isLoading}
+              isLoading={isLoadingTwo}
               label="No Response"
+              customer
               onPress={noResponseHandle}
               modalVisible={noResModalVisible}
               onShow={onNoResShow}
@@ -482,14 +471,14 @@ export const CustomerDetail = ({navigation}) => {
             />
           </View>
 
-          <Dropdown
+          {/* <Dropdown
             control={control}
             name="city"
             error={!!errors?.city}
             message={errors?.city?.message}
             containerStyles={style.inputContainer}
             items={city}
-          />
+          /> */}
 
           <Dropdown
             control={control}
@@ -602,8 +591,11 @@ export const CustomerDetail = ({navigation}) => {
               </View>
             </>
           )}
+
           <CustomModal
             isLoading={isLoading}
+            isLoadingTwo={isLoadingTwo}
+            customer
             onPress={handleSubmit(onSubmit)}
             modalVisible={modalVisible}
             onShow={onShow}
@@ -613,4 +605,6 @@ export const CustomerDetail = ({navigation}) => {
       </ScrollView>
     </KeyboardAvoidingView>
   );
-};
+});
+
+export default CustomerDetail;

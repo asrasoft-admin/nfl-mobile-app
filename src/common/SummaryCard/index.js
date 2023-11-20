@@ -19,7 +19,7 @@ const SummaryCard = ({data, cardTitle}) => {
                 : toTitleCase(item)}{' '}
               :{' '}
             </Text>
-            <Text style={styles.title}>{data && data[item]}</Text>
+            <Text style={styles.title}>{data[item] ? data[item] : 0}</Text>
           </View>
         )}
       />
