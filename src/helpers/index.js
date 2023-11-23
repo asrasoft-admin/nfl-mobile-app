@@ -5,6 +5,12 @@ import RNFS from 'react-native-fs';
 import Geolocation from 'react-native-geolocation-service';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import uploadAudioToCloudinary from '../services/cloudinary/Cloudinary';
+import {
+  STAGE_AXIOS_INSTANCE_URL,
+  STAGE_BASE_URL,
+  PROD_AXIOS_INSTANCE_URL,
+  PROD_BASE_URL,
+} from '@env';
 
 export const getToken = async () => {
   try {
@@ -57,12 +63,14 @@ export const stopRecording = async () => {
   return audioPath;
 };
 // export const baseURL = 'https://dds.asrasoft.net';
-export const baseURL = 'https://nfl-dashboard.vercel.app';
+export const baseURL = STAGE_BASE_URL;
+// export const baseURL = PROD_BASE_URL;
 // export const baseURL = 'https://0361-117-102-63-236.ngrok-free.app';
 
 export const axiosInstance = axios.create({
   // baseURL: 'https://0361-117-102-63-236.ngrok-free.app/api',
-  baseURL: 'https://nfl-dashboard.vercel.app/api',
+  baseURL: STAGE_AXIOS_INSTANCE_URL,
+  // baseURL: PROD_AXIOS_INSTANCE_URL,
   // baseURL: 'https://dds.asrasoft.net/api',
   // baseURL: 'https://746f-111-88-203-1.ngrok-free.app/api',
 });

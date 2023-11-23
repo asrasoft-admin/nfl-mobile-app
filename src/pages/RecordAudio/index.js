@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Alert,
   BackHandler,
+  Text,
 } from 'react-native';
 // import uploadAudioToCloudinary from './CloudinaryUploader';
 import {Button, Header, Texture} from '../../common';

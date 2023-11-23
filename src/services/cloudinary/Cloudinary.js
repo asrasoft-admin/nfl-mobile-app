@@ -1,14 +1,19 @@
 import RNFetchBlob from 'react-native-fetch-blob';
 import AWS from 'aws-sdk';
 import {Buffer} from 'buffer';
+import {
+  STAGE_CLOUDINARY_URL,
+  STAGE_CLOUDINARY_DATA_STR,
+  PROD_S3_REGION,
+  PROD_S3_ACCESS_KEY_ID,
+  PROD_S3_SECRET_ACCESS_KEY,
+  PROD_S3_BUCKET,
+} from '@env';
 
 // This is for stagging -----
 const uploadAudioToCloudinary = async audioPath => {
   // stage --
-  const url = `https://api.cloudinary.com/v1_1/dwhyqylgz/video/upload`;
-
-  // prod --
-  // const url = `https://api.cloudinary.com/v1_1/degnxdivg/video/upload`;
+  const url = STAGE_CLOUDINARY_URL;
 
   const generatedFilename = audioPath.substring(audioPath.lastIndexOf('/') + 1);
 
@@ -20,10 +25,7 @@ const uploadAudioToCloudinary = async audioPath => {
       data: RNFetchBlob.wrap(audioPath),
     },
     // stage --
-    {name: 'upload_preset', data: 'v8rutycs'},
-
-    // prod --
-    // {name: 'upload_preset', data: 'xzoqxjtz'},
+    {name: 'upload_preset', data: STAGE_CLOUDINARY_DATA_STR},
   ];
 
   console.log({uploadData});
@@ -61,13 +63,12 @@ export default uploadAudioToCloudinary;
 // });
 
 // This is for production -----
-
 // const uploadAudioToS3 = async audioPath => {
 //   // Set up AWS configuration
 //   AWS.config.update({
-//     region: 'ap-southeast-2', // e.g., 'us-east-1'
-//     accessKeyId: 'AKIA4YOFGPSHU46SIXXO',
-//     secretAccessKey: 'L8SvUjoQCh9I8YTNDydXT2ROv+14d2NSHU8ihEAx',
+//     region: PROD_S3_REGION, // e.g., 'us-east-1'
+//     accessKeyId: PROD_S3_ACCESS_KEY_ID,
+//     secretAccessKey: PROD_S3_SECRET_ACCESS_KEY,
 //     correctClockSkew: true,
 //   });
 
@@ -82,7 +83,7 @@ export default uploadAudioToCloudinary;
 
 //   // S3 Upload parameters
 //   const params = {
-//     Bucket: 'nfl-dds-audios',
+//     Bucket: PROD_S3_BUCKET,
 //     Key: `uploads/${generatedFilename}`,
 //     Body: fileBuffer,
 //     ContentType: 'audio/aac', // Adjust based on your actual audio file type
