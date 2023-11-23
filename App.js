@@ -8,6 +8,7 @@ import AppView from './src/app';
 import {useDispatch} from 'react-redux';
 import {axiosInstance, getToken} from './src/helpers';
 import {logout} from './src/Redux/Actions/userAction';
+import ErrorBoundary from './src/common/ErrorBoundary/ErrorBoundary';
 
 const MyTheme = {
   colors: {
@@ -45,10 +46,16 @@ const App = () => {
     return Promise.reject(err);
   });
 
+  // const TestErrorBoundary = () => {
+  //   throw new Error('This is a test error');
+  // };
+
   return (
-    <NavigationContainer theme={MyTheme} ref={navigation}>
-      <AppView />
-    </NavigationContainer>
+    <ErrorBoundary navigation={navigation}>
+      <NavigationContainer theme={MyTheme} ref={navigation}>
+        <AppView />
+      </NavigationContainer>
+    </ErrorBoundary>
   );
 };
 
