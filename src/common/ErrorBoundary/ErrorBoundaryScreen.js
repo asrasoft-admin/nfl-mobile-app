@@ -16,9 +16,6 @@ const ErrorBoundaryScreen = ({navigation}) => {
       <Text style={styles.pleaseHead}>
         Please either refresh the app or return home to try again!
       </Text>
-      <Text style={styles.ifIssueHead}>
-        If the issue continues, Contact - Asra Soft
-      </Text>
 
       <Button
         label="Go to home"
