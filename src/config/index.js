@@ -7,5 +7,4 @@ const APP_ENV = 'stage';
 // const APP_ENV = 'prod';
 
 const envOverrides = require(`./${APP_ENV}`);
-console.log({envOverrides, APP_ENV});
 export default _.merge({}, defaults, envOverrides);
