@@ -15,4 +15,7 @@ module.exports = {
     STAGE_CLOUDINARY_URL: STAGE_CLOUDINARY_URL,
     STAGE_CLOUDINARY_DATA_STR: STAGE_CLOUDINARY_DATA_STR,
   },
+  featureFlags: {
+    ShowNflLogo: false,
+  },
 };

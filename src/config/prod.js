@@ -19,4 +19,7 @@ module.exports = {
     PROD_S3_SECRET_ACCESS_KEY: PROD_S3_SECRET_ACCESS_KEY,
     PROD_S3_BUCKET: PROD_S3_BUCKET,
   },
+  featureFlags: {
+    ShowNflLogo: true,
+  },
 };
