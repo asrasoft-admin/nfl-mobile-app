@@ -10,10 +10,13 @@ import {
   PROD_S3_BUCKET,
 } from '@env';
 
+import config from '../../config';
+
 // This is for stagging -----
 const uploadAudioToCloudinary = async audioPath => {
   // stage --
-  const url = STAGE_CLOUDINARY_URL;
+  console.log(config.cloudinaryURL.STAGE_CLOUDINARY_URL, 'fffff');
+  const url = config.cloudinaryURL.STAGE_CLOUDINARY_URL;
 
   const generatedFilename = audioPath.substring(audioPath.lastIndexOf('/') + 1);
 
@@ -25,7 +28,10 @@ const uploadAudioToCloudinary = async audioPath => {
       data: RNFetchBlob.wrap(audioPath),
     },
     // stage --
-    {name: 'upload_preset', data: STAGE_CLOUDINARY_DATA_STR},
+    {
+      name: 'upload_preset',
+      data: config.cloudinaryURL.STAGE_CLOUDINARY_DATA_STR,
+    },
   ];
 
   console.log({uploadData});
@@ -66,9 +72,9 @@ export default uploadAudioToCloudinary;
 // const uploadAudioToS3 = async audioPath => {
 //   // Set up AWS configuration
 //   AWS.config.update({
-//     region: PROD_S3_REGION, // e.g., 'us-east-1'
-//     accessKeyId: PROD_S3_ACCESS_KEY_ID,
-//     secretAccessKey: PROD_S3_SECRET_ACCESS_KEY,
+//     region: config.S3_URL.PROD_S3_REGION, // e.g., 'us-east-1'
+//     accessKeyId: config.S3_URL.PROD_S3_ACCESS_KEY_ID,
+//     secretAccessKey: config.S3_URL.PROD_S3_SECRET_ACCESS_KEY,
 //     correctClockSkew: true,
 //   });
 

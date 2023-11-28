@@ -28,6 +28,7 @@ import {emptyList, saveUser} from '../../Redux/Actions/allUsers';
 import {storeDeals} from '../../Redux/Actions/deals';
 import {setArea} from '../../Redux/Actions/area';
 import axios from 'axios';
+import config from '../../config';
 
 // const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -219,6 +220,8 @@ export const RecordAudio = () => {
   // useEffect(() => {
   //   getSomeData();
   // }, [location]);
+
+  console.log(config);
 
   if (!user.authenticated) {
     return null;

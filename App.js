@@ -46,13 +46,13 @@ const App = () => {
     return Promise.reject(err);
   });
 
-  const TestErrorBoundary = () => {
-    throw new Error('This is a test error');
-  };
+  // const TestErrorBoundary = () => {
+  //   throw new Error('This is a test error');
+  // };
 
   return (
     <ErrorBoundary navigation={navigation}>
-      <TestErrorBoundary />
+      {/* <TestErrorBoundary /> */}
       <NavigationContainer theme={MyTheme} ref={navigation}>
         <AppView />
       </NavigationContainer>

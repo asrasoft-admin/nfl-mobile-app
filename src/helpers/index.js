@@ -12,6 +12,8 @@ import {
   PROD_BASE_URL,
 } from '@env';
 
+import config from '../config';
+
 export const getToken = async () => {
   try {
     const token = await AsyncStorage.getItem('@token');
@@ -63,13 +65,13 @@ export const stopRecording = async () => {
   return audioPath;
 };
 // export const baseURL = 'https://dds.asrasoft.net';
-export const baseURL = STAGE_BASE_URL;
+export const baseURL = config?.baseURL?.BASE_URL;
 // export const baseURL = PROD_BASE_URL;
 // export const baseURL = 'https://0361-117-102-63-236.ngrok-free.app';
 
 export const axiosInstance = axios.create({
   // baseURL: 'https://0361-117-102-63-236.ngrok-free.app/api',
-  baseURL: STAGE_AXIOS_INSTANCE_URL,
+  baseURL: config?.baseURL?.AXIOS_INSTANCE_URL,
   // baseURL: PROD_AXIOS_INSTANCE_URL,
   // baseURL: 'https://dds.asrasoft.net/api',
   // baseURL: 'https://746f-111-88-203-1.ngrok-free.app/api',
