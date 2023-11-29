@@ -262,7 +262,8 @@ const CustomerDetail = memo(({navigation}) => {
         }
       } catch (error) {
         setOTPSendLoading(false);
-        setOtpMessage({message: error.message, success: false});
+        console.log(error.response.data.message);
+        setOtpMessage({message: error.response.data.message, success: false});
         dispatch(otpCodeAction(''));
         console.log(error, 'otp error');
       }

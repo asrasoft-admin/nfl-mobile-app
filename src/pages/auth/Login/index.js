@@ -146,7 +146,7 @@ export const Login = ({navigation}) => {
         } else throw new Error('Number is Required');
       } else throw new Error('Area is Required');
     } catch (error) {
-      console.log({error});
+      console.log(error, '2');
       parseError(error);
     }
   };
