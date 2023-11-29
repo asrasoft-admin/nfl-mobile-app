@@ -557,7 +557,7 @@ const CustomerDetail = memo(({navigation}) => {
                   }
                   onPress={sendOTPHandler}
                   loading={OTPSendLoading}
-                  disabled={showTimer}
+                  disabled={showTimer || OTPSendLoading}
                 />
                 {showTimer && <Text>{timer}</Text>}
               </View>

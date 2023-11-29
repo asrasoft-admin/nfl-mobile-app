@@ -15,7 +15,6 @@ import config from '../../config';
 // This is for stagging -----
 const uploadAudioToCloudinary = async audioPath => {
   // stage --
-  console.log(config.cloudinaryURL.STAGE_CLOUDINARY_URL, 'fffff');
   const url = config.cloudinaryURL.STAGE_CLOUDINARY_URL;
 
   const generatedFilename = audioPath.substring(audioPath.lastIndexOf('/') + 1);
