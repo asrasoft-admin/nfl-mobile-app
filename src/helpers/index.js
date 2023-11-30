@@ -25,6 +25,15 @@ export const getToken = async () => {
 
 export const audioRecorderPlayer = new AudioRecorderPlayer();
 
+export const deleteAudioFile = async audioPath => {
+  try {
+    await RNFS.unlink(audioPath);
+    console.log('Audio file deleted successfully');
+  } catch (error) {
+    console.error('Error deleting audio file:', error);
+  }
+};
+
 export const handleUploadAudio = async audioPath => {
   if (audioPath) {
     console.log({audioPath});
@@ -194,8 +203,10 @@ export const fetchDeals = async user => {
 
 export const handleSync = async data => {
   try {
+    let audioFile;
     const modifiedData = await Promise.all(
       data.map(async element => {
+        audioFile = element.audioPath;
         const audio = await uploadAudioToCloudinary(element.audioPath);
         console.log('ssjklasjdlkajsdlk', {audio});
         console.log(element.deals);
@@ -213,6 +224,10 @@ export const handleSync = async data => {
     const {data: resData} = await axiosInstance.post('/customer/sync', {
       data: modifiedData,
     });
+    console.log({resData});
+    if (resData) {
+      await deleteAudioFile(audioFile);
+    }
     console.log(
       '=================================================================================>',
     );

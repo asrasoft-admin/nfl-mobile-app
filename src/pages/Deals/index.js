@@ -75,6 +75,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
         const dealQty = quantities.filter(
           item => allDeals.find(it => it.id === item.id).selected,
         );
+        console.log('deal', {dealQty});
         if (dealQty.length === 0) {
           throw new Error('Select the deal');
         }
@@ -85,7 +86,6 @@ export const Deals = ({route, navigation, containerStyles}) => {
         // if (qtyIsNull) {
         //   throw new Error('Enter quantity of the selected deals');
         // }
-        console.log({});
         const cusData = {
           ...customer,
           audioPath,
@@ -96,14 +96,13 @@ export const Deals = ({route, navigation, containerStyles}) => {
         let filterDeal = [...deals];
         const dealIndex = filterDeal.findIndex(item => item.id === deal?.id);
 
-        if (filterDeal[dealIndex].selected === true) {
-          filterDeal[dealIndex].selected = false;
-          setAllDeals(filterDeal);
-        }
-
         if (user?.role === 'consumer') {
           // dispatch(saveUser(cusData));
           await handleSync([cusData]);
+          if (filterDeal[dealIndex].selected === true) {
+            filterDeal[dealIndex].selected = false;
+            setAllDeals(filterDeal);
+          }
         }
         dispatch(recordSuccess());
         setLoading(false);
@@ -159,6 +158,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
     });
     console.log({updatedQuantities});
     setQuantities(updatedQuantities);
+    console.log('ppppp', updatedQuantities);
   };
   const handleSelect = deal => {
     let deals = [...allDeals];
@@ -180,7 +180,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
         {allDeals.map((deal, index) => (
           <Deal
             containerStyles={style.deal}
-            handleSelect={() => handleSelect(deal)}
+            handleSelect={() => !isLoading && handleSelect(deal)}
             deal={deal}
             onChange={onChange}
             quantities={quantities}
@@ -319,6 +319,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
               />
             )
           }
+          disabled={isLoading}
           active={formState.isValid && !isLoading}
           onPress={handleSubmit(handleProceed)}
           containerStyles={style.btn}

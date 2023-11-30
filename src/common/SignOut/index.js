@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import style from './style';
-import {Image, View, Text} from 'react-native';
+import {Image, View, Text, BackHandler} from 'react-native';
 import {Button} from '..';
 import {Texture, Header} from '..';
 import {useDispatch, useSelector} from 'react-redux';
@@ -13,6 +13,7 @@ import {
 export const SignOut = ({navigation}) => {
   const user = useSelector(state => state.user);
   const dispatch = useDispatch();
+  const [isActiveScreen, setIsActiveScreen] = useState(false);
 
   const handleAnotherRes = async () => {
     if (user.role === 'supervisor') {
@@ -53,6 +54,41 @@ export const SignOut = ({navigation}) => {
         console.log(err, 'err');
       });
   }, [user, dispatch]);
+
+  const handleBackPress = () => {
+    if (isActiveScreen) {
+      // navigation.navigate('RecordAudio');
+      handleAnotherRes();
+      return true;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    };
+  }, [isActiveScreen]);
+
+  useEffect(() => {
+    const onFocus = () => {
+      setIsActiveScreen(true);
+    };
+
+    const onBlur = () => {
+      setIsActiveScreen(false);
+    };
+
+    const focusListener = navigation.addListener('focus', onFocus);
+    const blurListener = navigation.addListener('blur', onBlur);
+
+    return () => {
+      focusListener.remove();
+      blurListener.remove();
+    };
+  }, []);
 
   return (
     <View style={style.root}>

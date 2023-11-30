@@ -364,7 +364,14 @@ const CustomerDetail = memo(({navigation}) => {
       } else {
         if (!data.otp || otpCode == data.otp) {
           dispatch(otpCodeAction(''));
-          if (data.name && data.number && data.terms && !!data.prevBrand) {
+          if (
+            data.name &&
+            data.number &&
+            data.terms &&
+            !!data.prevBrand &&
+            data.otp &&
+            data.address
+          ) {
             try {
               const details = {
                 user_id: user.id,
