@@ -225,6 +225,7 @@ const CustomerDetail = memo(({navigation}) => {
       //   console.log({res});
       //   return res;
     } catch (error) {
+      onNoResClose();
       throw new Error(error);
     } finally {
       setLoading(false);
@@ -278,6 +279,11 @@ const CustomerDetail = memo(({navigation}) => {
     const locationData = await getAreaFromAPI(location);
 
     try {
+      if (!data.prevBrand) {
+        onClose();
+        return parseError({message: 'Atlest select previous brand'});
+      }
+
       if (!disclaimer && !!data.prevBrand) {
         // console.log('==>' + {disclaimer});
         try {
@@ -326,8 +332,8 @@ const CustomerDetail = memo(({navigation}) => {
             navigation.navigate('SignOut');
             onClose();
           } catch (error) {
+            onClose();
             parseError(error);
-            console.log(error);
           } finally {
             console.log('helllo===============>', {modalVisible});
           }
@@ -352,7 +358,8 @@ const CustomerDetail = memo(({navigation}) => {
           // console.log('===========================area =>', {res});
           // return res;
         } catch (error) {
-          throw new Error(error);
+          onClose();
+          parseError(error);
         }
       } else {
         if (!data.otp || otpCode == data.otp) {
@@ -378,11 +385,15 @@ const CustomerDetail = memo(({navigation}) => {
               onClose();
               navigation.navigate('Deals');
             } catch (error) {
-              throw new Error(error);
+              parseError(error);
+              onClose();
             } finally {
               setLoading(false);
             }
-          } else throw new Error('Please Enter Complete Information');
+          } else {
+            parseError({message: 'Please Enter Complete Information'});
+            onClose();
+          }
         } else {
           setOtpMessage({message: 'Invalid OTP', success: false});
           onClose();
@@ -390,6 +401,7 @@ const CustomerDetail = memo(({navigation}) => {
       }
     } catch (error) {
       parseError(error);
+      onClose();
     }
   };
 
