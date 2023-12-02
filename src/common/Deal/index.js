@@ -11,6 +11,7 @@ export const Deal = ({
   label,
   quantities,
   onChange,
+  syncDataFeatureFlag,
 }) => {
   const [inputValue, setInputValue] = useState('');
 
@@ -47,7 +48,7 @@ export const Deal = ({
           borderColor: '#8080',
         }}>
         <Text style={style.price}> {deal?.price} PKR</Text>
-        {/* {deal?.selected && (
+        {deal?.selected && syncDataFeatureFlag && (
           <TextInput
             style={{
               height: 35,
@@ -57,14 +58,14 @@ export const Deal = ({
               borderRadius: 6,
               color: 'black',
               fontWeight: 'bold',
-              backgroundColor: '#fff'
+              backgroundColor: '#fff',
             }}
             value={quantities.find(item => item.id === deal.id)?.quantity}
             onChangeText={text => onChange(deal.id, text)}
             placeholder="Enter Qty"
             keyboardType="numeric"
           />
-        )} */}
+        )}
       </View>
       <Text>{deal?.description}</Text>
       <Button

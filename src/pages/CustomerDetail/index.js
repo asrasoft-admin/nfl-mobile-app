@@ -44,12 +44,16 @@ import {otpCodeAction} from '../../Redux/Actions/customerDetail';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {saveUser} from '../../Redux/Actions/allUsers';
 import axios from 'axios';
+import config from '../../config';
+import {widthPercentageToDP} from '../../utils/responsive';
 
 const CustomerDetail = memo(({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [noResModalVisible, setNoResModalVisible] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [isLoadingTwo, setIsLoadingTwo] = useState(false);
+  const syncDataFeatureFlag = config.featureFlags.syncDataFeature;
+  const otpByPassFeature = config.featureFlags.otpByPassFeature;
 
   const state = useSelector(state => state);
   const user = state.user;
@@ -187,8 +191,11 @@ const CustomerDetail = memo(({navigation}) => {
       };
 
       if (user?.role === 'consumer') {
-        // dispatch(saveUser(cusData));
-        await handleSync([cusData]);
+        if (syncDataFeatureFlag) {
+          dispatch(saveUser(cusData));
+        } else {
+          await handleSync([cusData]);
+        }
       }
 
       dispatch(recordSuccess());
@@ -323,10 +330,19 @@ const CustomerDetail = memo(({navigation}) => {
             deals: [],
           };
           try {
+            // if (user?.role === 'consumer') {
+            //   // dispatch(saveUser(cusData));
+            //   await handleSync([cusData]);
+            // }
+
             if (user?.role === 'consumer') {
-              // dispatch(saveUser(cusData));
-              await handleSync([cusData]);
+              if (syncDataFeatureFlag) {
+                dispatch(saveUser(cusData));
+              } else {
+                await handleSync([cusData]);
+              }
             }
+
             dispatch(recordSuccess());
             setLoading(false);
             navigation.navigate('SignOut');
@@ -337,26 +353,6 @@ const CustomerDetail = memo(({navigation}) => {
           } finally {
             console.log('helllo===============>', {modalVisible});
           }
-
-          // const res = await axiosInstance.post('/customer/details', {
-          //   user_id: user.id,
-          //   activity_id: user.activity_id,
-          //   coordinates: JSON.stringify(location),
-          //   audio: downloadLink,
-          //   city: data.city,
-          //   previous_brand_id: data.prevBrand,
-          //   no_response: false,
-          //   audio_record_time: new Date().getTime(),
-          //   audio_record_date: new Date(),
-          //   area_id: area?.id,
-          // });
-          // if (res.data.success) {
-          //   dispatch(recordSuccess());
-          //   onClose();
-          //   navigation.navigate('SignOut');
-          // }
-          // console.log('===========================area =>', {res});
-          // return res;
         } catch (error) {
           onClose();
           parseError(error);
@@ -369,8 +365,8 @@ const CustomerDetail = memo(({navigation}) => {
             data.number &&
             data.terms &&
             !!data.prevBrand &&
-            data.otp &&
-            data.address
+            data.address &&
+            (!otpByPassFeature || data.otp)
           ) {
             try {
               const details = {
@@ -566,32 +562,41 @@ const CustomerDetail = memo(({navigation}) => {
                   placeholder="Number 03XX-XXXXXXX"
                   error={!!errors?.number}
                   message={errors?.number?.message}
-                  containerStyles={style.numberInputContainer}
+                  containerStyles={[
+                    style.numberInputContainer,
+                    otpByPassFeature ? {} : {width: widthPercentageToDP(90)},
+                  ]}
                   keyboardType="numeric"
                   maxLength={11}
                 />
-                <Button
-                  containerStyles={style.otp}
-                  label={
-                    isChangingOTPLabel && !showTimer ? 'Resend OTP' : 'Send OTP'
-                  }
-                  onPress={sendOTPHandler}
-                  loading={OTPSendLoading}
-                  disabled={showTimer || OTPSendLoading}
-                />
+                {otpByPassFeature && (
+                  <Button
+                    containerStyles={style.otp}
+                    label={
+                      isChangingOTPLabel && !showTimer
+                        ? 'Resend OTP'
+                        : 'Send OTP'
+                    }
+                    onPress={sendOTPHandler}
+                    loading={OTPSendLoading}
+                    disabled={showTimer || OTPSendLoading}
+                  />
+                )}
                 {showTimer && <Text>{timer}</Text>}
               </View>
 
-              <Input
-                ref={ref}
-                control={control}
-                name="otp"
-                keyboardType="numeric"
-                placeholder="Enter OTP"
-                error={!!errors?.otp}
-                message={errors?.otp?.message}
-                containerStyles={style.inputContainer}
-              />
+              {otpByPassFeature && (
+                <Input
+                  ref={ref}
+                  control={control}
+                  name="otp"
+                  keyboardType="numeric"
+                  placeholder="Enter OTP"
+                  error={!!errors?.otp}
+                  message={errors?.otp?.message}
+                  containerStyles={style.inputContainer}
+                />
+              )}
 
               <View>
                 <Text

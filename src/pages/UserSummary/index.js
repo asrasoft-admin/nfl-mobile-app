@@ -20,12 +20,14 @@ import {
 } from '../../Redux/Actions/summary';
 import {axiosInstance} from '../../helpers';
 import {heightPercentageToDP} from '../../utils/responsive';
+import config from '../../config';
 
 const UserSummary = () => {
   const {summaryData} = useSelector(state => state.summaryData);
   const {summaryTotalData} = useSelector(state => state.summaryTotalData);
   const user = useSelector(state => state.user);
   const [isLoading, setIsLoading] = useState(false);
+  const syncDataFeatureFlag = config.featureFlags.syncDataFeature;
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -87,25 +89,29 @@ const UserSummary = () => {
           </View>
         ) : (
           <>
-            {/* <View style={styles.disclaimerWarning}>
-              <Text style={styles.disclaimerText}>
-                <Text style={styles.disclaimerHead}>Disclaimer : </Text>
-                Sync all your data to see the correct records!
-              </Text>
-            </View> */}
+            {syncDataFeatureFlag && (
+              <View style={styles.disclaimerWarning}>
+                <Text style={styles.disclaimerText}>
+                  <Text style={styles.disclaimerHead}>Disclaimer : </Text>
+                  Sync all your data to see the correct records!
+                </Text>
+              </View>
+            )}
 
-            <View>
-              <SummaryCard
-                data={summaryData?.data}
-                cardTitle="Your Today's Stats"
-              />
-            </View>
-            <View>
-              <SummaryCard
-                data={summaryTotalData?.data}
-                cardTitle="Your Total Stats"
-              />
-            </View>
+            <ScrollView scrollEnabled={syncDataFeatureFlag}>
+              <View>
+                <SummaryCard
+                  data={summaryData?.data}
+                  cardTitle="Your Today's Stats"
+                />
+              </View>
+              <View style={{marginBottom: syncDataFeatureFlag ? 20 : 0}}>
+                <SummaryCard
+                  data={summaryTotalData?.data}
+                  cardTitle="Your Total Stats"
+                />
+              </View>
+            </ScrollView>
           </>
         )}
       </View>

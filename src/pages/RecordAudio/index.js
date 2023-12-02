@@ -36,6 +36,8 @@ export const RecordAudio = () => {
   const [audioPath, setAudioPath] = useState('');
   const [syncLoading, setSyncLoading] = useState(false);
 
+  const syncDataFeatureFlag = config.featureFlags.syncDataFeature;
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {isRecording} = useSelector(state => state.Recorder);
@@ -143,35 +145,27 @@ export const RecordAudio = () => {
   };
 
   // sync function --
-  // const onClick = async () => {
-  //   try {
-  //     setSyncLoading(true);
-  //     if (user.role === 'testID') {
-  //       setSyncLoading(false);
-  //       return Alert.alert(
-  //         'Data Sync Completed',
-  //         'Data has been synced successfully',
-  //         [{text: 'OK'}],
-  //       );
-  //     }
-  //     const data = await handleSync(allCustomersDetails);
-  //     console.log('============================>', data);
-  //     if (data && data?.success) {
-  //       dispatch(emptyList());
-  //       console.log('hello');
-  //       Alert.alert(
-  //         'Data Sync Completed',
-  //         'Data has been synced successfully',
-  //         [{text: 'OK'}],
-  //       );
-  //     }
+  const onClick = async () => {
+    try {
+      setSyncLoading(true);
+      const data = await handleSync(allCustomersDetails);
+      console.log('============================>', data);
+      if (data && data?.success) {
+        dispatch(emptyList());
+        console.log('hello');
+        Alert.alert(
+          'Data Sync Completed',
+          'Data has been synced successfully',
+          [{text: 'OK'}],
+        );
+      }
 
-  //     setSyncLoading(false);
-  //   } catch (error) {
-  //     parseError(error);
-  //     setSyncLoading(false);
-  //   }
-  // };
+      setSyncLoading(false);
+    } catch (error) {
+      parseError(error);
+      setSyncLoading(false);
+    }
+  };
 
   const handleRecordAudio = async () => {
     try {
@@ -221,8 +215,6 @@ export const RecordAudio = () => {
   //   getSomeData();
   // }, [location]);
 
-  console.log(config);
-
   if (!user.authenticated) {
     return null;
   }
@@ -241,18 +233,21 @@ export const RecordAudio = () => {
           onPress={() => navigation.navigate('UserSummary')}
           containerStyles={style.viewSummary}
         />
-        {/* <Button
-          containerStyles={style.viewSummary}
-          label="Sync Data"
-          icon={
-            syncLoading && (
-              <ActivityIndicator
-                style={{position: 'absolute', left: wp('24')}}
-              />
-            )
-          }
-          onPress={() => onClick()}
-        /> */}
+        {syncDataFeatureFlag && (
+          <Button
+            containerStyles={style.viewSummary}
+            label="Sync Data"
+            disabled={syncLoading}
+            icon={
+              syncLoading && (
+                <ActivityIndicator
+                  style={{position: 'absolute', left: wp('24')}}
+                />
+              )
+            }
+            onPress={() => onClick()}
+          />
+        )}
       </View>
     </View>
   );

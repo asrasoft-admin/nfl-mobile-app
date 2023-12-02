@@ -202,6 +202,16 @@ export const fetchDeals = async user => {
 };
 
 export const handleSync = async data => {
+  const syncDataFeatureFlag = config.featureFlags.syncDataFeature;
+
+  if (data.length === 0 && syncDataFeatureFlag) {
+    return Alert.alert(
+      'Nothing to Sync',
+      'You have to record one or more entries to enable sync data',
+      [{text: 'OK'}],
+    );
+  }
+
   try {
     let audioFile;
     const modifiedData = await Promise.all(

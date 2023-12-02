@@ -62,7 +62,7 @@ export const Header = ({navigation}) => {
   return (
     <View>
       <View style={style.logoContainer}>
-        <View style={{}}>
+        <View>
           {/* <Image
             source={require('assets/images/activeMedia.png')}
             style={style.logo}

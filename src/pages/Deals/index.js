@@ -16,6 +16,7 @@ import {
 } from '../../Redux/Actions/RecordAudio';
 import uploadAudioToCloudinary from '../../services/cloudinary/Cloudinary';
 import {saveUser} from '../../Redux/Actions/allUsers';
+import config from '../../config';
 
 export const Deals = ({route, navigation, containerStyles}) => {
   const [isLoading, setLoading] = useState(false);
@@ -31,6 +32,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
     downloadLink: downloadUrl,
   } = useSelector(state => state.Recorder);
   const dispatch = useDispatch();
+  const syncDataFeatureFlag = config.featureFlags.syncDataFeature;
 
   const state = useSelector(state => state);
   const user = state.user;
@@ -83,9 +85,9 @@ export const Deals = ({route, navigation, containerStyles}) => {
         const qtyIsNull = dealQty.every(
           item => item.quantity === 0 && !Boolean(item.quantity),
         );
-        // if (qtyIsNull) {
-        //   throw new Error('Enter quantity of the selected deals');
-        // }
+        if (qtyIsNull && syncDataFeatureFlag) {
+          throw new Error('Enter quantity of the selected deals');
+        }
         const cusData = {
           ...customer,
           audioPath,
@@ -97,11 +99,18 @@ export const Deals = ({route, navigation, containerStyles}) => {
         const dealIndex = filterDeal.findIndex(item => item.id === deal?.id);
 
         if (user?.role === 'consumer') {
-          // dispatch(saveUser(cusData));
-          await handleSync([cusData]);
-          if (filterDeal[dealIndex].selected === true) {
-            filterDeal[dealIndex].selected = false;
-            setAllDeals(filterDeal);
+          if (syncDataFeatureFlag) {
+            dispatch(saveUser(cusData));
+            if (filterDeal[dealIndex].selected === true) {
+              filterDeal[dealIndex].selected = false;
+              setAllDeals(filterDeal);
+            }
+          } else {
+            await handleSync([cusData]);
+            if (filterDeal[dealIndex].selected === true) {
+              filterDeal[dealIndex].selected = false;
+              setAllDeals(filterDeal);
+            }
           }
         }
         dispatch(recordSuccess());
@@ -139,7 +148,10 @@ export const Deals = ({route, navigation, containerStyles}) => {
   };
 
   const fetchDeals = async () => {
-    const temp = deals.map(item => ({id: item.id, quantity: 1}));
+    const temp = deals.map(item => ({
+      id: item.id,
+      quantity: syncDataFeatureFlag ? 0 : 1,
+    }));
     setQuantities(temp);
     setAllDeals(deals);
   };
@@ -185,6 +197,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
             onChange={onChange}
             quantities={quantities}
             key={`deal ${index}`}
+            syncDataFeatureFlag={syncDataFeatureFlag}
           />
         ))}
       </View>
