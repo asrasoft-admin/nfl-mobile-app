@@ -240,7 +240,7 @@ const CustomerDetail = memo(({navigation}) => {
   };
 
   const sendOTPHandler = async () => {
-    const {number, terms, otp} = control._formValues;
+    const {number, terms, otp, name} = control._formValues;
     const {valid} = numberValidation({number});
 
     const genOtpCode = otpCodeGenerator();
@@ -248,12 +248,17 @@ const CustomerDetail = memo(({navigation}) => {
     const sum = number?.slice(1, 11);
     const numRes = 92 + sum;
 
+    if (!name) {
+      return parseError({message: 'Customer Name is required for send otp'});
+    }
+
     if (valid) {
       try {
         setOTPSendLoading(true);
         const res = await axiosInstance.post('/customer/send-otp', {
           otp_code: genOtpCode,
           number: numRes,
+          name: name,
         });
         dispatch(otpCodeAction(genOtpCode));
 
