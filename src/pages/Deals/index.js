@@ -65,6 +65,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
           audioPath = await stopRecording();
           dispatch(stopAudioRecording(audioPath));
         }
+        //
         // if (Boolean(downloadUrl)) {
         //   downloadLink = downloadUrl;
         // } else {
