@@ -1,7 +1,7 @@
 export const gender = [
   {
     name: 'Gender',
-    id: '',
+    id: 0,
   },
   {
     name: 'Male',
@@ -195,7 +195,7 @@ export const winnersActivity = [
 ];
 
 export const ageList = [
-  {id: '', name: 'Age'},
+  {id: 0, name: 'Age'},
   {id: '15 to 20', name: '15 to 20'},
   {id: '20 to 25', name: '20 to 25'},
   {id: '25 to 30', name: '25 to 30'},

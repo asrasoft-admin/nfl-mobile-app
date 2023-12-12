@@ -364,16 +364,16 @@ const CustomerDetail = memo(({navigation}) => {
           parseError(error);
         }
       } else {
-        if (!data.otp || otpCode == data.otp) {
-          dispatch(otpCodeAction(''));
+        if (otpCode == data.otp) {
+          console.log({d: otpCode, f: data.otp});
           if (
             data.number &&
             data.terms &&
             !!data.prevBrand &&
             data.address &&
             data.name &&
-            data.age &&
-            data.gender &&
+            !!data.age &&
+            !!data.gender &&
             (!otpByPassFeature || data.otp)
           ) {
             try {
@@ -397,6 +397,7 @@ const CustomerDetail = memo(({navigation}) => {
               };
               dispatch(setCustomerDetails(details));
               onClose();
+              dispatch(otpCodeAction(''));
               navigation.navigate('Deals');
             } catch (error) {
               parseError(error);
@@ -409,6 +410,8 @@ const CustomerDetail = memo(({navigation}) => {
             onClose();
           }
         } else {
+          console.log('??');
+          console.log({d: otpCode, f: data.otp});
           setOtpMessage({message: 'Invalid OTP', success: false});
           onClose();
         }
