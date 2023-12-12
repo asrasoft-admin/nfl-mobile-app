@@ -19,6 +19,7 @@ import {
   mobileNetwork,
   prevBrand,
   city,
+  ageList,
 } from '../../dummyData';
 import {
   axiosInstance,
@@ -366,11 +367,13 @@ const CustomerDetail = memo(({navigation}) => {
         if (!data.otp || otpCode == data.otp) {
           dispatch(otpCodeAction(''));
           if (
-            data.name &&
             data.number &&
             data.terms &&
             !!data.prevBrand &&
             data.address &&
+            data.name &&
+            data.age &&
+            data.gender &&
             (!otpByPassFeature || data.otp)
           ) {
             try {
@@ -379,7 +382,10 @@ const CustomerDetail = memo(({navigation}) => {
                 activity_id: user.activity_id,
                 coordinates: JSON.stringify(location),
                 name: data.name,
+                last_name: data.lastName,
                 mobile_number: data.number,
+                age: data.age,
+                gender: data.gender,
                 city: 'karachi',
                 no_response: false,
                 previous_brand_id: data.prevBrand,
@@ -410,6 +416,7 @@ const CustomerDetail = memo(({navigation}) => {
     } catch (error) {
       parseError(error);
       onClose();
+      console.log('erro 4');
     }
   };
 
@@ -460,7 +467,6 @@ const CustomerDetail = memo(({navigation}) => {
     }
   }, [location]);
 
-  console.log('helllo===============>', modalVisible);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -492,14 +498,14 @@ const CustomerDetail = memo(({navigation}) => {
             />
           </View>
 
-          {/* <Dropdown
+          <Dropdown
             control={control}
             name="city"
             error={!!errors?.city}
             message={errors?.city?.message}
             containerStyles={style.inputContainer}
             items={city}
-          /> */}
+          />
 
           <Dropdown
             control={control}
@@ -531,10 +537,38 @@ const CustomerDetail = memo(({navigation}) => {
                 ref={ref}
                 control={control}
                 name="name"
-                placeholder="Customer Name"
+                placeholder="First Name"
                 error={!!errors?.name}
                 message={errors?.name?.message}
                 containerStyles={style.inputContainer}
+              />
+
+              <Input
+                ref={ref}
+                control={control}
+                name="lastName"
+                placeholder="Last Name (optional)"
+                error={!!errors?.name}
+                message={errors?.name?.message}
+                containerStyles={style.inputContainer}
+              />
+
+              <Dropdown
+                control={control}
+                name="age"
+                error={!!errors?.age}
+                message={errors?.age?.message}
+                containerStyles={style.inputContainer}
+                items={ageList}
+              />
+
+              <Dropdown
+                control={control}
+                name="gender"
+                error={!!errors?.gender}
+                message={errors?.gender?.message}
+                containerStyles={style.inputContainer}
+                items={gender}
               />
 
               <Input
