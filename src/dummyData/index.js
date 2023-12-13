@@ -59,7 +59,7 @@ export const prevBrand = [
   },
   {
     id: 6,
-    name: 'Other',
+    name: 'Loose Recipe',
   },
 ];
 
@@ -196,10 +196,8 @@ export const winnersActivity = [
 
 export const ageList = [
   {id: 0, name: 'Age'},
-  {id: '15 to 20', name: '15 to 20'},
-  {id: '20 to 25', name: '20 to 25'},
-  {id: '25 to 30', name: '25 to 30'},
-  {id: '30 to 35', name: '30 to 35'},
-  {id: '40 to 45', name: '40 to 45'},
-  {id: 'Above (45)', name: 'Above (45)'},
+  {id: '18-25', name: '18-25'},
+  {id: '26-35', name: '26-35'},
+  {id: '36-45', name: '36-45'},
+  {id: '45 & over', name: '45 & over'},
 ];
