@@ -25,7 +25,7 @@ const uploadAudioToS3 = async audioPath => {
 
   // S3 Upload parameters
   const params = {
-    Bucket: config.PROD_S3_BUCKET,
+    Bucket: config.S3_URL.PROD_S3_BUCKET,
     Key: `uploads/${generatedFilename}`,
     Body: fileBuffer,
     ContentType: 'audio/aac', // Adjust based on your actual audio file type
