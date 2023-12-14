@@ -44,6 +44,7 @@ export const RecordAudio = () => {
   const {allCustomersDetails} = useSelector(state => state.allCustomers);
   const [isActiveScreen, setIsActiveScreen] = useState(false);
   const [location, setLocation] = useState(null);
+  const [locationData, setLocationData] = useState(null);
   const state = useSelector(state => state);
   const {area} = useSelector(state => state.allArea);
   const user = state.user;
@@ -168,23 +169,29 @@ export const RecordAudio = () => {
   };
 
   const handleRecordAudio = async () => {
-    try {
-      console.log('asdasd');
-      if (audioRecorderPlayer !== null) {
-        const path = await audioRecorderPlayer.startRecorder();
-        if (path) dispatch(startRecording());
-        audioRecorderPlayer.addRecordBackListener(e => {
-          // console.log('Recording . . . ', e.currentPosition);
-          return;
-        });
-        if (state?.user?.role === 'shopkeeper') {
-          navigation.navigate('ShopkeerDetail');
-        } else {
-          navigation.navigate('CustomerDetail');
+    if (locationData?.address && location?.displayName) {
+      try {
+        console.log('asdasd');
+        if (audioRecorderPlayer !== null) {
+          const path = await audioRecorderPlayer.startRecorder();
+          if (path) dispatch(startRecording());
+          audioRecorderPlayer.addRecordBackListener(e => {
+            // console.log('Recording . . . ', e.currentPosition);
+            return;
+          });
+          if (state?.user?.role === 'shopkeeper') {
+            navigation.navigate('ShopkeerDetail');
+          } else {
+            navigation.navigate('CustomerDetail');
+          }
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      parseError({
+        message: 'Please turn on the location before starting the form',
+      });
     }
   };
 
@@ -196,7 +203,7 @@ export const RecordAudio = () => {
     (async () => {
       if (location) {
         const data = await getAreaFromAPI(location);
-        console.log({data});
+        setLocationData(data);
         if (data.address) {
           dispatch(setArea(data.address));
         }
