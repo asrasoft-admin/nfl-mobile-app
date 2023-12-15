@@ -8,6 +8,7 @@ import uploadAudioToCloudinary from '../services/cloudinary/Cloudinary';
 
 import config from '../config';
 import {syncLoader, updateList} from '../Redux/Actions/allUsers';
+import {Audio} from 'react-native-compressor';
 
 import {store} from '../Redux/store';
 
@@ -213,9 +214,19 @@ export const handleSync = async data => {
       const element = tempData[0];
       try {
         audioFile = element.audioPath;
-        const audio = await uploadAudioToCloudinary(element.audioPath);
+        // const result1 = await Audio.compress(
+        //   audioFile, // recommended wav file but can be use mp3 file
+        //   {quality: 'medium'},
+        // );
+
+        const audioCompressed = await Audio.compress(audioFile, {
+          bitrate: 32000, // Adjust as needed
+          samplerate: 22050, // Adjust as needed
+          channels: 1, // Convert to mono if stereo is not necessary
+        });
+
+        const audio = await uploadAudioToCloudinary(audioCompressed);
         console.log('ssjklasjdlkajsdlk', {audio});
-        console.log('eeeeleeeeee', element.deals);
         const {audioPath, ...finalElement} = element;
         const finalObject = {
           ...finalElement,
