@@ -7,6 +7,9 @@ import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import uploadAudioToCloudinary from '../services/cloudinary/Cloudinary';
 
 import config from '../config';
+import {syncLoader, updateList} from '../Redux/Actions/allUsers';
+
+import {store} from '../Redux/store';
 
 export const getToken = async () => {
   try {
@@ -191,8 +194,12 @@ export const fetchDeals = async user => {
 
 export const handleSync = async data => {
   const syncDataFeatureFlag = config.featureFlags.syncDataFeature;
+  let tempData = [...data];
+  console.log({data});
+  let completedCount = 0;
+  let totalCount = tempData.length;
 
-  if (data.length === 0 && syncDataFeatureFlag) {
+  if (data.length === 0) {
     return Alert.alert(
       'Nothing to Sync',
       'You have to record one or more entries to enable sync data',
@@ -202,36 +209,71 @@ export const handleSync = async data => {
 
   try {
     let audioFile;
-    const modifiedData = await Promise.all(
-      data.map(async element => {
+    while (tempData.length > 0) {
+      const element = tempData[0];
+      try {
         audioFile = element.audioPath;
         const audio = await uploadAudioToCloudinary(element.audioPath);
         console.log('ssjklasjdlkajsdlk', {audio});
-        console.log(element.deals);
+        console.log('eeeeleeeeee', element.deals);
         const {audioPath, ...finalElement} = element;
-        return {
+        const finalObject = {
           ...finalElement,
           audio,
         };
-      }),
-    );
+        const {data: resData} = await axiosInstance.post('/customer/sync', {
+          data: [finalObject],
+        });
+        if (resData) {
+          const updatedData = tempData.slice(1);
+          console.log({yeyeyeyyey: updatedData});
+          store.dispatch(updateList(updatedData));
+          tempData = [...updatedData];
 
-    console.log(
-      '?????????????????????????????????????????????????????????????????????????>',
-    );
-    const {data: resData} = await axiosInstance.post('/customer/sync', {
-      data: modifiedData,
-    });
-    console.log({resData});
-    if (resData) {
-      await deleteAudioFile(audioFile);
+          if (updatedData?.length > 0) {
+            completedCount++;
+            await deleteAudioFile(audioFile);
+            const percentage = (completedCount / totalCount) * 100;
+            store.dispatch(syncLoader(`${percentage.toFixed(0)}%`));
+            console.log(`Upload Progress: ${percentage.toFixed(2)}%`);
+          }
+        }
+        console.log({element});
+      } catch (error) {
+        store.dispatch(syncLoader(0));
+        parseError(error);
+        break;
+        throw error;
+      }
     }
-    console.log(
-      '=================================================================================>',
-    );
-    // console.log(resData);
-    return resData;
+
+    // const modifiedData = await Promise.all(
+    //   data.map(async element => {
+
+    //     return {
+    //       ...finalElement,
+    //       audio,
+    //     };
+    //   }),
+    // );
+
+    // console.log(
+    //   '?????????????????????????????????????????????????????????????????????????>',
+    // );
+    // const {data: resData} = await axiosInstance.post('/customer/sync', {
+    //   data: modifiedData,
+    // });
+    // console.log({resData});
+    // if (resData) {
+    //   await deleteAudioFile(audioFile);
+    // }
+    // console.log(
+    //   '=================================================================================>',
+    // );
+    // // console.log(resData);
+    return {success: true};
   } catch (error) {
+    store.dispatch(syncLoader(0));
     parseError(error);
     console.log(error);
     throw error; // Re-throw the error to propagate it to the calling function

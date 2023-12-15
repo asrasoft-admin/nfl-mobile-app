@@ -364,7 +364,7 @@ const CustomerDetail = memo(({navigation}) => {
           parseError(error);
         }
       } else {
-        if (otpCode == data.otp) {
+        if (!otpByPassFeature || otpCode == data.otp) {
           console.log({d: otpCode, f: data.otp});
           if (
             data.number &&

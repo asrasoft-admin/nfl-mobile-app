@@ -41,8 +41,11 @@ export const RecordAudio = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {isRecording} = useSelector(state => state.Recorder);
-  const {allCustomersDetails} = useSelector(state => state.allCustomers);
+  const {allCustomersDetails, loading} = useSelector(
+    state => state.allCustomers,
+  );
   const [isActiveScreen, setIsActiveScreen] = useState(false);
+  const [progressLoading, setProgressLoading] = useState('0%');
   const [location, setLocation] = useState(null);
   const [locationData, setLocationData] = useState(null);
   const state = useSelector(state => state);
@@ -149,14 +152,17 @@ export const RecordAudio = () => {
   const onClick = async () => {
     try {
       setSyncLoading(true);
+      console.log({allCustomersDetails});
       const data = await handleSync(allCustomersDetails);
       console.log('============================>', data);
       if (data && data?.success) {
-        dispatch(emptyList());
+        // dispatch(emptyList());
         console.log('hello');
         Alert.alert(
           'Data Sync Completed',
-          'Data has been synced successfully',
+          `${allCustomersDetails?.length} ${
+            allCustomersDetails?.length > 1 ? 'items' : 'item'
+          } have been synced successfully`,
           [{text: 'OK'}],
         );
       }
@@ -169,7 +175,7 @@ export const RecordAudio = () => {
   };
 
   const handleRecordAudio = async () => {
-    if (locationData?.address && location?.displayName) {
+    if (!locationData?.address && !location?.displayName) {
       try {
         console.log('asdasd');
         if (audioRecorderPlayer !== null) {
@@ -211,6 +217,12 @@ export const RecordAudio = () => {
     })();
   }, [location]);
 
+  useEffect(() => {
+    if (loading) {
+      setProgressLoading(loading);
+    }
+  }, [loading]);
+
   // const getSomeData = async () => {
   //   if (location) {
 
@@ -243,15 +255,10 @@ export const RecordAudio = () => {
         {syncDataFeatureFlag && (
           <Button
             containerStyles={style.viewSummary}
-            label="Sync Data"
-            disabled={syncLoading}
-            icon={
-              syncLoading && (
-                <ActivityIndicator
-                  style={{position: 'absolute', left: wp('24')}}
-                />
-              )
+            label={
+              syncLoading ? 'Syncing data... ' + progressLoading : 'Sync Data'
             }
+            disabled={syncLoading}
             onPress={() => onClick()}
           />
         )}
