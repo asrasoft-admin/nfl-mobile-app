@@ -12,6 +12,7 @@ const uploadAudioToS3 = async audioPath => {
     accessKeyId: config.S3_URL.PROD_S3_ACCESS_KEY_ID,
     secretAccessKey: config.S3_URL.PROD_S3_SECRET_ACCESS_KEY,
     correctClockSkew: true,
+    useAccelerateEndpoint: true,
   });
 
   const s3 = new AWS.S3();

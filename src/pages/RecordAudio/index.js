@@ -175,7 +175,7 @@ export const RecordAudio = () => {
   };
 
   const handleRecordAudio = async () => {
-    if (!locationData?.address && !location?.displayName) {
+    if (locationData) {
       try {
         console.log('asdasd');
         if (audioRecorderPlayer !== null) {
