@@ -1,12 +1,10 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   PermissionsAndroid,
   Platform,
-  ActivityIndicator,
   Alert,
   BackHandler,
-  Text,
 } from 'react-native';
 // import uploadAudioToCloudinary from './CloudinaryUploader';
 import {Button, Header, Texture} from '../../common';
@@ -14,7 +12,6 @@ import style from './style';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {startRecording} from '../../Redux/Actions/RecordAudio';
 import {useDispatch, useSelector} from 'react-redux';
-import {widthPercentageToDP as wp} from '../../utils/responsive';
 import {
   audioRecorderPlayer,
   fetchDeals,
@@ -23,6 +20,7 @@ import {
   handleSync,
   parseError,
 } from '../../helpers';
+import {request, RESULTS, openSettings} from 'react-native-permissions';
 
 import {emptyList, saveUser} from '../../Redux/Actions/allUsers';
 import {storeDeals} from '../../Redux/Actions/deals';
@@ -45,6 +43,7 @@ export const RecordAudio = () => {
     state => state.allCustomers,
   );
   const [isActiveScreen, setIsActiveScreen] = useState(false);
+  const [isCheckPermissions, setIsCheckPermissions] = useState(false);
   const [progressLoading, setProgressLoading] = useState('0%');
   const [location, setLocation] = useState(null);
   const [locationData, setLocationData] = useState(null);
@@ -123,8 +122,6 @@ export const RecordAudio = () => {
             PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
           ]);
 
-          console.log('write external stroage', grants);
-
           if (
             grants['android.permission.WRITE_EXTERNAL_STORAGE'] ===
               PermissionsAndroid.RESULTS.GRANTED &&
@@ -174,30 +171,86 @@ export const RecordAudio = () => {
     }
   };
 
-  const handleRecordAudio = async () => {
-    if (locationData) {
-      try {
-        console.log('asdasd');
-        if (audioRecorderPlayer !== null) {
-          const path = await audioRecorderPlayer.startRecorder();
-          if (path) dispatch(startRecording());
-          audioRecorderPlayer.addRecordBackListener(e => {
-            // console.log('Recording . . . ', e.currentPosition);
-            return;
-          });
-          if (state?.user?.role === 'shopkeeper') {
-            navigation.navigate('ShopkeerDetail');
-          } else {
-            navigation.navigate('CustomerDetail');
-          }
-        }
-      } catch (error) {
-        console.log(error);
+  const requestMultiplePermission = async PERMISSION => {
+    try {
+      const result = await request(PERMISSION);
+
+      if (result === RESULTS.GRANTED) {
+        console.log('all permissions granted');
       }
-    } else {
-      parseError({
-        message: 'Please turn on the location before starting the form',
-      });
+
+      if (result === RESULTS.DENIED) {
+        console.log('all permissions denied');
+        return await openSettings();
+      }
+
+      if (result === RESULTS.BLOCKED) {
+        console.log('Permission denied forever. Opening app settings...');
+        return await openSettings();
+      }
+    } catch (error) {
+      parseError(error);
+    }
+  };
+
+  const handleRecordAudio = async () => {
+    const writeExternalStoragePermission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    );
+
+    const readExternalStoragePermission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+    );
+
+    const locationPermission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+
+    const recordAudioPermission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+    );
+
+    if (!writeExternalStoragePermission) {
+      return requestMultiplePermission(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      );
+    }
+
+    if (!readExternalStoragePermission) {
+      return requestMultiplePermission(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      );
+    }
+
+    if (!locationPermission) {
+      return requestMultiplePermission(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+    }
+
+    if (!recordAudioPermission) {
+      return requestMultiplePermission(
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      );
+    }
+
+    try {
+      console.log('asdasd');
+      if (audioRecorderPlayer !== null) {
+        const path = await audioRecorderPlayer.startRecorder();
+        if (path) dispatch(startRecording());
+        audioRecorderPlayer.addRecordBackListener(e => {
+          // console.log('Recording . . . ', e.currentPosition);
+          return;
+        });
+        if (state?.user?.role === 'shopkeeper') {
+          navigation.navigate('ShopkeerDetail');
+        } else {
+          navigation.navigate('CustomerDetail');
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -222,17 +275,6 @@ export const RecordAudio = () => {
       setProgressLoading(loading);
     }
   }, [loading]);
-
-  // const getSomeData = async () => {
-  //   if (location) {
-
-  //     console.log({formattedAddress, area, firstResult});
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getSomeData();
-  // }, [location]);
 
   if (!user.authenticated) {
     return null;
