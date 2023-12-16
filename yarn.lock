@@ -3263,12 +3263,6 @@
     "locate-path" "^5.0.0"
     "path-exists" "^4.0.0"
 
-"find-up@^5.0.0":
-  "version" "5.0.0"
-  dependencies:
-    "locate-path" "^6.0.0"
-    "path-exists" "^4.0.0"
-
 "flat-cache@^3.0.4":
   "version" "3.0.4"
   dependencies:
@@ -4772,11 +4766,6 @@
   dependencies:
     "p-locate" "^4.1.0"
 
-"locate-path@^6.0.0":
-  "version" "6.0.0"
-  dependencies:
-    "p-locate" "^5.0.0"
-
 "lodash.debounce@^4.0.8":
   "integrity" "sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow=="
   "resolved" "https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-4.0.8.tgz"
@@ -5566,11 +5555,6 @@
   dependencies:
     "p-try" "^2.0.0"
 
-"p-limit@^3.0.2":
-  "version" "3.1.0"
-  dependencies:
-    "yocto-queue" "^0.1.0"
-
 "p-locate@^3.0.0":
   "integrity" "sha512-x+12w/To+4GFfgJhBEpiDcLozRJGegY+Ei7/z0tSLkMmxGZNybVMSfWj9aJn8Z5Fc7dBUNJOOVgPv2H7IwulSQ=="
   "resolved" "https://registry.npmjs.org/p-locate/-/p-locate-3.0.0.tgz"
@@ -5584,11 +5568,6 @@
   "version" "4.1.0"
   dependencies:
     "p-limit" "^2.2.0"
-
-"p-locate@^5.0.0":
-  "version" "5.0.0"
-  dependencies:
-    "p-limit" "^3.0.2"
 
 "p-try@^2.0.0":
   "integrity" "sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ=="
@@ -5708,11 +5687,6 @@
   "version" "4.2.0"
   dependencies:
     "find-up" "^4.0.0"
-
-"pkg-dir@^5.0.0":
-  "version" "5.0.0"
-  dependencies:
-    "find-up" "^5.0.0"
 
 "plist@^3.0.2", "plist@^3.0.5":
   "integrity" "sha512-uysumyrvkUX0rX/dEVqt8gC3sTBzd4zoWfLeS29nb53imdaXVvLINYXTI2GNqzaMuvacNx4uJQ8+b3zXR0pkgQ=="
@@ -5967,11 +5941,10 @@
   "resolved" "https://registry.npmjs.org/react-native-keyboard-aware-scrollview/-/react-native-keyboard-aware-scrollview-2.1.0.tgz"
   "version" "2.1.0"
 
-"react-native-permissions@^3.8.3":
-  "version" "3.8.4"
-  dependencies:
-    "picocolors" "^1.0.0"
-    "pkg-dir" "^5.0.0"
+"react-native-permissions@^3.10.1":
+  "integrity" "sha512-Gc5BxxpjZn4QNUDiVeHOO0vXh3AH7ToolmwTJozqC6DsxV7NAf3ttap+8BSmzDR8WxuAM3Cror+YNiBhHJx7/w=="
+  "resolved" "https://registry.npmjs.org/react-native-permissions/-/react-native-permissions-3.10.1.tgz"
+  "version" "3.10.1"
 
 "react-native-reanimated@^2.3.0-beta.1":
   "integrity" "sha512-bVy+FUEaHXq4i+aPPqzGeor1rG4scgVNBbBz21ohvC7iMpB9IIgvGsmy1FAoodZhZ5sa3EPF67Rcec76F1PXlQ=="
@@ -7609,6 +7582,3 @@
     "string-width" "^4.2.0"
     "y18n" "^5.0.5"
     "yargs-parser" "^20.2.2"
-
-"yocto-queue@^0.1.0":
-  "version" "0.1.0"
