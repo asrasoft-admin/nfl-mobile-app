@@ -9,6 +9,7 @@ import {useDispatch} from 'react-redux';
 import {axiosInstance, getToken} from './src/helpers';
 import {logout} from './src/Redux/Actions/userAction';
 import ErrorBoundary from './src/common/ErrorBoundary/ErrorBoundary';
+import BackgroundTask from 'react-native-background-task';
 
 const MyTheme = {
   colors: {
@@ -49,7 +50,7 @@ const App = () => {
   // const TestErrorBoundary = () => {
   //   throw new Error('This is a test error');
   // };
-
+  console.log(BackgroundTask, 'BackgroundTask');
   return (
     <ErrorBoundary navigation={navigation}>
       {/* <TestErrorBoundary /> */}
