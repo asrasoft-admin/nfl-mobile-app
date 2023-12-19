@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   NavigationContainer,
   useNavigationContainerRef,
@@ -9,7 +9,10 @@ import {useDispatch} from 'react-redux';
 import {axiosInstance, getToken} from './src/helpers';
 import {logout} from './src/Redux/Actions/userAction';
 import ErrorBoundary from './src/common/ErrorBoundary/ErrorBoundary';
-import BackgroundTask from 'react-native-background-task';
+import {NativeModules} from 'react-native';
+import BackgroundTask from './src/services/BackgroundTask';
+
+const {InternetCheckModule} = NativeModules;
 
 const MyTheme = {
   colors: {
@@ -50,7 +53,23 @@ const App = () => {
   // const TestErrorBoundary = () => {
   //   throw new Error('This is a test error');
   // };
-  console.log(BackgroundTask, 'BackgroundTask');
+
+  // useEffect(() => {
+  //   BackgroundTask.schedule();
+
+  //   console.log(
+  //     'App is in the foreground:',
+  //     BackgroundTask.isRunningInForeground,
+  //   );
+  // }, []);
+
+  InternetCheckModule.checkInternetConnection()
+    .then(isConnected => {
+      console.log(isConnected, 'connect');
+    })
+    .catch(error => {
+      console.error(error);
+    });
   return (
     <ErrorBoundary navigation={navigation}>
       {/* <TestErrorBoundary /> */}

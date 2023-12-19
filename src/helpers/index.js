@@ -9,7 +9,6 @@ import uploadAudioToCloudinary from '../services/cloudinary/Cloudinary';
 import config from '../config';
 import {syncLoader, updateList} from '../Redux/Actions/allUsers';
 import {Audio} from 'react-native-compressor';
-
 import {store} from '../Redux/store';
 
 export const getToken = async () => {
