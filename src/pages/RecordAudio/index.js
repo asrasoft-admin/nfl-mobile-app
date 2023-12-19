@@ -5,6 +5,7 @@ import {
   Platform,
   Alert,
   BackHandler,
+  NativeModules,
 } from 'react-native';
 // import uploadAudioToCloudinary from './CloudinaryUploader';
 import {Button, Header, Texture} from '../../common';
@@ -43,12 +44,13 @@ export const RecordAudio = () => {
     state => state.allCustomers,
   );
   const [isActiveScreen, setIsActiveScreen] = useState(false);
-  const [isCheckPermissions, setIsCheckPermissions] = useState(false);
+  const [isNetConntected, setIsNetConntected] = useState(null);
   const [progressLoading, setProgressLoading] = useState('0%');
   const [location, setLocation] = useState(null);
   const state = useSelector(state => state);
   const {area} = useSelector(state => state.allArea);
   const user = state.user;
+  const {InternetCheckModule} = NativeModules;
 
   const handleBackPress = () => {
     if (isActiveScreen) {
@@ -233,6 +235,12 @@ export const RecordAudio = () => {
       );
     }
 
+    if (!isNetConntected) {
+      return Alert.alert('Network Error', 'Your net is not connected!', [
+        {text: 'OK'},
+      ]);
+    }
+
     try {
       console.log('asdasd');
       if (audioRecorderPlayer !== null) {
@@ -253,8 +261,21 @@ export const RecordAudio = () => {
     }
   };
 
+  const checkInternetConnection = () => {
+    InternetCheckModule.checkInternetConnection()
+      .then(isConnected => {
+        setIsNetConntected(isConnected);
+        console.log({isConnected}, 'connect');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
   useEffect(() => {
     getLocation(setLocation);
+
+    checkInternetConnection();
   }, []);
 
   useEffect(() => {

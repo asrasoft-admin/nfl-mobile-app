@@ -9,10 +9,7 @@ import {useDispatch} from 'react-redux';
 import {axiosInstance, getToken} from './src/helpers';
 import {logout} from './src/Redux/Actions/userAction';
 import ErrorBoundary from './src/common/ErrorBoundary/ErrorBoundary';
-import {NativeModules} from 'react-native';
 import BackgroundTask from './src/services/BackgroundTask';
-
-const {InternetCheckModule} = NativeModules;
 
 const MyTheme = {
   colors: {
@@ -63,13 +60,6 @@ const App = () => {
   //   );
   // }, []);
 
-  InternetCheckModule.checkInternetConnection()
-    .then(isConnected => {
-      console.log(isConnected, 'connect');
-    })
-    .catch(error => {
-      console.error(error);
-    });
   return (
     <ErrorBoundary navigation={navigation}>
       {/* <TestErrorBoundary /> */}
