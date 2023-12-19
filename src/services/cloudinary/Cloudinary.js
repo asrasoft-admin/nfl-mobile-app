@@ -8,13 +8,14 @@ const uploadAudioToCloudinary = async audioPath => {
   const url = config.cloudinaryURL.STAGE_CLOUDINARY_URL;
 
   const generatedFilename = audioPath.substring(audioPath.lastIndexOf('/') + 1);
+  const fileData = await RNFetchBlob.fs.readFile(audioPath, 'base64');
 
   const uploadData = [
     {
       name: 'file',
       filename: generatedFilename,
       type: 'audio/aac',
-      data: RNFetchBlob.wrap(audioPath),
+      data: fileData,
     },
     // stage --
     {
