@@ -18,7 +18,14 @@ import shopkeeperDetails from './Reducers/shopkeeperDetails';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['user', 'allArea', 'allCustomers', 'deals', 'shopkeeperDetail'],
+  whitelist: [
+    'user',
+    'allArea',
+    'allCustomers',
+    'deals',
+    'shopkeeperDetail',
+    'customerDetail',
+  ],
 };
 
 const rootReducer = combineReducers({

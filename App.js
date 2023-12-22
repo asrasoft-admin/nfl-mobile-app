@@ -5,12 +5,13 @@ import {
 } from '@react-navigation/native';
 import {colors} from './src/assets/colors';
 import AppView from './src/app';
-import {useDispatch} from 'react-redux';
-import {axiosInstance, getToken} from './src/helpers';
+import {useDispatch, useSelector} from 'react-redux';
+import {axiosInstance, getToken, handleSync} from './src/helpers';
 import {logout} from './src/Redux/Actions/userAction';
 import ErrorBoundary from './src/common/ErrorBoundary/ErrorBoundary';
 import {NativeModules} from 'react-native';
-import BackgroundTask from './src/services/BackgroundTask';
+// import BackgroundTask from './src/services/BackgroundTask';
+import BackgroundTimer from 'react-native-background-timer';
 
 const {InternetCheckModule} = NativeModules;
 
@@ -24,6 +25,7 @@ const MyTheme = {
 const App = () => {
   const dispatch = useDispatch();
   const navigation = useNavigationContainerRef();
+  const {allCustomersDetails} = useSelector(state => state.allCustomers);
 
   // request interceptor to attach token on all request
   axiosInstance.interceptors.request.use(async request => {
@@ -54,22 +56,25 @@ const App = () => {
   //   throw new Error('This is a test error');
   // };
 
-  // useEffect(() => {
-  //   BackgroundTask.schedule();
+  useEffect(() => {
+    const interval = 1000 * 60;
 
-  //   console.log(
-  //     'App is in the foreground:',
-  //     BackgroundTask.isRunningInForeground,
-  //   );
-  // }, []);
+    // Create a function that will be called every 15 minutes
+    const task = async () => {
+      await handleSync(allCustomersDetails);
+      console.log('Task executed!');
+      // Your code that will be called every 15 minutes goes here
+    };
 
-  InternetCheckModule.checkInternetConnection()
-    .then(isConnected => {
-      console.log(isConnected, 'connect');
-    })
-    .catch(error => {
-      console.error(error);
-    });
+    // Start the background timer with the task function and the interval
+    const timerId = BackgroundTimer.setInterval(task, interval);
+
+    // Clear the interval when the component is unmounted
+    return () => {
+      BackgroundTimer.clearInterval(timerId);
+    };
+  }, [allCustomersDetails]);
+
   return (
     <ErrorBoundary navigation={navigation}>
       {/* <TestErrorBoundary /> */}
