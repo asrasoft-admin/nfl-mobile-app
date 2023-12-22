@@ -253,6 +253,10 @@ const CustomerDetail = memo(({navigation}) => {
       return parseError({message: 'Customer Name is required for send otp'});
     }
 
+    if (!number) {
+      return parseError({message: 'Customer Number is required for send otp'});
+    }
+
     if (valid) {
       try {
         setOTPSendLoading(true);
@@ -267,7 +271,7 @@ const CustomerDetail = memo(({navigation}) => {
         if (res.data.success) {
           setOtpMessage({message: res.data.message, success: res.data.success});
           setOTPSendLoading(false);
-          setTimer(90);
+          setTimer(60);
           setShowTimer(true);
         }
 
@@ -357,6 +361,7 @@ const CustomerDetail = memo(({navigation}) => {
             onClose();
             parseError(error);
           } finally {
+            setLoading(false);
             console.log('helllo===============>', {modalVisible});
           }
         } catch (error) {

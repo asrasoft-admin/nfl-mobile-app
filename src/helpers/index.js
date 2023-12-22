@@ -220,9 +220,9 @@ export const handleSync = async data => {
         // );
 
         const audioCompressed = await Audio.compress(audioFile, {
-          bitrate: 32000, // Adjust as needed
-          samplerate: 22050, // Adjust as needed
-          channels: 1, // Convert to mono if stereo is not necessary
+          bitrate: 64000,
+          samplerate: 44100,
+          channels: 1,
         });
 
         const audio = await uploadAudioToCloudinary(audioCompressed);
