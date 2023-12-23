@@ -71,6 +71,8 @@ const CustomerDetail = memo(({navigation}) => {
   const [timer, setTimer] = useState(30); // Initial timer value in seconds
   const [showTimer, setShowTimer] = useState(false);
   console.log('===================== COMPONENT RENDER ===================== ');
+  const {allCustomersDetails} = useSelector(state => state.allCustomers);
+  const {cloneAllCustomerDetails} = useSelector(state => state.customerDetail);
 
   const {
     isRecording,
@@ -253,7 +255,30 @@ const CustomerDetail = memo(({navigation}) => {
       return parseError({message: 'Customer Name is required for send otp'});
     }
 
+    if (!number) {
+      return parseError({message: 'Number is required'});
+    }
+
     if (valid) {
+      const storedCustomerData = [...allCustomersDetails];
+      const cloneStoredCustomerData = [...cloneAllCustomerDetails];
+
+      let filterExistNumber = storedCustomerData.some(
+        (item, i) => item.mobile_number === number,
+      );
+
+      let filterExistNumberClone = cloneStoredCustomerData.some(
+        (item, i) => item.mobile_number === number,
+      );
+
+      if (filterExistNumber) {
+        return parseError({message: 'Number is in already used'});
+      }
+
+      if (filterExistNumberClone) {
+        return parseError({message: 'Number is in already used'});
+      }
+
       try {
         setOTPSendLoading(true);
         const res = await axiosInstance.post('/customer/send-otp', {
@@ -282,7 +307,7 @@ const CustomerDetail = memo(({navigation}) => {
         console.log(error, 'otp error');
       }
     }
-    // console.log(number, terms, otp);
+    console.log(number, terms, otp);
   };
 
   const onSubmit = async data => {

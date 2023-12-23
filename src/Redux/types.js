@@ -14,6 +14,8 @@ export const authConstants = {
 };
 
 export const OTPCODE = 'OTPCODE';
+export const SAVE_CUSTOMER = 'SAVE_CUSTOMER';
+export const UPDATE_CUSTOMER = 'UPDATE_CUSTOMER';
 
 export const GET_SUMMARY_DATA_SUCCESS = 'GET_SUMMARY_DATA_SUCCESS';
 export const GET_SUMMARY_DATA_FAIL = 'GET_SUMMARY_DATA_FAIL';

@@ -1,31 +1,33 @@
-// import {NativeModules} from 'react-native';
-// import BackgroundTask from 'react-native-background-task';
+import React, {useEffect} from 'react';
+import {View, Text} from 'react-native';
+import BackgroundTimer from 'react-native-background-timer';
 
-// const {InternetCheckModule} = NativeModules;
+const BackgroundTask = () => {
+  useEffect(() => {
+    // Set the interval to 15 minutes (900,000 milliseconds)
+    // const interval = 1 * 60 * 1000;
+    const interval = 1000 * 60;
 
-// BackgroundTask.define(async () => {
-//   console.log('Background task starting...');
+    // Create a function that will be called every 15 minutes
+    const task = () => {
+      console.log('Task executed!');
+      // Your code that will be called every 15 minutes goes here
+    };
 
-//   try {
-//     const isConnected =
-//       await InternetCheckModule.checkInternetConnection().then(
-//         state => state.isConnected,
-//       );
+    // Start the background timer with the task function and the interval
+    const timerId = BackgroundTimer.setInterval(task, interval);
 
-//     if (isConnected) {
-//       console.log(
-//         'Device is connected to the internet. Performing API call...',
-//       );
-//       // Your API call logic here
-//     } else {
-//       console.log('No network connectivity. API call skipped.');
-//     }
-//   } catch (error) {
-//     console.error('Background task error:', error);
-//   } finally {
-//     console.log('Background task completed.');
-//     BackgroundTask.finish();
-//   }
-// });
+    // Clear the interval when the component is unmounted
+    return () => {
+      BackgroundTimer.clearInterval(timerId);
+    };
+  }, []); // Empty dependency array ensures that the effect runs only once on mount
 
-// export default BackgroundTask;
+  return (
+    <View>
+      <Text>BackgroundTask</Text>
+    </View>
+  );
+};
+
+export default BackgroundTask;

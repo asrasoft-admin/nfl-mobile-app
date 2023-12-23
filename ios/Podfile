@@ -22,6 +22,8 @@ target 'activemedia' do
 
   pod 'RNAudioRecord', :path => '../node_modules/react-native-audio-record'
 
+  pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
+
   target 'activemediaTests' do
     inherit! :complete
     # Pods for testing

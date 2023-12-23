@@ -314,7 +314,7 @@ export const RecordAudio = () => {
           onPress={() => navigation.navigate('UserSummary')}
           containerStyles={style.viewSummary}
         />
-        {syncDataFeatureFlag && (
+        {/* {syncDataFeatureFlag && (
           <Button
             containerStyles={style.viewSummary}
             label={
@@ -323,7 +323,7 @@ export const RecordAudio = () => {
             disabled={syncLoading}
             onPress={() => onClick()}
           />
-        )}
+        )} */}
       </View>
     </View>
   );
