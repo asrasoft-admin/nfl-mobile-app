@@ -49,6 +49,9 @@ const UserSummary = () => {
         console.log(data, 'res');
       })
       .catch(err => {
+        if (!err.response) {
+          return parseError({message: 'No internet connection'});
+        }
         dispatch(getSummaryDataFail(err));
         console.log(err, 'err');
       });
@@ -63,6 +66,9 @@ const UserSummary = () => {
         dispatch(getSummaryTotalDataSuccess(data));
       })
       .catch(err => {
+        if (!err.response) {
+          return parseError({message: 'No internet connection'});
+        }
         dispatch(getSummaryTotalDataFail(err));
         console.log(err, 'err');
       });

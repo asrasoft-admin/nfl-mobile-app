@@ -32,7 +32,9 @@ export const Deals = ({route, navigation, containerStyles}) => {
     downloadLink: downloadUrl,
   } = useSelector(state => state.Recorder);
   const dispatch = useDispatch();
-  const syncDataFeatureFlag = config.featureFlags.syncDataFeature;
+  const showQuantityInDealFeature =
+    config.featureFlags.showQuantityInDealFeature;
+  const syncDataFeature = config.featureFlags.syncDataFeature;
 
   const state = useSelector(state => state);
   const user = state.user;
@@ -86,7 +88,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
         const qtyIsNull = dealQty.every(
           item => item.quantity === 0 && !Boolean(item.quantity),
         );
-        if (qtyIsNull && syncDataFeatureFlag) {
+        if (qtyIsNull && showQuantityInDealFeature) {
           throw new Error('Enter quantity of the selected deals');
         }
         const cusData = {
@@ -100,7 +102,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
         const dealIndex = filterDeal.findIndex(item => item.id === deal?.id);
 
         if (user?.role === 'consumer') {
-          if (syncDataFeatureFlag) {
+          if (syncDataFeature) {
             dispatch(saveUser(cusData));
             if (filterDeal[dealIndex].selected === true) {
               filterDeal[dealIndex].selected = false;
@@ -143,6 +145,10 @@ export const Deals = ({route, navigation, containerStyles}) => {
         throw new Error('Please select deal');
       } else throw new Error('Please select any one deal');
     } catch (error) {
+      if (!error.response) {
+        setLoading(false);
+        return parseError({message: 'No internet connection'});
+      }
       setLoading(false);
       parseError(error);
     }
@@ -151,7 +157,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
   const fetchDeals = async () => {
     const temp = deals.map(item => ({
       id: item.id,
-      quantity: syncDataFeatureFlag ? 0 : 1,
+      quantity: !showQuantityInDealFeature ? 0 : 1,
     }));
     setQuantities(temp);
     setAllDeals(deals);
@@ -198,7 +204,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
             onChange={onChange}
             quantities={quantities}
             key={`deal ${index}`}
-            syncDataFeatureFlag={syncDataFeatureFlag}
+            showQuantityInDealFeature={showQuantityInDealFeature}
           />
         ))}
       </View>

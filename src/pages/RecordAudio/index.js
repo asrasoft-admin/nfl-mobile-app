@@ -47,6 +47,7 @@ export const RecordAudio = () => {
   const [isNetConntected, setIsNetConntected] = useState(null);
   const [progressLoading, setProgressLoading] = useState('0%');
   const [location, setLocation] = useState(null);
+  const [locationData, setLocationData] = useState(null);
   const state = useSelector(state => state);
   const {area} = useSelector(state => state.allArea);
   const user = state.user;
@@ -282,7 +283,7 @@ export const RecordAudio = () => {
     (async () => {
       if (location) {
         const data = await getAreaFromAPI(location);
-        console.log({data});
+        setLocationData(data);
         if (data.address) {
           dispatch(setArea(data.address));
         }
