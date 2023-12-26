@@ -39,6 +39,7 @@ const CustomModal = memo(
                       />
                     )
                   }
+                  disabled={isLoading}
                   active={formState.isValid && !isLoading}
                   onPress={onPress}
                   containerStyles={style.btn}

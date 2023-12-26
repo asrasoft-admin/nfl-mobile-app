@@ -41,7 +41,7 @@ import {
   uploadSuccess,
 } from '../../Redux/Actions/RecordAudio';
 import {setCustomerDetails} from '../../Redux/Actions/customer';
-import {otpCodeAction} from '../../Redux/Actions/customerDetail';
+import {getOTPId, otpCodeAction} from '../../Redux/Actions/customerDetail';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {saveUser} from '../../Redux/Actions/allUsers';
 import axios from 'axios';
@@ -64,7 +64,7 @@ const CustomerDetail = memo(({navigation}) => {
   const [location, setLocation] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [OTPSendLoading, setOTPSendLoading] = useState(false);
-  const {otpCode} = useSelector(state => state.customerDetail);
+  const {otpCode, id} = useSelector(state => state.customerDetail);
   const [otpMessage, setOtpMessage] = useState({});
   const [isChangingOTPLabel, setIsChangingOTPLabel] = useState(false);
   const {area: myArea} = useSelector(state => state.allArea);
@@ -233,10 +233,43 @@ const CustomerDetail = memo(({navigation}) => {
       //   console.log({res});
       //   return res;
     } catch (error) {
+      if (!error.response) {
+        setIsLoadingTwo(false);
+        onNoResClose();
+        return parseError({message: 'No internet connection'});
+      }
+
       onNoResClose();
       throw new Error(error);
     } finally {
-      setLoading(false);
+      setIsLoadingTwo(false);
+    }
+  };
+
+  const verifyOTPHandler = async data => {
+    try {
+      // console.log(res, id);
+      const res = await axiosInstance.get('/customer/verify-otp', {
+        params: {
+          id: id,
+          otp: data.otp,
+        },
+      });
+
+      // console.log(id, data.data);
+      // console.log(res.data);
+
+      if (res.data.success) {
+        console.log(res, 'otp verify res');
+        return data;
+      }
+    } catch (error) {
+      if (!error.response) {
+        return parseError({message: 'No internet connection'});
+      }
+      console.log(error, 'otp verify error');
+      onClose();
+      parseError(error);
     }
   };
 
@@ -267,8 +300,10 @@ const CustomerDetail = memo(({navigation}) => {
         });
         dispatch(otpCodeAction(genOtpCode));
 
-        console.log('=================== send otp', res.data);
-        if (res.data.success) {
+        console.log(res.data);
+
+        if (res) {
+          dispatch(getOTPId(res.data.id));
           setOtpMessage({message: res.data.message, success: res.data.success});
           setOTPSendLoading(false);
           setTimer(60);
@@ -279,25 +314,35 @@ const CustomerDetail = memo(({navigation}) => {
           setOtpMessage({message: res.data.message, success: res.data.success});
         }
       } catch (error) {
-        setOTPSendLoading(false);
-        console.log(error.response.data.message);
-        setOtpMessage({message: error.response.data.message, success: false});
-        dispatch(otpCodeAction(''));
-        console.log(error, 'otp error');
+        if (!error.response) {
+          setOTPSendLoading(false);
+          parseError({message: 'No internet connection'});
+          // You can handle the network error here, such as showing a message to the user
+        } else {
+          // Handle other types of errors
+          setOTPSendLoading(false);
+          console.log(error.response.data.message);
+          setOtpMessage({message: error.response.data.message, success: false});
+          console.log(error, 'otp error');
+        }
       }
     }
     // console.log(number, terms, otp);
   };
 
   const onSubmit = async data => {
+    setLoading(true);
     // const otpCode = otpCodeGenerator();
     const {number} = numberValidation(data);
     // console.log('===========>', audio, downloadUrl);
     const locationData = await getAreaFromAPI(location);
 
+    console.log('again run?');
+
     try {
       if (!data.prevBrand) {
         onClose();
+        setLoading(false);
         return parseError({message: 'Atlest select previous brand'});
       }
 
@@ -359,69 +404,108 @@ const CustomerDetail = memo(({navigation}) => {
             onClose();
           } catch (error) {
             onClose();
+            setLoading(false);
             parseError(error);
           } finally {
             setLoading(false);
             console.log('helllo===============>', {modalVisible});
           }
         } catch (error) {
+          console.log({mysetError: error});
+          if (!error.response) {
+            onClose();
+            setLoading(false);
+            return parseError({message: 'No internet connection'});
+          }
+
           onClose();
+          if (
+            error.message ===
+            "ENOENT:  (No such file or directory), open 'Already stopped'"
+          ) {
+            return null;
+          }
+          setLoading(false);
           parseError(error);
         }
       } else {
-        if (!otpByPassFeature || otpCode == data.otp) {
-          console.log({d: otpCode, f: data.otp});
-          if (
-            data.number &&
-            data.terms &&
-            !!data.prevBrand &&
-            data.address &&
-            data.name &&
-            !!data.age &&
-            !!data.gender &&
-            (!otpByPassFeature || data.otp)
-          ) {
-            try {
-              const details = {
-                user_id: user.id,
-                activity_id: user.activity_id,
-                coordinates: JSON.stringify(location),
-                name: data.name,
-                last_name: data.lastName,
-                mobile_number: data.number,
-                age: data.age,
-                gender: data.gender,
-                city: 'karachi',
-                no_response: false,
-                previous_brand_id: data.prevBrand,
-                otp: data.otp || null,
-                location: locationData.displayName,
-                area_id: 1,
-                area: myArea,
-                address: data?.address,
-              };
+        if (
+          data.number &&
+          data.terms &&
+          !!data.prevBrand &&
+          data.address &&
+          data.name &&
+          !!data.age &&
+          !!data.gender &&
+          (!otpByPassFeature || data.otp)
+        ) {
+          setLoading(true);
+          try {
+            const details = {
+              user_id: user.id,
+              activity_id: user.activity_id,
+              coordinates: JSON.stringify(location),
+              name: data.name,
+              last_name: data.lastName,
+              mobile_number: data.number,
+              age: data.age,
+              gender: data.gender,
+              city: 'karachi',
+              no_response: false,
+              previous_brand_id: data.prevBrand,
+              otp: data.otp || null,
+              location: locationData.displayName,
+              area_id: 1,
+              area: myArea,
+              address: data?.address,
+            };
+            const res = await verifyOTPHandler(data);
+            if (res) {
+              console.log(res);
+              // console.log(res, 'res of verify otp');
               dispatch(setCustomerDetails(details));
               onClose();
-              dispatch(otpCodeAction(''));
-              navigation.navigate('Deals');
-            } catch (error) {
-              parseError(error);
-              onClose();
-            } finally {
               setLoading(false);
+              navigation.navigate('Deals');
             }
-          } else {
-            parseError({message: 'Please Enter Complete Information'});
+          } catch (error) {
+            if (!error.response) {
+              onClose();
+              setLoading(false);
+              return parseError({message: 'No internet connection'});
+            }
+            console.log(error, '1');
+
+            if (
+              error.message ===
+              "ENOENT:  (No such file or directory), open 'Already stopped'"
+            ) {
+              return null;
+            }
+            parseError(error);
             onClose();
+          } finally {
+            setLoading(false);
           }
         } else {
-          console.log('??');
-          console.log({d: otpCode, f: data.otp});
-          setOtpMessage({message: 'Invalid OTP', success: false});
+          parseError({message: 'Please Enter Complete Information'});
           onClose();
         }
       }
     } catch (error) {
+      if (!error.response) {
+        onClose();
+        setLoading(false);
+        return parseError({message: 'No internet connection'});
+      }
+      console.log(error, '2');
+
+      if (
+        error.message ===
+        "ENOENT:  (No such file or directory), open 'Already stopped'"
+      ) {
+        return null;
+      }
       parseError(error);
       onClose();
       console.log('erro 4');
@@ -668,7 +752,11 @@ const CustomerDetail = memo(({navigation}) => {
             isLoading={isLoading}
             isLoadingTwo={isLoadingTwo}
             customer
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => {
+              if (!isLoading) {
+                handleSubmit(onSubmit)();
+              }
+            }}
             modalVisible={modalVisible}
             onShow={onShow}
             onClose={onClose}

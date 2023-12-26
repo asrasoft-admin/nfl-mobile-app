@@ -13,7 +13,8 @@ export const authConstants = {
   LOGOUT: 'LOGOUT',
 };
 
-export const OTPCODE = 'OTPCODE';
+export const OTP_CODE = 'OTP_CODE';
+export const OTP_ID = 'OTP_ID';
 
 export const GET_SUMMARY_DATA_SUCCESS = 'GET_SUMMARY_DATA_SUCCESS';
 export const GET_SUMMARY_DATA_FAIL = 'GET_SUMMARY_DATA_FAIL';

@@ -145,6 +145,10 @@ export const Deals = ({route, navigation, containerStyles}) => {
         throw new Error('Please select deal');
       } else throw new Error('Please select any one deal');
     } catch (error) {
+      if (!error.response) {
+        setLoading(false);
+        return parseError({message: 'No internet connection'});
+      }
       setLoading(false);
       parseError(error);
     }
