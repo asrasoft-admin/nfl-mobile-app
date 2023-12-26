@@ -3,12 +3,14 @@ import AWS from 'aws-sdk';
 import {Buffer} from 'buffer';
 
 import config from '../../config';
+console.log(config);
 
 // This is for production -----
 const uploadAudioToS3 = async audioPath => {
   // Set up AWS configuration
   AWS.config.update({
-    region: config.S3_URL.PROD_S3_REGION, // e.g., 'us-east-1'
+    // region: config.S3_URL.PROD_S3_REGION, // e.g., 'us-east-1'
+    region: 'ap-south-1', // e.g., 'us-east-1'
     accessKeyId: config.S3_URL.PROD_S3_ACCESS_KEY_ID,
     secretAccessKey: config.S3_URL.PROD_S3_SECRET_ACCESS_KEY,
     correctClockSkew: true,
@@ -26,7 +28,7 @@ const uploadAudioToS3 = async audioPath => {
 
   // S3 Upload parameters
   const params = {
-    Bucket: config.S3_URL.PROD_S3_BUCKET,
+    Bucket: 'dds-audios-mumbai',
     Key: `uploads/${generatedFilename}`,
     Body: fileBuffer,
     ContentType: 'audio/aac', // Adjust based on your actual audio file type
