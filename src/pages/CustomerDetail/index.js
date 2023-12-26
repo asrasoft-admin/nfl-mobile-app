@@ -490,6 +490,7 @@ const CustomerDetail = memo(({navigation}) => {
         } else {
           parseError({message: 'Please Enter Complete Information'});
           onClose();
+          setLoading(false);
         }
       }
     } catch (error) {
