@@ -219,13 +219,13 @@ export const handleSync = async data => {
         //   {quality: 'medium'},
         // );
 
-        const audioCompressed = await Audio.compress(audioFile, {
-          bitrate: 64000,
-          samplerate: 44100,
-          channels: 1,
-        });
+        // const audioCompressed = await Audio.compress(audioFile, {
+        //   bitrate: 64000,
+        //   samplerate: 44100,
+        //   channels: 1,
+        // });
 
-        const audio = await uploadAudioToCloudinary(audioCompressed);
+        const audio = await uploadAudioToCloudinary(audioFile);
         console.log('ssjklasjdlkajsdlk', {audio});
         const {audioPath, ...finalElement} = element;
         const finalObject = {
