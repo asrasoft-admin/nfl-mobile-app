@@ -17,7 +17,7 @@ module.exports = {
   },
   featureFlags: {
     ShowNflLogo: false,
-    syncDataFeature: true,
+    syncDataFeature: false,
     otpByPassFeature: false,
     showQuantityInDealFeature: true,
   },

@@ -12,6 +12,7 @@ import ErrorBoundary from './src/common/ErrorBoundary/ErrorBoundary';
 import {NativeModules} from 'react-native';
 // import BackgroundTask from './src/services/BackgroundTask';
 import BackgroundTimer from 'react-native-background-timer';
+import config from './src/config';
 
 const MyTheme = {
   colors: {
@@ -24,6 +25,7 @@ const App = () => {
   const dispatch = useDispatch();
   const navigation = useNavigationContainerRef();
   const {allCustomersDetails} = useSelector(state => state.allCustomers);
+  const syncDataFeatureFlag = config.featureFlags.syncDataFeature;
 
   // request interceptor to attach token on all request
   axiosInstance.interceptors.request.use(async request => {
@@ -59,8 +61,10 @@ const App = () => {
 
     // Create a function that will be called every 15 minutes
     const task = async () => {
-      await handleSync(allCustomersDetails);
-      console.log('Task executed!');
+      if (syncDataFeatureFlag) {
+        await handleSync(allCustomersDetails);
+        console.log('Task executed!');
+      }
       // Your code that will be called every 15 minutes goes here
     };
 
@@ -71,7 +75,7 @@ const App = () => {
     return () => {
       BackgroundTimer.clearInterval(timerId);
     };
-  }, [allCustomersDetails]);
+  }, [allCustomersDetails, syncDataFeatureFlag]);
 
   return (
     <ErrorBoundary navigation={navigation}>

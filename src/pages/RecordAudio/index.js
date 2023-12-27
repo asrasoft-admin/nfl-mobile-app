@@ -242,10 +242,22 @@ export const RecordAudio = () => {
       ]);
     }
 
+    const config = {
+      AVSampleRateKeyIOS: 16000,
+      AVNumberOfChannelsKeyIOS: 1,
+      AVEncoderAudioQualityKeyIOS: 'min',
+
+      AudioSourceAndroid: 6,
+      OutputFormatAndroid: 2,
+      AudioEncoderAndroid: 3,
+      AudioEncodingBitRateAndroid: 24000,
+      AudioSamplingRateAndroid: 16000,
+    };
+
     try {
       console.log('asdasd');
       if (audioRecorderPlayer !== null) {
-        const path = await audioRecorderPlayer.startRecorder();
+        const path = await audioRecorderPlayer.startRecorder(undefined, config);
         if (path) dispatch(startRecording());
         audioRecorderPlayer.addRecordBackListener(e => {
           // console.log('Recording . . . ', e.currentPosition);
