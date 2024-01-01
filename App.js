@@ -13,6 +13,7 @@ import {NativeModules} from 'react-native';
 // import BackgroundTask from './src/services/BackgroundTask';
 import BackgroundTimer from 'react-native-background-timer';
 import config from './src/config';
+import Geolocation from 'react-native-geolocation-service';
 
 const MyTheme = {
   colors: {
@@ -25,8 +26,8 @@ const App = () => {
   const dispatch = useDispatch();
   const navigation = useNavigationContainerRef();
   const {allCustomersDetails} = useSelector(state => state.allCustomers);
+  const {user} = useSelector(state => state);
   const syncDataFeatureFlag = config.featureFlags.syncDataFeature;
-
   // request interceptor to attach token on all request
   axiosInstance.interceptors.request.use(async request => {
     const token = await getToken();
@@ -55,6 +56,37 @@ const App = () => {
   // const TestErrorBoundary = () => {
   //   throw new Error('This is a test error');
   // };
+
+  // useEffect(() => {
+  //   const userId = user.id; // Replace with your user authentication logic
+
+  //   const sendLocationToServer = (latitude, longitude) => {
+  //     // const socket = new WebSocket(
+  //     //   'ws://https://5140-39-50-160-132.ngrok-free.app',
+  //     // );
+  //     socket.onopen = () => {
+  //       socket.send(JSON.stringify({userId, latitude, longitude}));
+  //       socket.close();
+  //     };
+  //   };
+
+  //   const watchId = Geolocation.watchPosition(
+  //     position =>
+  //       sendLocationToServer(
+  //         position.coords.latitude,
+  //         position.coords.longitude,
+  //       ),
+  //     error => console.error(error),
+  //     {
+  //       enableHighAccuracy: true,
+  //       timeout: 20000,
+  //       maximumAge: 1000,
+  //       distanceFilter: 10,
+  //     },
+  //   );
+
+  //   return () => Geolocation.clearWatch(watchId);
+  // }, []);
 
   useEffect(() => {
     const interval = 1000 * 60;
