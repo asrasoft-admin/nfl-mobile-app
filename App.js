@@ -57,36 +57,56 @@ const App = () => {
   //   throw new Error('This is a test error');
   // };
 
-  // useEffect(() => {
-  //   const userId = user.id; // Replace with your user authentication logic
+  useEffect(() => {
+    const userId = user?.id; // Replace with your user authentication logic
+    const socket = new WebSocket(
+      'wss://a560-39-50-160-200.ngrok-free.app/websocket',
+    );
+    console.log({socket});
+    socket.onopen = () => {
+      console.log('WebSocket connected');
 
-  //   const sendLocationToServer = (latitude, longitude) => {
-  //     // const socket = new WebSocket(
-  //     //   'ws://https://5140-39-50-160-132.ngrok-free.app',
-  //     // );
-  //     socket.onopen = () => {
-  //       socket.send(JSON.stringify({userId, latitude, longitude}));
-  //       socket.close();
-  //     };
-  //   };
+      const sendLocationToServer = (latitude, longitude) => {
+        console.log({latitude, longitude});
+        // Send location data to the server using the existing WebSocket connection
+        socket.send(JSON.stringify({userId, latitude, longitude}));
+      };
 
-  //   const watchId = Geolocation.watchPosition(
-  //     position =>
-  //       sendLocationToServer(
-  //         position.coords.latitude,
-  //         position.coords.longitude,
-  //       ),
-  //     error => console.error(error),
-  //     {
-  //       enableHighAccuracy: true,
-  //       timeout: 20000,
-  //       maximumAge: 1000,
-  //       distanceFilter: 10,
-  //     },
-  //   );
+      const watchId = Geolocation.watchPosition(
+        position => {
+          const {latitude, longitude} = position.coords;
+          sendLocationToServer(latitude, longitude);
+        },
+        error => console.error('Geolocation error:', error),
+        {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 1000,
+          distanceFilter: 10,
+        },
+      );
 
-  //   return () => Geolocation.clearWatch(watchId);
-  // }, []);
+      // Cleanup function
+      return () => {
+        Geolocation.clearWatch(watchId);
+        // Close the WebSocket connection when the component is unmounted
+        socket.close();
+      };
+    };
+
+    socket.onclose = event => {
+      console.log('WebSocket closed:', event);
+    };
+
+    socket.onerror = error => {
+      console.error('WebSocket error:', error);
+    };
+
+    return () => {
+      // Close the WebSocket connection when the component is unmounted
+      socket.close();
+    };
+  }, []);
 
   useEffect(() => {
     const interval = 1000 * 60;
