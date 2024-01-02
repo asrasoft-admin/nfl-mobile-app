@@ -5,6 +5,7 @@ import {
   Platform,
   Alert,
   BackHandler,
+  NativeModules,
 } from 'react-native';
 // import uploadAudioToCloudinary from './CloudinaryUploader';
 import {Button, Header, Texture} from '../../common';
@@ -43,13 +44,14 @@ export const RecordAudio = () => {
     state => state.allCustomers,
   );
   const [isActiveScreen, setIsActiveScreen] = useState(false);
-  const [isCheckPermissions, setIsCheckPermissions] = useState(false);
+  const [isNetConntected, setIsNetConntected] = useState(null);
   const [progressLoading, setProgressLoading] = useState('0%');
   const [location, setLocation] = useState(null);
   const [locationData, setLocationData] = useState(null);
   const state = useSelector(state => state);
   const {area} = useSelector(state => state.allArea);
   const user = state.user;
+  const {InternetCheckModule} = NativeModules;
 
   const handleBackPress = () => {
     if (isActiveScreen) {
@@ -234,6 +236,12 @@ export const RecordAudio = () => {
       );
     }
 
+    if (!isNetConntected) {
+      return Alert.alert('Network Error', 'Your net is not connected!', [
+        {text: 'OK'},
+      ]);
+    }
+
     const config = {
       AVSampleRateKeyIOS: 16000,
       AVNumberOfChannelsKeyIOS: 1,
@@ -266,21 +274,34 @@ export const RecordAudio = () => {
     }
   };
 
-  useEffect(() => {
-    getLocation(setLocation);
-  }, []);
+  const checkInternetConnection = () => {
+    InternetCheckModule.checkInternetConnection()
+      .then(isConnected => {
+        setIsNetConntected(isConnected);
+        console.log({isConnected}, 'connect');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
 
   useEffect(() => {
-    (async () => {
-      if (location) {
-        const data = await getAreaFromAPI(location);
-        setLocationData(data);
-        if (data.address) {
-          dispatch(setArea(data.address));
-        }
-      }
-    })();
-  }, [location]);
+    getLocation(setLocation);
+
+    checkInternetConnection();
+  }, []);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     if (location) {
+  //       const data = await getAreaFromAPI(location);
+  //       setLocationData(data);
+  //       if (data.address) {
+  //         dispatch(setArea(data.address));
+  //       }
+  //     }
+  //   })();
+  // }, [location]);
 
   useEffect(() => {
     if (loading) {
@@ -306,7 +327,7 @@ export const RecordAudio = () => {
           onPress={() => navigation.navigate('UserSummary')}
           containerStyles={style.viewSummary}
         />
-        {syncDataFeatureFlag && (
+        {/* {syncDataFeatureFlag && (
           <Button
             containerStyles={style.viewSummary}
             label={
@@ -315,7 +336,7 @@ export const RecordAudio = () => {
             disabled={syncLoading}
             onPress={() => onClick()}
           />
-        )}
+        )} */}
       </View>
     </View>
   );

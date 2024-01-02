@@ -25,6 +25,7 @@ import {SearchableDropdowns} from '../../../common/SearchableDropdown';
 import {allActivities} from '../../../dummyData';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import {request, RESULTS, openSettings} from 'react-native-permissions';
 
 export const Login = ({navigation}) => {
   const state = useSelector(states => states);
@@ -38,7 +39,7 @@ export const Login = ({navigation}) => {
   const {errors} = formState;
   const dispatch = useDispatch();
   const [selectedArea, setSelectedArea] = useState(1);
-
+  const [location, setLocation] = useState(null);
   const [isActiveScreen, setIsActiveScreen] = useState(false);
 
   const handleBackPress = () => {
@@ -78,6 +79,7 @@ export const Login = ({navigation}) => {
   useEffect(async () => {
     if (Platform.OS === 'ios') {
       getLocation();
+      getLocation(setLocation);
     } else {
       try {
         const granted = await PermissionsAndroid.request(
@@ -90,9 +92,20 @@ export const Login = ({navigation}) => {
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           getLocation();
+          getLocation(setLocation);
         } else {
           Alert.alert('Location permission denied', `Locataion is Required`, [
-            {text: 'OK'},
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  locationPermission();
+                  // Do something when the user presses the "OK" button
+                  console.log('OK Pressed');
+                },
+              },
+            ],
+            {cancelable: false},
           ]);
         }
       } catch (error) {
@@ -100,6 +113,40 @@ export const Login = ({navigation}) => {
       }
     }
   });
+
+  const requestMultiplePermission = async PERMISSION => {
+    try {
+      const result = await request(PERMISSION);
+
+      if (result === RESULTS.GRANTED) {
+        console.log('all permissions granted');
+      }
+
+      if (result === RESULTS.DENIED) {
+        console.log('all permissions denied');
+        return await openSettings();
+      }
+
+      if (result === RESULTS.BLOCKED) {
+        console.log('Permission denied forever. Opening app settings...');
+        return await openSettings();
+      }
+    } catch (error) {
+      parseError(error);
+    }
+  };
+
+  const locationPermission = async () => {
+    const permission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+
+    if (!permission) {
+      return requestMultiplePermission(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+    }
+  };
 
   useEffect(() => {
     const areaItems = [];
@@ -112,36 +159,47 @@ export const Login = ({navigation}) => {
       if (selectedArea) {
         if (data.number) {
           if (data.password) {
-            setLoading(true);
-            console.log({data});
-            axios
-              .get(`${baseURL}/api/auth/signin`, {
-                params: {
-                  number: data.number,
-                  password: data.password,
-                },
-              })
-              .then(async ({data: user}) => {
-                setLoading(false);
+            if (location) {
+              setLoading(true);
+              axios
+                .get(`${baseURL}/api/auth/signin`, {
+                  params: {
+                    number: data.number,
+                    password: data.password,
+                    lat: JSON.stringify(location?.latitude),
+                    long: JSON.stringify(location?.longitude),
+                  },
+                })
+                .then(async ({data: user}) => {
+                  setLoading(false);
 
-                if (user.success) {
-                  await AsyncStorage.setItem('@token', user.data.token, err => {
-                    if (err) throw err;
-                    dispatch(loginAction(user, selectedArea));
-                    if (user.data.role === 'supervisor') {
-                      navigation.navigate('SupervisorDetail');
-                    } else if (user.data.role === 'consumer') {
-                      navigation.navigate('RecordAudio');
-                    } else {
-                      navigation.navigate('RecordAudio');
-                    }
-                  });
-                }
-              })
-              .catch(error => {
-                setLoading(false);
-                parseError(error);
-              });
+                  if (user.success) {
+                    await AsyncStorage.setItem(
+                      '@token',
+                      user.data.token,
+                      err => {
+                        if (err) throw err;
+                        dispatch(loginAction(user, selectedArea));
+                        if (user.data.role === 'supervisor') {
+                          navigation.navigate('SupervisorDetail');
+                        } else if (user.data.role === 'consumer') {
+                          navigation.navigate('RecordAudio');
+                        } else {
+                          navigation.navigate('RecordAudio');
+                        }
+                      },
+                    );
+                  }
+                })
+                .catch(error => {
+                  console.log(error, '2');
+                  setLoading(false);
+                  parseError(error);
+                });
+            } else
+              throw new Error(
+                'Please enable your location or given permission access',
+              );
           } else throw new Error('Password is Required');
         } else throw new Error('Number is Required');
       } else throw new Error('Area is Required');

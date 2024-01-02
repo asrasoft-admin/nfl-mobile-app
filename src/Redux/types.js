@@ -13,6 +13,9 @@ export const authConstants = {
   LOGOUT: 'LOGOUT',
 };
 
+export const OTPCODE = 'OTPCODE';
+export const SAVE_CUSTOMER = 'SAVE_CUSTOMER';
+export const UPDATE_CUSTOMER = 'UPDATE_CUSTOMER';
 export const OTP_CODE = 'OTP_CODE';
 export const OTP_ID = 'OTP_ID';
 

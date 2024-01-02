@@ -1,16 +1,13 @@
 import RNFetchBlob from 'react-native-fetch-blob';
 import AWS from 'aws-sdk';
-import {Buffer} from 'buffer';
-
 import config from '../../config';
-console.log(config);
+import {Buffer} from 'buffer';
 
 // This is for production -----
 const uploadAudioToS3 = async audioPath => {
   // Set up AWS configuration
   AWS.config.update({
-    // region: config.S3_URL.PROD_S3_REGION, // e.g., 'us-east-1'
-    region: 'ap-south-1', // e.g., 'us-east-1'
+    region: config.S3_URL.PROD_S3_REGION, // e.g., 'us-east-1'
     accessKeyId: config.S3_URL.PROD_S3_ACCESS_KEY_ID,
     secretAccessKey: config.S3_URL.PROD_S3_SECRET_ACCESS_KEY,
     correctClockSkew: true,
@@ -28,7 +25,7 @@ const uploadAudioToS3 = async audioPath => {
 
   // S3 Upload parameters
   const params = {
-    Bucket: 'dds-audios-mumbai',
+    Bucket: config.S3_URL.PROD_S3_BUCKET,
     Key: `uploads/${generatedFilename}`,
     Body: fileBuffer,
     ContentType: 'audio/aac', // Adjust based on your actual audio file type
@@ -42,8 +39,8 @@ const uploadAudioToS3 = async audioPath => {
     console.log('Successfully uploaded to S3:', publicUrl);
     return publicUrl;
   } catch (error) {
-    console.error('Error uploading to S3:', error);
-    throw new Error('Failed to upload to S3');
+    console.log(error);
+    throw error;
   }
 };
 

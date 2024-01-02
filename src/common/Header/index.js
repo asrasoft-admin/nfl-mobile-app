@@ -86,7 +86,7 @@ export const Header = ({navigation}) => {
                 fontSize: 18,
                 fontWeight: 'bold',
               }}>
-              {area}
+              {user?.area}
             </Text>
           )}
         </View>

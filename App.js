@@ -1,14 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   NavigationContainer,
   useNavigationContainerRef,
 } from '@react-navigation/native';
 import {colors} from './src/assets/colors';
 import AppView from './src/app';
-import {useDispatch} from 'react-redux';
-import {axiosInstance, getToken} from './src/helpers';
+import {useDispatch, useSelector} from 'react-redux';
+import {axiosInstance, getToken, handleSync} from './src/helpers';
 import {logout} from './src/Redux/Actions/userAction';
 import ErrorBoundary from './src/common/ErrorBoundary/ErrorBoundary';
+import {NativeModules} from 'react-native';
+// import BackgroundTask from './src/services/BackgroundTask';
+import BackgroundTimer from 'react-native-background-timer';
+import config from './src/config';
 
 const MyTheme = {
   colors: {
@@ -20,6 +24,8 @@ const MyTheme = {
 const App = () => {
   const dispatch = useDispatch();
   const navigation = useNavigationContainerRef();
+  const {allCustomersDetails} = useSelector(state => state.allCustomers);
+  const syncDataFeatureFlag = config.featureFlags.syncDataFeature;
 
   // request interceptor to attach token on all request
   axiosInstance.interceptors.request.use(async request => {
@@ -49,6 +55,27 @@ const App = () => {
   // const TestErrorBoundary = () => {
   //   throw new Error('This is a test error');
   // };
+
+  useEffect(() => {
+    const interval = 1000 * 60;
+
+    // Create a function that will be called every 15 minutes
+    const task = async () => {
+      if (syncDataFeatureFlag) {
+        await handleSync(allCustomersDetails);
+        console.log('Task executed!');
+      }
+      // Your code that will be called every 15 minutes goes here
+    };
+
+    // Start the background timer with the task function and the interval
+    const timerId = BackgroundTimer.setInterval(task, interval);
+
+    // Clear the interval when the component is unmounted
+    return () => {
+      BackgroundTimer.clearInterval(timerId);
+    };
+  }, [allCustomersDetails, syncDataFeatureFlag]);
 
   return (
     <ErrorBoundary navigation={navigation}>
