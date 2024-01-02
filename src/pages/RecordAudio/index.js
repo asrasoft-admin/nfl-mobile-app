@@ -291,17 +291,17 @@ export const RecordAudio = () => {
     checkInternetConnection();
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      if (location) {
-        const data = await getAreaFromAPI(location);
-        setLocationData(data);
-        if (data.address) {
-          dispatch(setArea(data.address));
-        }
-      }
-    })();
-  }, [location]);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (location) {
+  //       const data = await getAreaFromAPI(location);
+  //       setLocationData(data);
+  //       if (data.address) {
+  //         dispatch(setArea(data.address));
+  //       }
+  //     }
+  //   })();
+  // }, [location]);
 
   useEffect(() => {
     if (loading) {

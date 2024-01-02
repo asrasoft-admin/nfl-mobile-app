@@ -62,7 +62,6 @@ const CustomerDetail = memo(({navigation}) => {
   let area = allArea?.data?.find(area => area.name === user.area);
   const [disclaimer, setDisclaimer] = useState(false);
   const [location, setLocation] = useState(null);
-  const [userLocation, setUserLocation] = useState(null);
   const [OTPSendLoading, setOTPSendLoading] = useState(false);
   const {otpCode, id} = useSelector(state => state.customerDetail);
   const [otpMessage, setOtpMessage] = useState({});
@@ -174,7 +173,6 @@ const CustomerDetail = memo(({navigation}) => {
       //     throw new Error('Something went wrong in recording audio');
       //   dispatch(uploadSuccess(downloadLink));
       // }
-      const data = await getAreaFromAPI(location);
 
       const cusData = {
         user_id: user.id,
@@ -188,8 +186,7 @@ const CustomerDetail = memo(({navigation}) => {
         audio_record_time: new Date().getTime(),
         audio_record_date: new Date(),
         area_id: 1,
-        area: myArea,
-        location: data.displayName,
+        area: user?.area,
         deals: [],
       };
 
@@ -358,7 +355,6 @@ const CustomerDetail = memo(({navigation}) => {
     // const otpCode = otpCodeGenerator();
     const {number} = numberValidation(data);
     // console.log('===========>', audio, downloadUrl);
-    const locationData = await getAreaFromAPI(location);
 
     console.log('again run?');
 
@@ -402,8 +398,7 @@ const CustomerDetail = memo(({navigation}) => {
             audio_record_time: new Date().getTime(),
             audio_record_date: new Date(),
             area_id: 1,
-            area: myArea,
-            location: locationData.displayName,
+            area: user?.area,
             address: data.address,
             deals: [],
           };
@@ -477,9 +472,8 @@ const CustomerDetail = memo(({navigation}) => {
               no_response: false,
               previous_brand_id: data.prevBrand,
               otp: data.otp || null,
-              location: locationData.displayName,
               area_id: 1,
-              area: myArea,
+              area: user?.area,
               address: data?.address,
             };
             const res = await verifyOTPHandler(data);
@@ -570,17 +564,6 @@ const CustomerDetail = memo(({navigation}) => {
       }, 5000);
     }
   }, [OTPSendLoading]);
-
-  const getArea = async () => {
-    const locationData = await getAreaFromAPI(location);
-    setUserLocation(locationData ? locationData.displayName : 'Loading...');
-  };
-
-  useEffect(() => {
-    if (location) {
-      getArea();
-    }
-  }, [location]);
 
   return (
     <KeyboardAvoidingView
@@ -694,18 +677,6 @@ const CustomerDetail = memo(({navigation}) => {
                 error={!!errors?.name}
                 message={errors?.name?.message}
                 containerStyles={style.inputContainer}
-              />
-
-              <Input
-                ref={ref}
-                control={control}
-                name="location"
-                placeholder="Location"
-                error={!!errors?.name}
-                message={errors?.name?.message}
-                containerStyles={style.inputContainer}
-                defaultValue={userLocation}
-                editable={false}
               />
 
               <View style={style.numberInputMain}>

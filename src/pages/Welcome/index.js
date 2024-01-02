@@ -15,10 +15,9 @@ export const Welcome = ({navigation}) => {
   const dispatch = useDispatch();
 
   useEffect(async () => {
-    if (area.data.length === 0) {
-      dispatch(allAreaAction());
-    }
-
+    // if (area.data.length === 0) {
+    //   dispatch(allAreaAction());
+    // }
     setTimeout(() => {
       if (user.authenticated) {
         if (user.role === 'supervisor') {
@@ -29,11 +28,11 @@ export const Welcome = ({navigation}) => {
           // navigation.navigate('ShopkeerDetail');
           navigation.navigate('RecordAudio');
         }
-      } else if (area.data.length) {
+      } else {
         navigation.navigate('Login');
       }
     }, 500);
-  }, [area.data, user.authenticated]);
+  }, [user.authenticated]);
 
   return (
     <View style={style.container}>
