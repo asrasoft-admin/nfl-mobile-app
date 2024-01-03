@@ -136,9 +136,7 @@ export const parseError = error => {
   const errorMessage = error?.response?.data?.error?.message
     ? error?.response?.data?.error?.message
     : error?.message;
-  Alert.alert('Error occured', `Failed to submit data ${errorMessage}`, [
-    {text: 'OK'},
-  ]);
+  Alert.alert('Oops! An Issue Occurred', `${errorMessage}`, [{text: 'OK'}]);
 };
 
 export const numberValidation = data => {

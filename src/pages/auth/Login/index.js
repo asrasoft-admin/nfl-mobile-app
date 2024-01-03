@@ -76,43 +76,44 @@ export const Login = ({navigation}) => {
     };
   }, []);
 
-  useEffect(async () => {
-    if (Platform.OS === 'ios') {
-      getLocation();
-      getLocation(setLocation);
-    } else {
+  useEffect(() => {
+    const fetchLocation = async () => {
       try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: 'Device current location permission',
-            message: 'Allow app to get your current location',
-            buttonPositive: 'OK',
-          },
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        if (Platform.OS === 'ios') {
           getLocation();
           getLocation(setLocation);
         } else {
-          Alert.alert('Location permission denied', `Locataion is Required`, [
-            [
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Device current location permission',
+              message: 'Allow app to get your current location',
+              buttonPositive: 'OK',
+            },
+          );
+
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            getLocation();
+            getLocation(setLocation);
+          } else {
+            Alert.alert('Location permission denied', 'Location is Required', [
               {
                 text: 'OK',
                 onPress: () => {
                   locationPermission();
-                  // Do something when the user presses the "OK" button
                   console.log('OK Pressed');
                 },
               },
-            ],
-            {cancelable: false},
-          ]);
+            ]);
+          }
         }
       } catch (error) {
         parseError(error);
       }
-    }
-  });
+    };
+
+    fetchLocation();
+  }, []);
 
   const requestMultiplePermission = async PERMISSION => {
     try {
@@ -198,10 +199,10 @@ export const Login = ({navigation}) => {
                 });
             } else
               throw new Error(
-                'Please enable your location or given permission access',
+                'Enable location services or grant permission access to continue.',
               );
-          } else throw new Error('Password is Required');
-        } else throw new Error('Number is Required');
+          } else throw new Error('Please provide your password to proceed.');
+        } else throw new Error('Please provide your number to proceed.');
       } else throw new Error('Area is Required');
     } catch (error) {
       console.log(error, '2');
