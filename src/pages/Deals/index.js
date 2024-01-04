@@ -157,7 +157,7 @@ export const Deals = ({route, navigation, containerStyles}) => {
   const fetchDeals = async () => {
     const temp = deals.map(item => ({
       id: item.id,
-      quantity: !showQuantityInDealFeature ? 0 : 1,
+      quantity: showQuantityInDealFeature ? 0 : 1,
     }));
     setQuantities(temp);
     setAllDeals(deals);
